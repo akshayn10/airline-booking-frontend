@@ -1,9 +1,12 @@
-import "./App.css";
+import { BrowserRouter } from "react-router-dom";
+import AdminRoute from "./components/admin/AdminRoute.js";
 
 function App() {
   return (
     <div className="App">
-      <h1> Airline Booking Frontend </h1>
+      <BrowserRouter>
+        <AdminRoute />
+      </BrowserRouter>
     </div>
   );
 }

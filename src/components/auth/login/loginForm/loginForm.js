@@ -22,6 +22,7 @@ const LoginForm = () => {
               message: "The email address is invalid!",
             },
           ]}
+          hasFeedback
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -40,8 +41,9 @@ const LoginForm = () => {
               message: "Password must be at least 8 characters long!",
             },
           ]}
+          hasFeedback
         >
-          <Input
+          <Input.Password
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="Password"

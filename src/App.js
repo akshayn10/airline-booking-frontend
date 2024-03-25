@@ -1,14 +1,14 @@
 import { BrowserRouter } from "react-router-dom";
-import AdminRoute from "./components/admin/AdminRoute.js";
+import ParentRouter from "./components/admin/router/parentRouter.js";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
-        <AdminRoute />
+        <ParentRouter />
       </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

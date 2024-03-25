@@ -1,9 +1,10 @@
 import "./App.css";
+import Signup from "./components/signup/signup";
 
 function App() {
   return (
     <div className="App">
-      <h1> Airline Booking Frontend </h1>
+      <Signup />
     </div>
   );
 }

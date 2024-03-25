@@ -1,7 +1,7 @@
 import SignupForm from "./signupForm/signupForm/signupForm";
 import SignupWelcome from "./signupForm/signupWelcome/signupWelcome";
 import "./signup.css";
-import background from "../../assets/images/flightbg.jpg";
+import background from "../../../assets/images/flightbg.jpg";
 
 const Signup = () => {
   const styles = {

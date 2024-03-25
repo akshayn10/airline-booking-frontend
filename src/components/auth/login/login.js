@@ -1,7 +1,7 @@
 import LoginForm from "./loginForm/loginForm";
 import "./login.css";
 import LoginWelcome from "./loginWelcome/LoginWelcome";
-import background from "../../assets/images/airline.jpg";
+import background from '../../../assets/images/airline.jpg';
 
 const Login = () => {
   const styles = {

@@ -1,5 +1,5 @@
 import "./signupWelcome.css";
-import background from "../../../../assets/images/wings.jpg";
+import background from "../../../../../assets/images/wings.jpg";
 
 const SignupWelcome = () => {
   const styles = {

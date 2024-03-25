@@ -1,12 +1,15 @@
 import "./App.css";
-import Signup from "./components/signup/signup";
+import { BrowserRouter } from "react-router-dom";
+import ParentRouter from "./components/admin/router/parentRouter.js";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <Signup />
+      <BrowserRouter>
+        <ParentRouter />
+      </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

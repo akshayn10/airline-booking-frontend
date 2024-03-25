@@ -1,33 +1,52 @@
-import React, { useState } from 'react';
-import { Modal, Form, Input, DatePicker, Table } from 'antd';
+import { useState } from 'react';
+import { Modal, Form, DatePicker, Table, Alert, Select } from 'antd';
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 
-const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
+const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocationData }) => {
     const [form] = Form.useForm();
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedFleetId, setSelectedFleetId] = useState(null);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
+    const [selectedDepartureLocation, setSelectedDepartureLocation] = useState(null);
+    const [selectedArrivalLocation, setSelectedArrivalLocation] = useState(null);
 
-    const onSelectChange = (selectedKeys) => {
-        setSelectedRowKeys(selectedKeys);
-        form.setFieldsValue({ fleetId: selectedKeys.length ? selectedKeys[0] : null });
-    };
+    const disabledDate = (current) => {
+        return current && current < Date.now();
+    }
 
-    const onAddFlight = () => {
-        form
-            .validateFields()
-            .then((values) => {
-                const flightDetails = { ...values, fleetId: values.fleetId };
+    const onOk = () => {
+        if (!selectedFleetId) {
+            setSubmitAttempted(true);
+            return;
+        }
+
+        form.validateFields()
+            .then((fieldsValue) => {
+                const rangeValue = fieldsValue['dateRange'];
+                const values = {
+                    ...fieldsValue,
+                    departureTime: rangeValue[0],
+                    arrivalTime: rangeValue[1],
+                    fleetId: selectedFleetId
+                };
+                onCreate(values);
                 form.resetFields();
-                onCreate(flightDetails);
+                setSelectedFleetId(null);
+                setSubmitAttempted(false);
+                setSelectedDepartureLocation(null);
+                setSelectedArrivalLocation(null);
             })
-            .catch((info) => {
-                console.log('Validate Failed:', info);
-            });
-    };
+            .catch((info) => console.log('Validate Failed:', info));
+    }
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-        type: 'radio', // Use radio for single selection
-    };
+    const onDepartureLocationChange = value => {
+        setSelectedDepartureLocation(value);
+        form.setFieldsValue({ arrivalLocation: undefined }); // Reset arrival location to ensure it cannot be the same
+    }
+
+    const onArrivalLocationChange = value => {
+        setSelectedArrivalLocation(value);
+    }
 
     const columns = [
         {
@@ -57,76 +76,80 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
         },
     ];
 
+    const rowSelection = {
+        type: 'radio',
+        onChange: (selectedRowKeys) => {
+            setSelectedFleetId(selectedRowKeys[0]);
+            setSubmitAttempted(false);
+        },
+    }
+
     return (
         <Modal
             open={visible}
             title="Add New Flight"
-            onCancel={onCancel}
-            onOk={onAddFlight}
             okText="Add"
             cancelText="Cancel"
+            onCancel={onCancel}
+            onOk={onOk}
         >
+            {submitAttempted && !selectedFleetId && (
+                <Alert message="Please select a fleet before adding a flight." type="warning" showIcon style={{ marginBottom: 16 }} />
+            )}
             <Form form={form} layout="vertical" name="form_in_modal">
-                <Form.Item
-                    name="departureLocation"
-                    label="Departure Location"
-                    rules={[{ required: true, message: 'Please input the departure location!' }]}
-                >
-                    <Input />
+                <Form.Item name="departureLocation" label="Departure Location" rules={[{ required: true, message: 'Please select the departure location!' }]}>
+                    <Select
+                        showSearch
+                        placeholder="Select departure location"
+                        onChange={onDepartureLocationChange}
+                        filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                    >
+                        {flightLocationData.map(location => {
+                            if (location.id !== selectedArrivalLocation) {
+                                return <Option key={location.id} value={location.id}>{`${location.airportName} at ${location.cityName}, ${location.country}`}</Option>;
+                            }
+                            return null;
+                        })}
+                    </Select>
+                </Form.Item>
+                <Form.Item name="arrivalLocation" label="Arrival Location" rules={[{ required: true, message: 'Please select the arrival location!' }]}>
+                    <Select
+                        showSearch
+                        placeholder="Select arrival location"
+                        onChange={onArrivalLocationChange}
+                        filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
+                    >
+                        {flightLocationData.map(location => {
+                            if (location.id !== selectedDepartureLocation) {
+                                return <Option key={location.id} value={location.id}>{`${location.airportName} at ${location.cityName}, ${location.country}`}</Option>;
+                            }
+                            return null;
+                        })}
+                    </Select>
                 </Form.Item>
                 <Form.Item
-                    name="arrivalLocation"
-                    label="Arrival Location"
-                    rules={[{ required: true, message: 'Please input the arrival location!' }]}
+                    name="dateRange"
+                    label="Departure and Arrival Time"
+                    rules={[{ required: true, message: 'Please select the departure and arrival time!' }]}
                 >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    name="departureTime"
-                    label="Departure Time"
-                    rules={[{ required: true, message: 'Please select the departure time!' }]}
-                >
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-                </Form.Item>
-                <Form.Item
-                    name="arrivalTime"
-                    label="Arrival Time"
-                    rules={[{ required: true, message: 'Please select the arrival time!' }]}
-                >
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-                </Form.Item>
-
-                <Form.Item
-                    shouldUpdate={(prevValues, currentValues) => prevValues.fleetId !== currentValues.fleetId}
-                    noStyle
-                >
-                    {() => (
-                        <Form.Item
-                            name="fleetId"
-                            rules={[{ required: true, message: 'Please select a fleet!' }]}
-                            style={{ display: 'none' }}
-                        >
-                            <Input />
-                        </Form.Item>
-                    )}
-                </Form.Item>
-
-                <Form.Item label="Fleet Selection">
-                    <Table
-                        rowSelection={{
-                            type: 'radio',
-                            selectedRowKeys: selectedRowKeys,
-                            onChange: onSelectChange,
-                        }}
-                        columns={columns}
-                        dataSource={fleetData}
-                        pagination={false}
-                        rowKey="id"
-                    />
+                    <RangePicker showTime disabledDate={disabledDate} format="YYYY-MM-DD HH:mm:ss" />
                 </Form.Item>
             </Form>
+            <Table
+                rowSelection={{
+                    ...rowSelection,
+                }}
+                columns={columns}
+                dataSource={fleetData}
+                rowKey="id"
+                pagination={false}
+            />
         </Modal>
     );
-};
+}
 
 export default AddFlightModal;

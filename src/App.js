@@ -1,13 +1,15 @@
 import "./App.css";
-import Login from "./components/login/login";
+import { BrowserRouter } from "react-router-dom";
+import ParentRouter from "./router/parentRouter";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      {/* <h1> Airline Booking Frontend </h1> */}
-      <Login/>
+      <BrowserRouter>
+        <ParentRouter />
+      </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, Popconfirm, Table, Typography } from 'antd';
+import { useState } from 'react';
+import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
+import EditableCell from '../common/EditableCell';
 import { formatDate } from '../../util/DateConversion';
 
 const originFleetData = [
@@ -23,9 +24,9 @@ const originFleetData = [
     }
 ];
 
-const originData = [
+const originFlightData = [
     {
-        key: '0',
+        id: '0',
         departureLocation: 'Dubai International Airport',
         arrivalLocation: 'Katunayake International Airport',
         fleet: {
@@ -45,7 +46,7 @@ const originData = [
         arrivalTime: 'Sun, 25 Mar 2024 18:36:00 GMT'
     },
     {
-        key: '1',
+        id: '1',
         departureLocation: 'Katunayake International Airport',
         arrivalLocation: 'Dubai International Airport',
         fleet: {
@@ -66,52 +67,21 @@ const originData = [
     },
 ];
 
-const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-}) => {
-    return (
-        <td {...restProps}>
-            {editing ? (
-                <Form.Item
-                    name={dataIndex}
-                    style={{
-                        margin: 0,
-                    }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-            ) : (
-                children
-            )}
-        </td>
-    );
-}
-
 const FlightManagement = () => {
     const [form] = Form.useForm();
 
-    const [data, setData] = useState(originData);
-    const [editingKey, setEditingKey] = useState('');
-    const [currentFleet, setCurrentFleet] = useState({});
+    const [flightData, setFlightData] = useState(originFlightData);
+    const [fleetData, setFleetData] = useState(originFleetData);
+
+    const [flightEditingKey, setFlightEditingKey] = useState('');
+    const [fleetEditingKey, setFleetEditingKey] = useState('');
+    const [viewingFleet, setViewingFleet] = useState({});
 
     const [addFlightModalVisible, setAddFlightModalVisible] = useState(false);
-    const [fleetModalVisible, setFleetModalVisible] = useState(false);
+    const [fleetInformationModalVisible, setFleetInformationModalVisible] = useState(false);
 
 
-    const isEditing = (record) => record.key === editingKey;
+    const isEditing = (record) => record.key === flightEditingKey;
 
     const edit = (record) => {
         form.setFieldsValue({
@@ -127,16 +97,37 @@ const FlightManagement = () => {
             arrivalTime: '',
             ...record,
         });
-        setEditingKey(record.key);
+        setFlightEditingKey(record.id);
+    }
+
+    const save = async (key) => {
+        try {
+            const row = await form.validateFields();
+            const existingFlightData = [...flightData];
+            const index = existingFlightData.findIndex((item) => key === item.id);
+            const item = existingFlightData[index];
+            existingFlightData.splice(index, 1, {
+                ...item,
+                ...row,
+            });
+            setFlightData(existingFlightData);
+            setFleetEditingKey('');
+        } catch (errInfo) {
+            console.log('Validate Failed:', errInfo);
+        }
+    }
+
+    const deleteRow = async (key) => {
+        setFlightData(flightData.filter((item) => item.id !== key));
     }
 
     const cancel = () => {
-        setEditingKey('');
+        setFlightEditingKey('');
     }
 
     const addNewFlight = (newFlight) => {
-        const newKey = data.length.toString();
-        const selectedFleet = originFleetData.find(fleet => fleet.id === newFlight.fleetId);
+        const newKey = flightData.length.toString();
+        const selectedFleet = fleetData.find(fleet => fleet.id === newFlight.fleetId);
 
         const newFlightData = {
             key: newKey,
@@ -157,58 +148,29 @@ const FlightManagement = () => {
                 remainingPremiumSeats: selectedFleet.totalPremiumSeats,
                 remainingBusinessSeats: selectedFleet.totalBusinessSeats
             }
-        };
-        setData([...data, newFlightData]);
+        }
+
+        setFlightData([...flightData, newFlightData]);
         setAddFlightModalVisible(false);
-    };
-
-    const handleFleetUpdate = (updatedFleet) => {
-        const newData = [...data];
-        const flightIndex = newData.findIndex(flight => flight.key === editingKey);
-
-        if (flightIndex >= 0) {
-            newData[flightIndex] = {
-                ...newData[flightIndex],
-                fleet: updatedFleet
-            };
-
-            setData(newData);
-        }
-    };
-
-
-    const showFleetModal = (fleet) => {
-        console.dir(fleet)
-        setCurrentFleet(fleet);
-        setFleetModalVisible(true);
-    };
-
-    const save = async (key) => {
-        try {
-            const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
-        } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
-        }
     }
 
-    const deleteRow = async (key) => {
-        setData(data.filter((item) => item.key !== key));
-    };
+    const handleFleetUpdate = (updatedFleet, flightKey) => {
+        const existingFlightData = [...flightData];
+        const flightIndex = existingFlightData.findIndex(flight => flight.id === flightKey);
+
+        existingFlightData[flightIndex] = {
+            ...existingFlightData[flightIndex],
+            fleet: updatedFleet
+        }
+
+        setFlightData(existingFlightData);
+    }
+
+    const showFleetModal = (record) => {
+        setViewingFleet(record.fleet);
+        setFleetEditingKey(record.key);
+        setFleetInformationModalVisible(true);
+    }
 
     const columns = [
         {
@@ -240,7 +202,7 @@ const FlightManagement = () => {
             dataIndex: 'fleet',
             width: '5%',
             render: (_, record) => (
-                <a href={() => false} onClick={() => showFleetModal(record.fleet)}>View</a>
+                <a href={() => false} disabled={flightEditingKey !== ''} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {
@@ -259,11 +221,11 @@ const FlightManagement = () => {
                     </span>
                 ) : (
                     <span>
-                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
+                        <Typography.Link disabled={flightEditingKey !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
                             Edit
                         </Typography.Link>
                         <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.key)}>
-                            <a href={() => false} disabled={editingKey !== ''}>Delete</a>
+                            <a href={() => false} disabled={flightEditingKey !== ''}>Delete</a>
                         </Popconfirm>
                     </span>
                 );
@@ -303,12 +265,12 @@ const FlightManagement = () => {
                         },
                     }}
                     bordered
-                    dataSource={data}
+                    dataSource={flightData}
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
                         pageSize: 10,
-                        total: data.length,
+                        total: flightData.length,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         onChange: cancel
                     }}
@@ -318,18 +280,19 @@ const FlightManagement = () => {
                 visible={addFlightModalVisible}
                 onCreate={addNewFlight}
                 onCancel={() => setAddFlightModalVisible(false)}
-                fleetData={originFleetData}
+                fleetData={fleetData}
             />
             <FleetInfomationModal
-                visible={fleetModalVisible}
+                key={viewingFleet.id}
+                visible={fleetInformationModalVisible}
                 onFleetUpdate={handleFleetUpdate}
                 onCancel={() => {
-                    setFleetModalVisible(false);
+                    setFleetInformationModalVisible(false);
                 }}
-                fleetData={originFleetData}
-                initialFleet={currentFleet}
+                fleetData={fleetData}
+                initialFleet={viewingFleet}
+                editingFlightKey={fleetEditingKey}
             />
-
         </>
     );
 };

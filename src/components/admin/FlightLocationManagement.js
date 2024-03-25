@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, Popconfirm, Table, Typography } from 'antd';
+import { useState } from 'react';
+import { Button, Form, Popconfirm, Table, Typography } from 'antd';
+import EditableCell from '../common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
 
-const originData = [
+const originFlightLocationData = [
     {
         key: '0',
         country: 'Sri Lanka',
@@ -19,48 +20,14 @@ const originData = [
     },
 ];
 
-const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-}) => {
-    return (
-        <td {...restProps}>
-            {editing ? (
-                <Form.Item
-                    name={dataIndex}
-                    style={{
-                        margin: 0,
-                    }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-            ) : (
-                children
-            )}
-        </td>
-    );
-}
-
 const FlightLocationManagement = () => {
     const [form] = Form.useForm();
 
-    const [data, setData] = useState(originData);
-    const [editingKey, setEditingKey] = useState('');
-    const [modalVisible, setModalVisible] = useState(false);
+    const [flightLocationData, setFlightLocationData] = useState(originFlightLocationData);
+    const [editingFlightLocationKey, setEditingFlightLocationKey] = useState('');
+    const [newFlightLocationModalVisible, setNewFlightLocationModalVisible] = useState(false);
 
-    const isEditing = (record) => record.key === editingKey;
+    const isEditing = (record) => record.key === editingFlightLocationKey;
 
     const edit = (record) => {
         form.setFieldsValue({
@@ -70,45 +37,39 @@ const FlightLocationManagement = () => {
             code: '',
             ...record,
         });
-        setEditingKey(record.key);
+        setEditingFlightLocationKey(record.key);
     }
-
-    const cancel = () => {
-        setEditingKey('');
-    }
-
-    const addFlightLocation = (newLocation) => {
-        const newData = [...data, { key: data.length.toString(), ...newLocation }];
-        setData(newData);
-        setModalVisible(false);
-    };
 
     const save = async (key) => {
         try {
             const row = await form.validateFields();
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
+            const existingFlightLocationData = [...flightLocationData];
+            const index = existingFlightLocationData.findIndex((item) => key === item.key);
+            const item = existingFlightLocationData[index];
+            existingFlightLocationData.splice(index, 1, {
+                ...item,
+                ...row,
+            });
+            setFlightLocationData(existingFlightLocationData);
+            setEditingFlightLocationKey('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
     }
 
     const deleteRow = async (key) => {
-        setData(data.filter((item) => item.key !== key));
+        setFlightLocationData(flightLocationData.filter((item) => item.key !== key));
     };
+
+    const cancel = () => {
+        setEditingFlightLocationKey('');
+    }
+
+    const addFlightLocation = (newLocation) => {
+        const newFlightLocationData = [...flightLocationData, { key: flightLocationData.length.toString(), ...newLocation }];
+        setFlightLocationData(newFlightLocationData);
+        setNewFlightLocationModalVisible(false);
+    }
 
     const columns = [
         {
@@ -151,11 +112,11 @@ const FlightLocationManagement = () => {
                     </span>
                 ) : (
                     <span>
-                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
+                        <Typography.Link disabled={editingFlightLocationKey !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
                             Edit
                         </Typography.Link>
                         <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.key)}>
-                            <a href={() => false} disabled={editingKey !== ''}>Delete</a>
+                            <a href={() => false} disabled={editingFlightLocationKey !== ''}>Delete</a>
                         </Popconfirm>
                     </span>
                 );
@@ -182,7 +143,7 @@ const FlightLocationManagement = () => {
         <>
             <Button
                 type="primary"
-                onClick={() => setModalVisible(true)}
+                onClick={() => setNewFlightLocationModalVisible(true)}
                 style={{ marginBottom: 16 }}
             >
                 Add Flight Location
@@ -195,21 +156,21 @@ const FlightLocationManagement = () => {
                         },
                     }}
                     bordered
-                    dataSource={data}
+                    dataSource={flightLocationData}
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
                         pageSize: 10,
-                        total: data.length,
+                        total: flightLocationData.length,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         onChange: cancel
                     }}
                 />
             </Form>
             <NewFlightLocationModal
-                visible={modalVisible}
+                visible={newFlightLocationModalVisible}
                 onCreate={addFlightLocation}
-                onCancel={() => setModalVisible(false)}
+                onCancel={() => setNewFlightLocationModalVisible(false)}
             />
         </>
     );

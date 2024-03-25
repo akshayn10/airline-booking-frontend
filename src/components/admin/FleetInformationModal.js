@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button, Table } from 'antd';
 
-const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet }) => {
+const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, editingFlightKey }) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([initialFleet.id]);
     const [data, setData] = useState([]);
 
@@ -12,7 +12,7 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
             ...fleetData.filter(fleet => fleet.id !== initialFleet.id)
         ];
         setData(sortedData);
-    }, [fleetData, initialFleet]);
+    }, [fleetData, initialFleet, visible]);
 
     const onSelectChange = selectedKeys => {
         setSelectedRowKeys(selectedKeys);
@@ -20,8 +20,8 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
 
     const onSave = () => {
         const newSelectedFleet = data.find(fleet => fleet.id === selectedRowKeys[0]);
-        onFleetUpdate(newSelectedFleet);
-        onCancel(); // Optionally close the modal
+        onFleetUpdate(newSelectedFleet, editingFlightKey);
+        onCancel();
     };
 
     const rowSelection = {

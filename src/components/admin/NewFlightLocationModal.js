@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal, Form, Input } from 'antd';
 
 const NewFlightLocationModal = ({ visible, onCreate, onCancel }) => {
@@ -82,6 +81,6 @@ const NewFlightLocationModal = ({ visible, onCreate, onCancel }) => {
             </Form>
         </Modal>
     );
-};
+}
 
 export default NewFlightLocationModal;

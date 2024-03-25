@@ -11,7 +11,7 @@ const AdminRouter = () => {
                 <Route path="flight-location-management" element={<FlightLocationManagement />} />
             </Routes>
         </AdminDashboardSider>
-    )
+    );
 }
 
 export default AdminRouter;

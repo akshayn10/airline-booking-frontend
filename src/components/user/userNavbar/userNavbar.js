@@ -39,8 +39,8 @@ const UserNavbar = ({ children }) => {
           style={{
             zIndex: 2,
             position: "absolute",
-            top: "1%",
-            left: collapsed ? "3%" : "11%",
+            top: "5%",
+            left: collapsed ? "2.5%" : "10.5%",
           }}
           danger
           type="primary"

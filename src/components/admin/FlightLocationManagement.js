@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import EditableCell from '../common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
+import { AddFlightLocation } from '../../redux/actions/AdminActions';
 
 const originFlightLocationData = [
     {
-        key: '0',
+        id: '0',
         country: 'Sri Lanka',
         cityName: 'Katunayake',
         airportName: 'Katunayake International Airport',
         code: '941'
     },
     {
-        key: '1',
+        id: '1',
         country: 'United Arab Emirates',
         cityName: 'Dubai',
         airportName: 'Dubai International Airport',
@@ -23,11 +25,18 @@ const originFlightLocationData = [
 const FlightLocationManagement = () => {
     const [form] = Form.useForm();
 
-    const [flightLocationData, setFlightLocationData] = useState(originFlightLocationData);
-    const [editingFlightLocationKey, setEditingFlightLocationKey] = useState('');
+    const [flightLocationData, setFlightLocationData] = useState([]);
+    const [editingFlightLocationId, setEditingFlightLocationId] = useState('');
     const [newFlightLocationModalVisible, setNewFlightLocationModalVisible] = useState(false);
 
-    const isEditing = (record) => record.key === editingFlightLocationKey;
+    const data = useSelector((state) => state.flightLocations.flightLocations);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        setFlightLocationData(data);
+    }, [data])
+
+    const isEditing = (record) => record.id === editingFlightLocationId;
 
     const edit = (record) => {
         form.setFieldsValue({
@@ -37,37 +46,38 @@ const FlightLocationManagement = () => {
             code: '',
             ...record,
         });
-        setEditingFlightLocationKey(record.key);
+        setEditingFlightLocationId(record.id);
     }
 
-    const save = async (key) => {
+    const save = async (id) => {
         try {
             const row = await form.validateFields();
             const existingFlightLocationData = [...flightLocationData];
-            const index = existingFlightLocationData.findIndex((item) => key === item.key);
+            const index = existingFlightLocationData.findIndex((item) => id === item.id);
             const item = existingFlightLocationData[index];
             existingFlightLocationData.splice(index, 1, {
                 ...item,
                 ...row,
             });
             setFlightLocationData(existingFlightLocationData);
-            setEditingFlightLocationKey('');
+            setEditingFlightLocationId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
     }
 
-    const deleteRow = async (key) => {
-        setFlightLocationData(flightLocationData.filter((item) => item.key !== key));
-    };
+    const deleteRow = async (id) => {
+        setFlightLocationData(flightLocationData.filter((item) => item.id !== id));
+    }
 
     const cancel = () => {
-        setEditingFlightLocationKey('');
+        setEditingFlightLocationId('');
     }
 
     const addFlightLocation = (newLocation) => {
-        const newFlightLocationData = [...flightLocationData, { key: flightLocationData.length.toString(), ...newLocation }];
-        setFlightLocationData(newFlightLocationData);
+        const newFlightLocationData = [...flightLocationData, { id: flightLocationData.length.toString(), ...newLocation }];
+        // setFlightLocationData(newFlightLocationData);
+        dispatch(AddFlightLocation({ id: flightLocationData.length.toString(), ...newLocation }));
         setNewFlightLocationModalVisible(false);
     }
 
@@ -103,7 +113,7 @@ const FlightLocationManagement = () => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
-                        <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
+                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
@@ -112,11 +122,11 @@ const FlightLocationManagement = () => {
                     </span>
                 ) : (
                     <span>
-                        <Typography.Link disabled={editingFlightLocationKey !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
+                        <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
                             Edit
                         </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.key)}>
-                            <a href={() => false} disabled={editingFlightLocationKey !== ''}>Delete</a>
+                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>
+                            <a href={() => false} disabled={editingFlightLocationId !== ''}>Delete</a>
                         </Popconfirm>
                     </span>
                 );
@@ -174,6 +184,6 @@ const FlightLocationManagement = () => {
             />
         </>
     );
-};
+}
 
 export default FlightLocationManagement;

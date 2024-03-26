@@ -81,6 +81,6 @@ const NewFlightLocationModal = ({ visible, onCreate, onCancel }) => {
             </Form>
         </Modal>
     );
-};
+}
 
 export default NewFlightLocationModal;

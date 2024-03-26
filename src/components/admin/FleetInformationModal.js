@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Modal, Button, Table } from 'antd';
 
-const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, editingFlightKey }) => {
-    const [selectedRowKeys, setSelectedRowKeys] = useState([initialFleet.id]);
+const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, editingFlightId }) => {
+    const [selectedRowIds, setSelectedRowIds] = useState([initialFleet.id]);
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -14,47 +14,42 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
         setData(sortedData);
     }, [fleetData, initialFleet, visible]);
 
-    const onSelectChange = selectedKeys => {
-        setSelectedRowKeys(selectedKeys);
-    };
+    const onSelectChange = selectedIds => {
+        setSelectedRowIds(selectedIds);
+    }
 
     const onSave = () => {
-        const newSelectedFleet = data.find(fleet => fleet.id === selectedRowKeys[0]);
-        onFleetUpdate(newSelectedFleet, editingFlightKey);
+        const newSelectedFleet = data.find(fleet => fleet.id === selectedRowIds[0]);
+        onFleetUpdate(newSelectedFleet, editingFlightId);
         onCancel();
-    };
+    }
 
     const rowSelection = {
-        selectedRowKeys,
+        selectedRowKeys: selectedRowIds,
         onChange: onSelectChange,
         type: 'radio',
-    };
+    }
 
     const columns = [
         {
             title: 'Code',
             dataIndex: 'code',
-            key: 'code',
         },
         {
             title: 'Model',
             dataIndex: 'model',
-            key: 'model',
         },
         {
             title: 'Total Economy Seats',
             dataIndex: 'totalEconomySeats',
-            key: 'totalEconomySeats',
         },
         {
             title: 'Total Premium Seats',
             dataIndex: 'totalPremiumSeats',
-            key: 'totalPremiumSeats',
         },
         {
             title: 'Total Business Seats',
             dataIndex: 'totalBusinessSeats',
-            key: 'totalBusinessSeats',
         },
     ];
 
@@ -77,6 +72,6 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
             />
         </Modal>
     );
-};
+}
 
 export default FleetInformationModal;

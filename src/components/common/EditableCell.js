@@ -1,4 +1,5 @@
-import { Form, Input } from "antd";
+import { Form, Input, DatePicker } from "antd";
+const { RangePicker } = DatePicker;
 
 const EditableCell = ({
     editing,
@@ -10,14 +11,18 @@ const EditableCell = ({
     children,
     ...restProps
 }) => {
+    let inputNode = <Input />; // Default input
+
+    if (inputType === 'rangePicker') {
+        inputNode = <RangePicker showTime defaultValue={[record.departureTime, record.arrivalTime]} />;
+    }
+
     return (
         <td {...restProps}>
             {editing ? (
                 <Form.Item
                     name={dataIndex}
-                    style={{
-                        margin: 0,
-                    }}
+                    style={{ margin: 0 }}
                     rules={[
                         {
                             required: true,
@@ -25,7 +30,7 @@ const EditableCell = ({
                         },
                     ]}
                 >
-                    <Input />
+                    {inputNode}
                 </Form.Item>
             ) : (
                 children

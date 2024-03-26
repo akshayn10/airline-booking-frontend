@@ -7,7 +7,8 @@ import {
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import FlightIcon from "@mui/icons-material/Flight";
 import { Button, Menu } from "antd";
-function getItem(label, key, icon, children, type) {
+import { useNavigate } from 'react-router-dom';
+const getItem =(label, key, icon, children, type)=> {
   return {
     key,
     icon,
@@ -22,10 +23,27 @@ const items = [
   getItem("Reports", "3", <AssessmentIcon />),
 ];
 const UserNavbar = ({ children }) => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+  const handleClick = (e) => {  
+    switch (e.key) {
+      case '1':
+        navigate('/user/dashboard');
+        break;
+      case '2':
+        navigate('/user/flights');
+        break;
+      case '3':
+        navigate('/user/reports');
+        break;
+      default:
+        console.log('default');
+    }
+
+  }
   return (
     <div
       style={{
@@ -61,7 +79,7 @@ const UserNavbar = ({ children }) => {
             theme="dark"
             inlineCollapsed={collapsed}
             items={items}
-            onClick={(e) => console.log(e)}
+            onClick={handleClick}
           ></Menu>
         </div>
       </div>

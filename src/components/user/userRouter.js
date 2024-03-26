@@ -5,9 +5,20 @@ import UserTopBar from "./userTopbar/userTopBar";
 const UserRouter = () => {
   return (
     <Routes>
-      <Route path="/" element={<UserNavbar >
-        <UserTopBar/>
-      </UserNavbar>} />
+      <Route
+        path="/*"
+        element={
+          <UserNavbar>
+            <UserTopBar />
+            <Routes>
+              <Route path="/dashboard" element={<h1>Dashboard</h1>} />
+              <Route path="/account" element={<h1>Profile</h1>} />
+              <Route path="/flights" element={<h1>Flight</h1>} />
+              <Route path="/reports" element={<h1>Report</h1>} />
+            </Routes>
+          </UserNavbar>
+        }
+      />
     </Routes>
   );
 };

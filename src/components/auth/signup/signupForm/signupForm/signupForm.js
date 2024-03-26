@@ -2,10 +2,10 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./signupForm.css";
 
-const SignupForm = () => {
+const SignupForm = ({next}) => {
   const onFinish = (values) => {
+    next()
     console.log("Received values of form: ", values);
-    window.alert();
   };
 
   return (
@@ -124,6 +124,7 @@ const SignupForm = () => {
         </Form.Item>
         <Form.Item>
           <Button
+          onClick={next}
             shape="round"
             type="primary"
             htmlType="submit"

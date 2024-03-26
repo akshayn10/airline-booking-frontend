@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Form, Input, DatePicker, Table, Alert } from 'antd';
+const { RangePicker } = DatePicker;
 
 const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
     const [form] = Form.useForm();
@@ -13,14 +14,21 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
         }
 
         form.validateFields()
-            .then((values) => {
-                onCreate({ ...values, fleetId: selectedFleetId });
+            .then((fieldsValue) => {
+                const rangeValue = fieldsValue['dateRange'];
+                const values = {
+                    ...fieldsValue,
+                    departureTime: rangeValue[0],
+                    arrivalTime: rangeValue[1],
+                    fleetId: selectedFleetId
+                };
+                onCreate(values);
                 form.resetFields();
                 setSelectedFleetId(null);
                 setSubmitAttempted(false);
             })
             .catch((info) => console.log('Validate Failed:', info));
-    };
+    }
 
     const columns = [
         {
@@ -56,7 +64,7 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
             setSelectedFleetId(selectedRowKeys[0]);
             setSubmitAttempted(false);
         },
-    };
+    }
 
     return (
         <Modal
@@ -77,11 +85,12 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
                 <Form.Item name="arrivalLocation" label="Arrival Location" rules={[{ required: true, message: 'Please input the arrival location!' }]}>
                     <Input />
                 </Form.Item>
-                <Form.Item name="departureTime" label="Departure Time" rules={[{ required: true, message: 'Please select the departure time!' }]}>
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-                </Form.Item>
-                <Form.Item name="arrivalTime" label="Arrival Time" rules={[{ required: true, message: 'Please select the arrival time!' }]}>
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                <Form.Item
+                    name="dateRange"
+                    label="Departure and Arrival Time"
+                    rules={[{ required: true, message: 'Please select the departure and arrival time!' }]}
+                >
+                    <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                 </Form.Item>
             </Form>
             <Table
@@ -95,6 +104,6 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData }) => {
             />
         </Modal>
     );
-};
+}
 
 export default AddFlightModal;

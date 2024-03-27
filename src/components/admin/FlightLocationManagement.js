@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Form, Popconfirm, Table, Typography } from 'antd';
-import EditableCell from '../common/EditableCell';
+import EditableCell from './common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
 import { AddFlightLocation, DeleteFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
 
@@ -30,7 +30,9 @@ const FlightLocationManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            dispatch(UpdateFlightLocation(row, id));
+            row.id = id;
+
+            dispatch(UpdateFlightLocation(row));
             setEditingFlightLocationId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -46,7 +48,7 @@ const FlightLocationManagement = () => {
     }
 
     const addFlightLocation = (newLocation) => {
-        dispatch(AddFlightLocation({ id: flightLocationData.length.toString(), ...newLocation }));
+        dispatch(AddFlightLocation(newLocation));
         setNewFlightLocationModalVisible(false);
     }
 
@@ -110,10 +112,10 @@ const FlightLocationManagement = () => {
         return {
             ...col,
             onCell: (record) => ({
-                record,
+                editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: isEditing(record),
+                record,
             }),
         };
     });

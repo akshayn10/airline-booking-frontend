@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Modal, Form, DatePicker, Table, Alert, Select } from 'antd';
+import { Modal, Form, DatePicker, Alert, Select } from 'antd';
+import FleetSelection from './common/FleetSelection';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocationData }) => {
     const [form] = Form.useForm();
+
     const [selectedFleetId, setSelectedFleetId] = useState(null);
+    const [selectedFleet, setSelectedFleet] = useState({});
     const [submitAttempted, setSubmitAttempted] = useState(false);
     const [selectedDepartureLocation, setSelectedDepartureLocation] = useState(null);
     const [selectedArrivalLocation, setSelectedArrivalLocation] = useState(null);
@@ -30,13 +33,19 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
                     fleetId: selectedFleetId
                 };
                 onCreate(values);
-                form.resetFields();
-                setSelectedFleetId(null);
-                setSubmitAttempted(false);
-                setSelectedDepartureLocation(null);
-                setSelectedArrivalLocation(null);
+                handleCancel();
             })
             .catch((info) => console.log('Validate Failed:', info));
+    }
+
+    const handleCancel = () => {
+        form.resetFields();
+        setSelectedFleetId(null);
+        setSelectedFleet({});
+        setSubmitAttempted(false);
+        setSelectedDepartureLocation(null);
+        setSelectedArrivalLocation(null);
+        onCancel();
     }
 
     const onDepartureLocationChange = value => {
@@ -78,9 +87,16 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
 
     const rowSelection = {
         type: 'radio',
-        onChange: (selectedRowKeys) => {
+        selectedRowKeys: [selectedFleetId],
+        onChange: (selectedRowKeys, selectedRows) => {
             setSelectedFleetId(selectedRowKeys[0]);
+            setSelectedFleet(selectedRows[0]);
             setSubmitAttempted(false);
+            form.setFieldsValue({
+                economyFare: undefined,
+                premiumFare: undefined,
+                businessFare: undefined,
+            });
         },
     }
 
@@ -90,8 +106,9 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
             title="Add New Flight"
             okText="Add"
             cancelText="Cancel"
-            onCancel={onCancel}
+            onCancel={handleCancel}
             onOk={onOk}
+            style={{ top: '5%' }}
         >
             {submitAttempted && !selectedFleetId && (
                 <Alert message="Please select a fleet before adding a flight." type="warning" showIcon style={{ marginBottom: 16 }} />
@@ -134,20 +151,29 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
                 <Form.Item
                     name="dateRange"
                     label="Departure and Arrival Time"
-                    rules={[{ required: true, message: 'Please select the departure and arrival time!' }]}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please select the departure and arrival time!',
+                        },
+                        {
+                            validator: async (_, value) => {
+                                if (value && value[0] && value[1] && value[0].isSame(value[1], 'minute')) {
+                                    throw new Error('Departure and arrival datetime must be different!');
+                                }
+                            },
+                        }
+                    ]}
                 >
                     <RangePicker showTime disabledDate={disabledDate} format="YYYY-MM-DD HH:mm:ss" />
                 </Form.Item>
             </Form>
-            <Table
-                rowSelection={{
-                    ...rowSelection,
-                }}
+            <FleetSelection
+                rowSelection={rowSelection}
                 columns={columns}
-                dataSource={fleetData}
-                rowKey="id"
-                pagination={false}
-            />
+                fleetData={fleetData}
+                selectedFleet={selectedFleet}
+                form={form} />
         </Modal>
     );
 }

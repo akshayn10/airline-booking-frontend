@@ -16,7 +16,7 @@ const FlightLocationManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [dispatch, flightLocationData])
+    }, [dispatch, flightLocationData]);
 
     const isEditing = (record) => record.id === editingFlightLocationId;
 

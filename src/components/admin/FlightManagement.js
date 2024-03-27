@@ -122,12 +122,14 @@ const FlightManagement = () => {
             dataIndex: 'departureLocation',
             width: '30%',
             editable: true,
+            render: (text, record) => flightLocationData.find(loc => loc.id === record.departureLocation)?.airportName || 'N/A',
         },
         {
             title: 'Arrival Location',
             dataIndex: 'arrivalLocation',
             width: '30%',
             editable: true,
+            render: (text, record) => flightLocationData.find(loc => loc.id === record.arrivalLocation)?.airportName || 'N/A',
         },
         {
             title: 'Departure Time and Arrival Time',
@@ -186,13 +188,18 @@ const FlightManagement = () => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
+                form,
+                selectOptions: flightLocationData.map(({ id, airportName, cityName, country }) => ({
+                    label: `${airportName} at ${cityName}, ${country}`,
+                    value: id,
+                })),
             }),
-        };
-    })
+        }
+    });
 
     return (
         <>
@@ -227,6 +234,7 @@ const FlightManagement = () => {
                 onCreate={addNewFlight}
                 onCancel={() => setAddFlightModalVisible(false)}
                 fleetData={fleetData}
+                flightLocationData={flightLocationData}
             />
             <FleetInfomationModal
                 key={flightFleetEditingId}

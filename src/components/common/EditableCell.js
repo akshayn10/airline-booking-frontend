@@ -55,7 +55,6 @@ const EditableCell = ({
             break;
         default:
             inputNode = <Input />;
-            break;
     }
 
     return (

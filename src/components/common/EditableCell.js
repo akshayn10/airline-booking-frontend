@@ -14,7 +14,7 @@ const EditableCell = ({
     let inputNode = <Input />; // Default input
 
     if (inputType === 'rangePicker') {
-        inputNode = <RangePicker showTime defaultValue={[record.departureTime, record.arrivalTime]} />;
+        inputNode = <RangePicker showTime />;
     }
 
     return (

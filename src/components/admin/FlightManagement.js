@@ -1,102 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
 import EditableCell from '../common/EditableCell';
+import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
-
-const originFleetData = [
-    {
-        id: '1',
-        code: '1200',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: 30
-    },
-    {
-        id: '2',
-        code: '1201',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    }
-];
-
-const originFlightData = [
-    {
-        id: '0',
-        departureLocation: 'Dubai International Airport',
-        arrivalLocation: 'Katunayake International Airport',
-        fleet: {
-            id: '1',
-            code: '1200',
-            model: 'Boeing',
-            totalEconomySeats: 50,
-            totalPremiumSeats: 30,
-            totalBusinessSeats: 30
-        },
-        status: {
-            remainingEconomySeats: 10,
-            remainingPremiumSeats: 24,
-            remainingBusinessSeats: 24
-        },
-        departureTime: new Date(),
-        arrivalTime: new Date()
-    },
-    {
-        id: '1',
-        departureLocation: 'Katunayake International Airport',
-        arrivalLocation: 'Dubai International Airport',
-        fleet: {
-            id: '2',
-            code: '1201',
-            model: 'AirBus',
-            totalEconomySeats: 50,
-            totalPremiumSeats: 30,
-            totalBusinessSeats: 30
-        },
-        status: {
-            remainingEconomySeats: 8,
-            remainingPremiumSeats: 20,
-            remainingBusinessSeats: 0
-        },
-        departureTime: new Date(),
-        arrivalTime: new Date()
-    },
-];
 
 const FlightManagement = () => {
     const [form] = Form.useForm();
+    const dispatch = useDispatch();
 
-    const [flightData, setFlightData] = useState(originFlightData);
-    const [fleetData, setFleetData] = useState(originFleetData);
+    const flightLocationData = useSelector((state) => state.flightLocationsReducer.flightLocations);
+    const fleetData = useSelector((state) => state.fleetsReducer.fleets);
+    const flightData = useSelector((state) => state.flightsReducer.flights);
 
     const [flightEditingId, setFlightEditingId] = useState('');
-    const [fleetEditingId, setFleetEditingId] = useState('');
+    const [flightFleetEditingId, setFlightFleetEditingId] = useState('');
     const [viewingFleet, setViewingFleet] = useState({});
 
     const [addFlightModalVisible, setAddFlightModalVisible] = useState(false);
     const [fleetInformationModalVisible, setFleetInformationModalVisible] = useState(false);
 
+    useEffect(() => {
+        dispatch(GetFlightLocations());
+    }, [dispatch, flightLocationData]);
+
+    useEffect(() => {
+        dispatch(GetFleets());
+    }, [dispatch, fleetData]);
+
+    useEffect(() => {
+        dispatch(GetFlights());
+    }, [dispatch, flightData]);
 
     const isEditing = (record) => record.id === flightEditingId;
 
     const edit = (record) => {
         form.setFieldsValue({
-            departureLocation: '',
-            arrivalLocation: '',
-            fleet: {},
-            status: {
-                remainingEconomySeats: '',
-                remainingPremiumSeats: '',
-                remainingBusinessSeats: ''
-            },
-            departureTime: '',
-            arrivalTime: '',
             ...record,
+            departureAndArrival: [record.departureTime, record.arrivalTime],
         });
         setFlightEditingId(record.id);
     }
@@ -104,21 +48,7 @@ const FlightManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            const newData = {
-                ...row,
-                departureTime: row['departureAndArrival'][0],
-                arrivalTime: row['departureAndArrival'][1]
-            };
-            delete newData.departureAndArrival;
-
-            const existingFlightData = [...flightData];
-            const index = existingFlightData.findIndex((item) => id === item.id);
-            const item = existingFlightData[index];
-            existingFlightData.splice(index, 1, {
-                ...item,
-                ...newData,
-            });
-            setFlightData(existingFlightData);
+            dispatch(UpdateFlight(row, id));
             setFlightEditingId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -126,7 +56,7 @@ const FlightManagement = () => {
     }
 
     const deleteRow = async (id) => {
-        setFlightData(flightData.filter((item) => item.id !== id));
+        dispatch(DeleteFlight(id));
     }
 
     const cancel = () => {
@@ -158,25 +88,31 @@ const FlightManagement = () => {
             }
         }
 
-        setFlightData([...flightData, newFlightData]);
+        dispatch(AddFlight(newFlightData));
         setAddFlightModalVisible(false);
     }
 
-    const handleFleetUpdate = (updatedFleet, flightId) => {
+    const handleFlightFleetUpdate = (updatedFleet, flightId) => {
         const existingFlightData = [...flightData];
         const flightIndex = existingFlightData.findIndex(flight => flight.id === flightId);
 
+        console.log(existingFlightData[flightIndex])
+
         existingFlightData[flightIndex] = {
             ...existingFlightData[flightIndex],
+            departureAndArrival: [
+                existingFlightData[flightIndex].departureTime,
+                existingFlightData[flightIndex].arrivalTime
+            ],
             fleet: updatedFleet
-        }
+        };
 
-        setFlightData(existingFlightData);
+        dispatch(UpdateFlight(existingFlightData[flightIndex], flightId));
     }
 
     const showFleetModal = (record) => {
         setViewingFleet(record.fleet);
-        setFleetEditingId(record.id);
+        setFlightFleetEditingId(record.id);
         setFleetInformationModalVisible(true);
     }
 
@@ -211,7 +147,7 @@ const FlightManagement = () => {
             dataIndex: 'fleet',
             width: '5%',
             render: (_, record) => (
-                <a href={() => false} disabled={fleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
+                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {
@@ -293,16 +229,16 @@ const FlightManagement = () => {
                 fleetData={fleetData}
             />
             <FleetInfomationModal
-                key={fleetEditingId}
+                key={flightFleetEditingId}
                 visible={fleetInformationModalVisible}
-                onFleetUpdate={handleFleetUpdate}
+                onFleetUpdate={handleFlightFleetUpdate}
                 onCancel={() => {
                     setFleetInformationModalVisible(false);
-                    setFleetEditingId('');
+                    setFlightFleetEditingId('');
                 }}
                 fleetData={fleetData}
                 initialFleet={viewingFleet}
-                editingFlightId={fleetEditingId}
+                editingFlightId={flightFleetEditingId}
             />
         </>
     );

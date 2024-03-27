@@ -1,8 +1,6 @@
 import { Input, Form, Button } from "antd";
 import styles from "./resetPasswordForm.module.css";
-import { UserOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { LockOutlined, SendOutlined } from "@mui/icons-material";
+import { LockOutlined } from "@mui/icons-material";
 
 const ResetPasswordForm = () => {
   const onFinish = (values) => {

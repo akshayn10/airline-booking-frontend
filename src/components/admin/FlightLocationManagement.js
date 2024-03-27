@@ -3,47 +3,25 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import EditableCell from '../common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
-import { AddFlightLocation } from '../../redux/actions/AdminActions';
-
-const originFlightLocationData = [
-    {
-        id: '0',
-        country: 'Sri Lanka',
-        cityName: 'Katunayake',
-        airportName: 'Katunayake International Airport',
-        code: '941'
-    },
-    {
-        id: '1',
-        country: 'United Arab Emirates',
-        cityName: 'Dubai',
-        airportName: 'Dubai International Airport',
-        code: '971'
-    },
-];
+import { AddFlightLocation, DeleteFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
 
 const FlightLocationManagement = () => {
     const [form] = Form.useForm();
+    const dispatch = useDispatch();
 
-    const [flightLocationData, setFlightLocationData] = useState([]);
+    const flightLocationData = useSelector((state) => state.flightLocationsReducer.flightLocations);
+
     const [editingFlightLocationId, setEditingFlightLocationId] = useState('');
     const [newFlightLocationModalVisible, setNewFlightLocationModalVisible] = useState(false);
 
-    const data = useSelector((state) => state.flightLocations.flightLocations);
-    const dispatch = useDispatch();
-
     useEffect(() => {
-        setFlightLocationData(data);
-    }, [data])
+        dispatch(GetFlightLocations());
+    }, [dispatch, flightLocationData]);
 
     const isEditing = (record) => record.id === editingFlightLocationId;
 
     const edit = (record) => {
         form.setFieldsValue({
-            country: '',
-            cityName: '',
-            airportName: '',
-            code: '',
             ...record,
         });
         setEditingFlightLocationId(record.id);
@@ -52,14 +30,7 @@ const FlightLocationManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            const existingFlightLocationData = [...flightLocationData];
-            const index = existingFlightLocationData.findIndex((item) => id === item.id);
-            const item = existingFlightLocationData[index];
-            existingFlightLocationData.splice(index, 1, {
-                ...item,
-                ...row,
-            });
-            setFlightLocationData(existingFlightLocationData);
+            dispatch(UpdateFlightLocation(row, id));
             setEditingFlightLocationId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -67,7 +38,7 @@ const FlightLocationManagement = () => {
     }
 
     const deleteRow = async (id) => {
-        setFlightLocationData(flightLocationData.filter((item) => item.id !== id));
+        dispatch(DeleteFlightLocation(id));
     }
 
     const cancel = () => {
@@ -75,8 +46,6 @@ const FlightLocationManagement = () => {
     }
 
     const addFlightLocation = (newLocation) => {
-        const newFlightLocationData = [...flightLocationData, { id: flightLocationData.length.toString(), ...newLocation }];
-        // setFlightLocationData(newFlightLocationData);
         dispatch(AddFlightLocation({ id: flightLocationData.length.toString(), ...newLocation }));
         setNewFlightLocationModalVisible(false);
     }

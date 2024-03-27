@@ -1,5 +1,6 @@
-import { Form, Input, DatePicker } from "antd";
+import { Form, Input, DatePicker, Select } from "antd";
 const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 const EditableCell = ({
     editing,
@@ -9,12 +10,52 @@ const EditableCell = ({
     record,
     index,
     children,
+    selectOptions = [],
+    form,
     ...restProps
 }) => {
-    let inputNode = <Input />; // Default input
+    const disabledDate = (current) => {
+        return current && current < Date.now();
+    }
 
-    if (inputType === 'rangePicker') {
-        inputNode = <RangePicker showTime defaultValue={[record.departureTime, record.arrivalTime]} />;
+    let inputNode;
+
+    let rules = [
+        {
+            required: true,
+            message: `Please select ${title}!`,
+        },
+    ]; // Default validation rules
+
+    switch (inputType) {
+        case 'rangePicker':
+            inputNode = <RangePicker showTime disabledDate={disabledDate} />;
+            break;
+        case 'select':
+            inputNode = (
+                <Select>
+                    {selectOptions.map(opt => (
+                        <Option key={opt.value} value={opt.value}>{opt.label}</Option>
+                    ))}
+                </Select>
+            );
+
+            // Custom validation for departureLocation and arrivalLocation
+            if (['departureLocation', 'arrivalLocation'].includes(dataIndex)) {
+                rules.push({
+                    validator: async (_, value) => {
+                        const oppositeField = dataIndex === 'departureLocation' ? 'arrivalLocation' : 'departureLocation';
+                        const oppositeValue = form.getFieldValue(oppositeField);
+                        if (value === oppositeValue) {
+                            throw new Error('Departure and arrival locations must be different');
+                        }
+                    },
+                });
+            }
+            break;
+        default:
+            inputNode = <Input />;
+            break;
     }
 
     return (
@@ -23,12 +64,8 @@ const EditableCell = ({
                 <Form.Item
                     name={dataIndex}
                     style={{ margin: 0 }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        },
-                    ]}
+                    rules={rules}
+                    dependencies={['departureLocation', 'arrivalLocation'].filter(field => field !== dataIndex)}
                 >
                     {inputNode}
                 </Form.Item>

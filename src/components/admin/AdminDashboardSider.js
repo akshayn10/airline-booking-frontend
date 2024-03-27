@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import FlightIcon from '@mui/icons-material/Flight';
 import ConnectingAirportsIcon from '@mui/icons-material/ConnectingAirports';
@@ -13,18 +13,23 @@ const AdminDashboardSider = ({ children }) => {
     const siderWidthCollapsed = 80; // Default Ant Design collapsed width
 
     const [contentMargin, setContentMargin] = useState(siderWidthExpanded);
+    const location = useLocation();
 
     useEffect(() => {
         // Update contentMargin based on collapsed state
         setContentMargin(collapsed ? siderWidthCollapsed : siderWidthExpanded);
     }, [collapsed, siderWidthCollapsed, siderWidthExpanded]);
 
+    // Determine the selectedKeys based on the current path
+    const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
+        : location.pathname.startsWith("/admin/flight-location-management") ? "2" : ""];
+
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed} breakpoint="lg" onBreakpoint={broken => {
-                setCollapsed(broken)
+                setCollapsed(broken);
             }} width={'fit-content'} style={{ minHeight: '100vh', position: 'fixed', padding: 16 }}>
-                <Menu theme="dark" defaultSelectedKeys={['1']}>
+                <Menu theme="dark" selectedKeys={selectedKeys}>
                     <Menu.Item key="1" icon={<FlightIcon />}>
                         <Link to="flight-management">Flight Management</Link>
                     </Menu.Item>

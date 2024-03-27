@@ -4,7 +4,7 @@ import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
-import EditableCell from '../common/EditableCell';
+import EditableCell from './common/EditableCell';
 import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
 
@@ -64,27 +64,18 @@ const FlightManagement = () => {
     }
 
     const addNewFlight = (newFlight) => {
-        const newId = flightData.length.toString();
         const selectedFleet = fleetData.find(fleet => fleet.id === newFlight.fleetId);
 
         const newFlightData = {
-            id: newId,
             departureLocation: newFlight.departureLocation,
             arrivalLocation: newFlight.arrivalLocation,
             departureTime: newFlight.departureTime,
             arrivalTime: newFlight.arrivalTime,
             fleet: {
                 id: selectedFleet.id,
-                code: selectedFleet.code,
-                model: selectedFleet.model,
-                totalEconomySeats: selectedFleet.totalEconomySeats,
-                totalPremiumSeats: selectedFleet.totalPremiumSeats,
-                totalBusinessSeats: selectedFleet.totalBusinessSeats,
-            },
-            status: {
-                remainingEconomySeats: selectedFleet.totalEconomySeats,
-                remainingPremiumSeats: selectedFleet.totalPremiumSeats,
-                remainingBusinessSeats: selectedFleet.totalBusinessSeats
+                economyFare: newFlight.economyFare,
+                premiumFare: newFlight.premiumFare,
+                businessFare: newFlight.businessFare
             }
         }
 
@@ -95,8 +86,6 @@ const FlightManagement = () => {
     const handleFlightFleetUpdate = (updatedFleet, flightId) => {
         const existingFlightData = [...flightData];
         const flightIndex = existingFlightData.findIndex(flight => flight.id === flightId);
-
-        console.log(existingFlightData[flightIndex])
 
         existingFlightData[flightIndex] = {
             ...existingFlightData[flightIndex],

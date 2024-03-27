@@ -3,6 +3,8 @@ import { Button, Dropdown } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 import { Link } from "react-router-dom";
+
+
 const UserTopBar = () => {
     const logout = () => {
         window.alert("Logout")
@@ -10,10 +12,14 @@ const UserTopBar = () => {
   const items = [
     {
       key: "1",
-      label: <Link to="account">User Account</Link>,
+      label: <Link to="/user/account">User Account</Link>,
     },
     {
       key: "2",
+      label: <Link to="/auth/change-password">Change Password</Link>,
+    },
+    {
+      key: "3",
       label: <Button onClick={logout} danger type="primary" style={{color:"white"}}  to="logout">Logout</Button>,
     },
   ];

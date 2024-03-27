@@ -1,5 +1,5 @@
 import React from "react";
-import { Select } from "antd";
+import { Form, Select } from "antd";
 import countryList from "../../../../../assets/json/countries.json";
 const countryDropdown = ({setSelectedCountry}) => {
   const transformCountries = (countries) => {
@@ -26,15 +26,17 @@ const countryDropdown = ({setSelectedCountry}) => {
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
-    <Select
-      showSearch
-      placeholder="Select Country"
-      optionFilterProp="children"
-      onChange={onChange}
-      onSearch={onSearch}
-      filterOption={filterOption}
-      options={filteredCountryList}
-    />
+    <Form.Item name="country">
+      <Select
+        showSearch
+        placeholder="Select Country"
+        optionFilterProp="children"
+        onChange={onChange}
+        onSearch={onSearch}
+        filterOption={filterOption}
+        options={filteredCountryList}
+      />
+    </Form.Item>
   );
 };
 export default countryDropdown;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Form, Popconfirm, Table, Typography } from 'antd';
-import EditableCell from '../common/EditableCell';
+import EditableCell from './common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
 import { AddFlightLocation, DeleteFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
 
@@ -46,7 +46,7 @@ const FlightLocationManagement = () => {
     }
 
     const addFlightLocation = (newLocation) => {
-        dispatch(AddFlightLocation({ id: flightLocationData.length.toString(), ...newLocation }));
+        dispatch(AddFlightLocation(newLocation));
         setNewFlightLocationModalVisible(false);
     }
 

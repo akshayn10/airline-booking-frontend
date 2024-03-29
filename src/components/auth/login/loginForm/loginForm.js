@@ -2,6 +2,7 @@ import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./loginForm.css";
+import { Link } from "react-router-dom";
 
 const LoginForm = () => {
   const onFinish = (values) => {
@@ -22,6 +23,7 @@ const LoginForm = () => {
               message: "The email address is invalid!",
             },
           ]}
+          hasFeedback
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -40,25 +42,20 @@ const LoginForm = () => {
               message: "Password must be at least 8 characters long!",
             },
           ]}
+          hasFeedback
         >
-          <Input
+          <Input.Password
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="Password"
           />
         </Form.Item>
         <Form.Item>
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
+          <Link to="/auth/forgot-password">Forgot password</Link>
         </Form.Item>
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login__button"
-          >
+          <Button type="primary" htmlType="submit" className="login__button">
             Log in
           </Button>
         </Form.Item>

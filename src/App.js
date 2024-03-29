@@ -1,5 +1,6 @@
+import "./App.css";
 import { BrowserRouter } from "react-router-dom";
-import ParentRouter from "./components/admin/router/parentRouter.js";
+import ParentRouter from "./router/parentRouter";
 
 const App = () => {
   return (

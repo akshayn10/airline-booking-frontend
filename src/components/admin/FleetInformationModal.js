@@ -1,33 +1,52 @@
 import { useState, useEffect } from 'react';
-import { Modal, Button, Table } from 'antd';
+import { Modal, Button, Form } from 'antd';
+import FleetSelection from './common/FleetSelection';
 
 const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, editingFlightId }) => {
-    const [selectedRowIds, setSelectedRowIds] = useState([initialFleet.id]);
-    const [data, setData] = useState([]);
+    const [form] = Form.useForm();
+
+    const [selectedFleetId, setSelectedFleetId] = useState('');
+    const [selectedFleet, setSelectedFleet] = useState({});
+    const [sortedFleetData, setSortedFleetData] = useState([]);
 
     useEffect(() => {
+        const selectedFlightFleet = fleetData.find(fleet => fleet.id === initialFleet.id);
+        setSelectedFleetId(initialFleet.id);
+        setSelectedFleet(selectedFlightFleet);
+
         // Place initialFleet on top
         const sortedData = [
-            initialFleet,
+            selectedFlightFleet,
             ...fleetData.filter(fleet => fleet.id !== initialFleet.id)
         ];
-        setData(sortedData);
-    }, [fleetData, initialFleet, visible]);
+        setSortedFleetData(sortedData);
 
-    const onSelectChange = selectedIds => {
-        setSelectedRowIds(selectedIds);
-    }
+        form.setFieldsValue({
+            economyFare: initialFleet.economyFare,
+            premiumFare: initialFleet.premiumFare,
+            businessFare: initialFleet.businessFare,
+        });
+    }, [visible]);
 
     const onSave = () => {
-        const newSelectedFleet = data.find(fleet => fleet.id === selectedRowIds[0]);
-        onFleetUpdate(newSelectedFleet, editingFlightId);
-        onCancel();
+        form.validateFields().then(values => {
+            onFleetUpdate({
+                id: selectedFleetId,
+                economyFare: values.economyFare,
+                premiumFare: values.premiumFare,
+                businessFare: values.businessFare,
+            }, editingFlightId);
+            onCancel();
+        }).catch(info => console.log('Validation Failed:', info));
     }
 
     const rowSelection = {
-        selectedRowKeys: selectedRowIds,
-        onChange: onSelectChange,
         type: 'radio',
+        selectedRowKeys: [selectedFleetId],
+        onChange: (selectedRowKeys, selectedRows) => {
+            setSelectedFleetId(selectedRowKeys[0]);
+            setSelectedFleet(selectedRows[0]);
+        },
     }
 
     const columns = [
@@ -62,14 +81,14 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
                 <Button key="back" onClick={onCancel}>Cancel</Button>,
                 <Button key="submit" type="primary" onClick={onSave}>Save</Button>,
             ]}
+            style={{ top: '5%', }}
         >
-            <Table
+            <FleetSelection
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={data}
-                rowKey="id"
-                pagination={false}
-            />
+                fleetData={sortedFleetData}
+                selectedFleet={selectedFleet}
+                form={form} />
         </Modal>
     );
 }

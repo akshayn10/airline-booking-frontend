@@ -4,7 +4,7 @@ import { Button, Form, Popconfirm, Table, Typography } from 'antd';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
-import EditableCell from '../common/EditableCell';
+import EditableCell from './common/EditableCell';
 import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
 
@@ -25,15 +25,15 @@ const FlightManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [dispatch, flightLocationData]);
+    }, [flightLocationData]);
 
     useEffect(() => {
         dispatch(GetFleets());
-    }, [dispatch, fleetData]);
+    }, [fleetData]);
 
     useEffect(() => {
         dispatch(GetFlights());
-    }, [dispatch, flightData]);
+    }, [flightData]);
 
     const isEditing = (record) => record.id === flightEditingId;
 
@@ -48,7 +48,12 @@ const FlightManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            dispatch(UpdateFlight(row, id));
+            row.id = id;
+            row.departureTime = row['departureAndArrival'][0];
+            row.arrivalTime = row['departureAndArrival'][1];
+            delete row.departureAndArrival;
+
+            dispatch(UpdateFlight(row));
             setFlightEditingId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -64,27 +69,18 @@ const FlightManagement = () => {
     }
 
     const addNewFlight = (newFlight) => {
-        const newId = flightData.length.toString();
         const selectedFleet = fleetData.find(fleet => fleet.id === newFlight.fleetId);
 
         const newFlightData = {
-            id: newId,
             departureLocation: newFlight.departureLocation,
             arrivalLocation: newFlight.arrivalLocation,
             departureTime: newFlight.departureTime,
             arrivalTime: newFlight.arrivalTime,
             fleet: {
                 id: selectedFleet.id,
-                code: selectedFleet.code,
-                model: selectedFleet.model,
-                totalEconomySeats: selectedFleet.totalEconomySeats,
-                totalPremiumSeats: selectedFleet.totalPremiumSeats,
-                totalBusinessSeats: selectedFleet.totalBusinessSeats,
-            },
-            status: {
-                remainingEconomySeats: selectedFleet.totalEconomySeats,
-                remainingPremiumSeats: selectedFleet.totalPremiumSeats,
-                remainingBusinessSeats: selectedFleet.totalBusinessSeats
+                economyFare: newFlight.economyFare,
+                premiumFare: newFlight.premiumFare,
+                businessFare: newFlight.businessFare
             }
         }
 
@@ -95,8 +91,6 @@ const FlightManagement = () => {
     const handleFlightFleetUpdate = (updatedFleet, flightId) => {
         const existingFlightData = [...flightData];
         const flightIndex = existingFlightData.findIndex(flight => flight.id === flightId);
-
-        console.log(existingFlightData[flightIndex])
 
         existingFlightData[flightIndex] = {
             ...existingFlightData[flightIndex],
@@ -187,16 +181,17 @@ const FlightManagement = () => {
         return {
             ...col,
             onCell: (record) => ({
-                record,
-                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: isEditing(record),
-                form,
+                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                record,
                 selectOptions: flightLocationData.map(({ id, airportName, cityName, country }) => ({
                     label: `${airportName} at ${cityName}, ${country}`,
                     value: id,
                 })),
+                dependencies: ['departureLocation', 'arrivalLocation'].filter(field => field !== col.dataIndex),
+                form,
             }),
         }
     });

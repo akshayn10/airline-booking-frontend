@@ -1,14 +1,26 @@
 import React from "react";
 import { Form, Select } from "antd";
-import countryList from "../../../../../assets/json/countries.json";
-const countryDropdown = ({setSelectedCountry}) => {
+import { useEffect } from "react";
+import { getCountryList } from "../../../../../redux/actions/AuthActions";
+import { useDispatch, useSelector } from "react-redux";
+
+const CountryDropdown = ({ setSelectedCountry }) => {
+  const dispatch = useDispatch();
+  const countryList = useSelector(
+    (state) => state.countryListReducer.countryList
+  );
+
+  useEffect(() => {
+    dispatch(getCountryList());
+  }, [dispatch, countryList]);
+
   const transformCountries = (countries) => {
     return countries.map((country) => {
       const {
         name: { common },
       } = country;
       const value = common;
-      const label = common; 
+      const label = common;
 
       return { value, label };
     });
@@ -39,4 +51,4 @@ const countryDropdown = ({setSelectedCountry}) => {
     </Form.Item>
   );
 };
-export default countryDropdown;
+export default CountryDropdown;

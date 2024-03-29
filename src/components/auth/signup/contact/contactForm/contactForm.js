@@ -5,15 +5,6 @@ import PhoneNumber from "./phoneNumber";
 import { useEffect, useState } from 'react';
 
 const ContactForm = () => {
-  const { Option } = Select;
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
   const [selectedCountry, setSelectedCountry] = useState();
 
   const onFinish = (values) => {

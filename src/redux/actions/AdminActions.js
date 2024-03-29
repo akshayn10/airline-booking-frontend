@@ -2,14 +2,14 @@ import { CREATE_FLIGHT, CREATE_FLIGHT_LOCATION, DELETE_FLIGHT, DELETE_FLIGHT_LOC
 
 let flightLocations = [
     {
-        id: '0',
+        id: 1,
         country: 'Sri Lanka',
         cityName: 'Katunayake',
         airportName: 'Katunayake International Airport',
         code: '941'
     },
     {
-        id: '1',
+        id: 2,
         country: 'United Arab Emirates',
         cityName: 'Dubai',
         airportName: 'Dubai International Airport',
@@ -19,16 +19,88 @@ let flightLocations = [
 
 let fleets = [
     {
-        id: '1',
+        id: 1,
         code: '1200',
         model: 'Boeing',
         totalEconomySeats: 50,
         totalPremiumSeats: 30,
-        totalBusinessSeats: 30
+        totalBusinessSeats: undefined
     },
     {
-        id: '2',
+        id: 2,
         code: '1201',
+        model: 'AirBus',
+        totalEconomySeats: 100,
+        totalPremiumSeats: 60,
+        totalBusinessSeats: 60
+    },
+    {
+        id: 3,
+        code: '1202',
+        model: 'Boeing',
+        totalEconomySeats: 50,
+        totalPremiumSeats: 30,
+        totalBusinessSeats: undefined
+    },
+    {
+        id: 4,
+        code: '1203',
+        model: 'AirBus',
+        totalEconomySeats: 100,
+        totalPremiumSeats: 60,
+        totalBusinessSeats: 60
+    },
+    {
+        id: 5,
+        code: '1204',
+        model: 'Boeing',
+        totalEconomySeats: 50,
+        totalPremiumSeats: 30,
+        totalBusinessSeats: undefined
+    },
+    {
+        id: 6,
+        code: '1205',
+        model: 'AirBus',
+        totalEconomySeats: 100,
+        totalPremiumSeats: 60,
+        totalBusinessSeats: 60
+    },
+    {
+        id: 7,
+        code: '1206',
+        model: 'Boeing',
+        totalEconomySeats: 50,
+        totalPremiumSeats: 30,
+        totalBusinessSeats: undefined
+    },
+    {
+        id: 8,
+        code: '1207',
+        model: 'AirBus',
+        totalEconomySeats: 100,
+        totalPremiumSeats: 60,
+        totalBusinessSeats: 60
+    },
+    {
+        id: 9,
+        code: '1208',
+        model: 'Boeing',
+        totalEconomySeats: 50,
+        totalPremiumSeats: 30,
+        totalBusinessSeats: undefined
+    },
+    {
+        id: 10,
+        code: '1209',
+        model: 'AirBus',
+        totalEconomySeats: 100,
+        totalPremiumSeats: 60,
+        totalBusinessSeats: 60
+    },
+    {
+        id: 11,
+        code: '1210',
         model: 'AirBus',
         totalEconomySeats: 100,
         totalPremiumSeats: 60,
@@ -39,12 +111,12 @@ let fleets = [
 let flights = [];
 
 export const AddFlightLocation = (flightLocation) => async (dispatch) => {
-    flightLocations = [...flightLocations, flightLocation];
+    flightLocations = [...flightLocations, { id: (flightLocations.length + 1), ...flightLocation }];
     dispatch({ type: CREATE_FLIGHT_LOCATION, payload: flightLocations });
 }
 
 export const AddFlight = (flight) => async (dispatch) => {
-    flights = [...flights, flight];
+    flights = [...flights, { id: (flights.length + 1), ...flight }];
     dispatch({ type: CREATE_FLIGHT, payload: flights });
 }
 
@@ -60,9 +132,9 @@ export const GetFlights = () => async (dispatch) => {
     dispatch({ type: GET_FLIGHTS, payload: flights });
 }
 
-export const UpdateFlightLocation = (flightLocation, updatedFlightLocationId) => async (dispatch) => {
+export const UpdateFlightLocation = (flightLocation) => async (dispatch) => {
     const existingFlightLocations = [...flightLocations];
-    const index = existingFlightLocations.findIndex((item) => item.id === updatedFlightLocationId);
+    const index = existingFlightLocations.findIndex((item) => item.id === flightLocation.id);
     const item = existingFlightLocations[index];
     existingFlightLocations.splice(index, 1, {
         ...item,
@@ -73,20 +145,13 @@ export const UpdateFlightLocation = (flightLocation, updatedFlightLocationId) =>
     dispatch({ type: UPDATE_FLIGHT_LOCATION, payload: flightLocations });
 }
 
-export const UpdateFlight = (flight, updatedFlightId) => async (dispatch) => {
-    const newData = {
-        ...flight,
-        departureTime: flight['departureAndArrival'][0],
-        arrivalTime: flight['departureAndArrival'][1]
-    }
-    delete newData.departureAndArrival;
-
+export const UpdateFlight = (flight) => async (dispatch) => {
     const existingFlightData = [...flights];
-    const index = existingFlightData.findIndex((item) => updatedFlightId === item.id);
+    const index = existingFlightData.findIndex((item) => flight.id === item.id);
     const item = existingFlightData[index];
     existingFlightData.splice(index, 1, {
         ...item,
-        ...newData,
+        ...flight,
     });
     flights = existingFlightData;
 

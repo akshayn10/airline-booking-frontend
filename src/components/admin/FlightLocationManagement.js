@@ -30,7 +30,9 @@ const FlightLocationManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            dispatch(UpdateFlightLocation(row, id));
+            row.id = id;
+
+            dispatch(UpdateFlightLocation(row));
             setEditingFlightLocationId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -110,10 +112,10 @@ const FlightLocationManagement = () => {
         return {
             ...col,
             onCell: (record) => ({
-                record,
+                editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: isEditing(record),
+                record,
             }),
         };
     });

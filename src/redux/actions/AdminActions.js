@@ -132,9 +132,9 @@ export const GetFlights = () => async (dispatch) => {
     dispatch({ type: GET_FLIGHTS, payload: flights });
 }
 
-export const UpdateFlightLocation = (flightLocation, updatedFlightLocationId) => async (dispatch) => {
+export const UpdateFlightLocation = (flightLocation) => async (dispatch) => {
     const existingFlightLocations = [...flightLocations];
-    const index = existingFlightLocations.findIndex((item) => item.id === updatedFlightLocationId);
+    const index = existingFlightLocations.findIndex((item) => item.id === flightLocation.id);
     const item = existingFlightLocations[index];
     existingFlightLocations.splice(index, 1, {
         ...item,
@@ -145,20 +145,13 @@ export const UpdateFlightLocation = (flightLocation, updatedFlightLocationId) =>
     dispatch({ type: UPDATE_FLIGHT_LOCATION, payload: flightLocations });
 }
 
-export const UpdateFlight = (flight, updatedFlightId) => async (dispatch) => {
-    const newData = {
-        ...flight,
-        departureTime: flight['departureAndArrival'][0],
-        arrivalTime: flight['departureAndArrival'][1]
-    }
-    delete newData.departureAndArrival;
-
+export const UpdateFlight = (flight) => async (dispatch) => {
     const existingFlightData = [...flights];
-    const index = existingFlightData.findIndex((item) => updatedFlightId === item.id);
+    const index = existingFlightData.findIndex((item) => flight.id === item.id);
     const item = existingFlightData[index];
     existingFlightData.splice(index, 1, {
         ...item,
-        ...newData,
+        ...flight,
     });
     flights = existingFlightData;
 

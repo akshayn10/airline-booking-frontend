@@ -11,6 +11,7 @@ const EditableCell = ({
     index,
     children,
     selectOptions = [],
+    dependencies,
     form,
     ...restProps
 }) => {
@@ -30,6 +31,17 @@ const EditableCell = ({
     switch (inputType) {
         case 'rangePicker':
             inputNode = <RangePicker showTime disabledDate={disabledDate} />;
+
+            if (dataIndex === "departureAndArrival") {
+                rules.push({
+                    validator: async (_, value) => {
+                        console.log(value)
+                        if (value && value[0] && value[1] && value[0].isSame(value[1], 'minute')) {
+                            throw new Error('Departure and arrival datetime must be different!');
+                        }
+                    },
+                });
+            }
             break;
         case 'select':
             inputNode = (
@@ -40,14 +52,13 @@ const EditableCell = ({
                 </Select>
             );
 
-            // Custom validation for departureLocation and arrivalLocation
             if (['departureLocation', 'arrivalLocation'].includes(dataIndex)) {
                 rules.push({
                     validator: async (_, value) => {
                         const oppositeField = dataIndex === 'departureLocation' ? 'arrivalLocation' : 'departureLocation';
                         const oppositeValue = form.getFieldValue(oppositeField);
                         if (value === oppositeValue) {
-                            throw new Error('Departure and arrival locations must be different');
+                            throw new Error('Departure and arrival locations must be different!');
                         }
                     },
                 });
@@ -64,7 +75,7 @@ const EditableCell = ({
                     name={dataIndex}
                     style={{ margin: 0 }}
                     rules={rules}
-                    dependencies={['departureLocation', 'arrivalLocation'].filter(field => field !== dataIndex)}
+                    dependencies={dependencies}
                 >
                     {inputNode}
                 </Form.Item>

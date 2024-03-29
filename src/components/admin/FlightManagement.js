@@ -25,15 +25,15 @@ const FlightManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [dispatch, flightLocationData]);
+    }, [flightLocationData]);
 
     useEffect(() => {
         dispatch(GetFleets());
-    }, [dispatch, fleetData]);
+    }, [fleetData]);
 
     useEffect(() => {
         dispatch(GetFlights());
-    }, [dispatch, flightData]);
+    }, [flightData]);
 
     const isEditing = (record) => record.id === flightEditingId;
 
@@ -48,7 +48,12 @@ const FlightManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            dispatch(UpdateFlight(row, id));
+            row.id = id;
+            row.departureTime = row['departureAndArrival'][0];
+            row.arrivalTime = row['departureAndArrival'][1];
+            delete row.departureAndArrival;
+
+            dispatch(UpdateFlight(row));
             setFlightEditingId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -176,16 +181,17 @@ const FlightManagement = () => {
         return {
             ...col,
             onCell: (record) => ({
-                record,
-                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                editing: isEditing(record),
-                form,
+                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                record,
                 selectOptions: flightLocationData.map(({ id, airportName, cityName, country }) => ({
                     label: `${airportName} at ${cityName}, ${country}`,
                     value: id,
                 })),
+                dependencies: ['departureLocation', 'arrivalLocation'].filter(field => field !== col.dataIndex),
+                form,
             }),
         }
     });

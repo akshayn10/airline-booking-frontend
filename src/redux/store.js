@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { AdminFleetReducer, AdminFlightLocationReducer, AdminFlightsReducer } from './reducers/AdminReducer'
 import { PastBookingsReducer, UpcomingTripsReducer } from './reducers/UserReducer';
+import { CountryListReducer } from './reducers/AuthReducer';
 
 const store = configureStore({
         reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
 
                 pastBookingsReducer: PastBookingsReducer,
                 upcomingTripsReducer: UpcomingTripsReducer,
+                countryListReducer: CountryListReducer
         }
 });
 

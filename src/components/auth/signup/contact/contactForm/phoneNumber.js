@@ -1,6 +1,21 @@
 import { Form, Input, Select } from "antd";
-import countryList from "../../../../../assets/json/countries.json";
+import { useEffect } from "react";
+import { getCountryList } from "../../../../../redux/actions/AuthActions";
+import { useDispatch, useSelector } from "react-redux";
+
+
 const PhoneNumber = ({ selectedCountry }) => {
+
+  const dispatch = useDispatch();
+  const countryList = useSelector(
+    (state) => state.countryListReducer.countryList
+  );
+
+  useEffect(() => {
+    dispatch(getCountryList());
+  }, [dispatch, countryList]);
+
+
   const getCombinedIddNumbers = (countries, selectedCountry) => {
     if (selectedCountry !== null) {
       return countries

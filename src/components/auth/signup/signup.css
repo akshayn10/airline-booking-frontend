@@ -1,0 +1,36 @@
+.signup__container {
+  text-align: center;
+  width: 60%;
+  height: 70vh;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px; 
+  background-color: azure;
+
+  margin-top: 5%;
+}
+.signup__section {
+  width: 100%;
+  height: 70vh;
+  display: flex;
+}
+.signup__container .signup__form {
+  height: 100%;
+  width: 50%;
+}
+.signup__container .signup__welcome {
+  width: 50%;
+  height: 100%;
+}
+.signup__text {
+  padding-top: 20px;
+  font-size: large;
+}
+.signup__container .steps_container{
+  margin: 0 auto;
+  width: 40%;
+  padding: 1%;
+
+}

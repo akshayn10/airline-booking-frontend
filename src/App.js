@@ -1,17 +1,15 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
-import PassengerForm from "./components/passengerDetails/PassergerForm";
-import PaymentForm from './components/paymentDetails/PaymentForm';
+import "./App.css";
+import { BrowserRouter } from "react-router-dom";
+import ParentRouter from "./router/parentRouter";
 
-function App() {
-  return (  
-  
-    <Router>
-      <Routes>
-        <Route path="/" element={<PassengerForm noOfPassengers={3} />} />
-        <Route path="/paymentform" element={<PaymentForm/>}/>
-      </Routes>
-    </Router>
+const App = () => {
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <ParentRouter />
+      </BrowserRouter>
+    </div>
   );
-}
+};
 
 export default App;

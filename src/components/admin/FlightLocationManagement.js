@@ -84,7 +84,7 @@ const FlightLocationManagement = () => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
-                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
+                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
                             Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
@@ -93,7 +93,7 @@ const FlightLocationManagement = () => {
                     </span>
                 ) : (
                     <span>
-                        <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
+                        <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
                             Edit
                         </Typography.Link>
                         <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>

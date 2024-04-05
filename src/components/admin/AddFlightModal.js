@@ -42,9 +42,6 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
         form.resetFields();
         setSelectedFleetId(null);
         setSelectedFleet({});
-        setSubmitAttempted(false);
-        setSelectedDepartureLocation(null);
-        setSelectedArrivalLocation(null);
         onCancel();
     }
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'antd';
 import FleetSelection from './common/FleetSelection';
 
-const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, editingFlightId }) => {
+const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet }) => {
     const [form] = Form.useForm();
 
     const [selectedFleetId, setSelectedFleetId] = useState('');
@@ -31,11 +31,12 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
     const onSave = () => {
         form.validateFields().then(values => {
             onFleetUpdate({
-                id: selectedFleetId,
+                fleetId: selectedFleetId,
                 economyFare: values.economyFare,
                 premiumFare: values.premiumFare,
                 businessFare: values.businessFare,
-            }, editingFlightId);
+            });
+            form.resetFields();
             onCancel();
         }).catch(info => console.log('Validation Failed:', info));
     }

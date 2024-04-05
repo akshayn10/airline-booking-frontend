@@ -16,7 +16,7 @@ const FlightLocationManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [dispatch, flightLocationData])
+    }, [])
 
     const isEditing = (record) => record.id === editingFlightLocationId;
 
@@ -30,6 +30,8 @@ const FlightLocationManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
+            form.resetFields();
+
             row.id = id;
 
             dispatch(UpdateFlightLocation(row));

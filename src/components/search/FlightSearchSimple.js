@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, DatePicker, Button, Space, message } from "antd";
 import FlightSearchAdvanced from "./FlightSearchAdvanced";
 import FlightSearchResults from "./FlightSearchResults"; // Import FlightSearchResults
+import "./FlightSearch.css";
 
 const FlightSearchSimple = () => {
   const [fromCity, setFromCity] = useState("");
   const [toCity, setToCity] = useState("");
   const [departureDate, setDepartureDate] = useState("");
-  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
+  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false); // State for advanced search visibility
   const [flightResults, setFlightResults] = useState([]); // State for search results
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   const toggleAdvancedSearch = () => {
-    setIsAdvancedSearchOpen(!isAdvancedSearchOpen);
+    setIsAdvancedSearchOpen(!isAdvancedSearchOpen); // Toggle advanced search visibility
   };
 
   const fetchFlights = async (fromCity, toCity, departureDate) => {
@@ -21,6 +22,34 @@ const FlightSearchSimple = () => {
   };
 
   const mockData = [
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
     {
       airline: "Airline A",
       flightNumber: "AA123",
@@ -62,68 +91,74 @@ const FlightSearchSimple = () => {
   };
 
   return (
-    <div className="flight-search-overlay">
-      {" "}
-      {/* Wrapper for potential styling (CSS not included here) */}
-      <div className="flight-search-content">
-        <div className="flight-search-simple">
-          <Form layout="vertical" justify="center" align="middle">
-            <Form.Item
-              label="From City"
-              className="label"
-              required
-              validationStatus={!fromCity && "error"}
-            >
-              <Input
-                value={fromCity}
-                onChange={(e) => setFromCity(e.target.value)}
-                className="reduced-width-input"
-              />
-            </Form.Item>
-            <Form.Item
-              label="To City"
-              className="label"
-              required
-              validationStatus={!toCity && "error"}
-            >
-              <Input
-                value={toCity}
-                onChange={(e) => setToCity(e.target.value)}
-                className="reduced-width-input"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Departure Date"
-              className="label"
-              required
-              validationStatus={!departureDate && "error"}
-            >
-              <DatePicker
-                value={departureDate}
-                onChange={(date) => setDepartureDate(date)}
-                className="reduced-width-input"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Space size={8}>
-                <Button type="primary" onClick={handleSearch}>
-                  Search Flights
-                </Button>
-                <Button type="primary" onClick={toggleAdvancedSearch}>
-                  Advanced Search
-                </Button>
-              </Space>
-            </Form.Item>
-          </Form>
-          {isAdvancedSearchOpen && <FlightSearchAdvanced />}{" "}
-          {/* Conditionally render */}
-        </div>
-        {flightResults.length > 0 &&
-          !isLoading && ( // Display results only when data is available and not loading
+    <div class="background-image">
+      <div className="flight-search-overlay">
+        {/* Wrapper for potential styling (CSS not included here) */}
+
+        <div className="flight-search-content">
+          {isAdvancedSearchOpen ? (
+            <FlightSearchAdvanced />
+          ) : (
+            <div className="flight-search-simple">
+              <Form layout="vertical" justify="center" align="middle">
+                <Form.Item
+                  label="From City"
+                  className="label"
+                  required
+                  validationStatus={!fromCity && "error"}
+                >
+                  <Input
+                    value={fromCity}
+                    onChange={(e) => setFromCity(e.target.value)}
+                    className="reduced-width-input"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="To City"
+                  className="label"
+                  required
+                  validationStatus={!toCity && "error"}
+                >
+                  <Input
+                    value={toCity}
+                    onChange={(e) => setToCity(e.target.value)}
+                    className="reduced-width-input"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Departure Date"
+                  className="label"
+                  required
+                  validationStatus={!departureDate && "error"}
+                >
+                  <DatePicker
+                    value={departureDate}
+                    onChange={(date) => setDepartureDate(date)}
+                    className="reduced-width-input"
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Space size={8}>
+                    <Button
+                      type="primary"
+                      disabled={isAdvancedSearchOpen}
+                      onClick={handleSearch}
+                    >
+                      Search Flights
+                    </Button>
+                    <Button type="primary" onClick={toggleAdvancedSearch}>
+                      Advanced Search
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Form>
+            </div>
+          )}
+          {isLoading && <p>Searching for flights...</p>}
+          {flightResults.length > 0 && !isLoading && (
             <FlightSearchResults flightResults={flightResults} />
           )}
-        {isLoading && <p>Searching for flights...</p>}{" "}
-        {/* Display loading indicator */}
+        </div>
       </div>
     </div>
   );

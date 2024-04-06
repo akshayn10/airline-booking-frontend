@@ -1,35 +1,82 @@
 import React, { useState } from "react";
+import FlightSearchSimple from "./FlightSearchSimple";
 import "./FlightSearch.css";
+import FlightSearchResults from "./FlightSearchResults"; // Import FlightSearchResults
 import {
   Form,
   Input,
   Radio,
   DatePicker,
-  Select,
   TimePicker,
   Button,
   Space,
+  message,
 } from "antd";
 
 const FlightSearchAdvanced = () => {
   const [cities, setCities] = useState({ fromCity: "", toCity: "" });
   const [flightNumber, setFlightNumber] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState(null);
   const [travelClass, setTravelClass] = useState("economy"); // Default class
   const [tripType, setTripType] = useState("roundTrip"); // Default trip type
+  const [numPassengers, setNumPassengers] = useState(1); // Default number of passengers
+  const [flightResults, setFlightResults] = useState([]); // State for search results
+  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
-  const handleSearch = () => {
+  const fetchFlights = async (cities, selectedDate) => {
+    // Simulate API call with mock data (replace with your actual API logic)
+    return new Promise((resolve) => setTimeout(() => resolve(mockData), 1000)); // Simulate API delay
+  };
+
+  const mockData = [
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
+  ];
+
+  const handleSearch = async () => {
     // Handle advanced search logic here
-    console.log(
-      "Advanced Search:",
-      cities,
-      flightNumber,
-      selectedDate,
-      selectedTime,
-      travelClass,
-      tripType
-    );
+
+    if (
+      !cities.fromCity ||
+      !cities.toCity ||
+      !selectedDate ||
+      !selectedTime ||
+      !travelClass ||
+      !tripType ||
+      !numPassengers
+    ) {
+      message.error(
+        "Please fill in all required fields (City, Date, Time) to advance search for flights."
+      );
+      return;
+    }
+
+    setIsLoading(true); // Set loading indicator
+
+    try {
+      const results = await fetchFlights(cities, selectedDate);
+      setFlightResults(results);
+    } catch (error) {
+      console.error("Error fetching flights:", error);
+      message.error(
+        "An error occurred while searching for flights. Please try again later."
+      );
+    } finally {
+      setIsLoading(false); // Clear loading indicator
+    }
   };
 
   return (
@@ -132,12 +179,71 @@ const FlightSearchAdvanced = () => {
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
+        <Form.Item label="Number of Passengers" className="label">
+          <Radio.Group
+            buttonStyle="solid"
+            value={numPassengers}
+            onChange={(e) => setNumPassengers(e.target.value)}
+          >
+            {/* Modified Radio Buttons with custom style */}
+            <Radio.Button
+              value={1}
+              style={{
+                backgroundColor: numPassengers === 1 ? "green" : "white",
+              }}
+            >
+              1
+            </Radio.Button>
+            <Radio.Button
+              value={2}
+              style={{
+                backgroundColor: numPassengers === 2 ? "green" : "white",
+              }}
+            >
+              2
+            </Radio.Button>
+            <Radio.Button
+              value={3}
+              style={{
+                backgroundColor: numPassengers === 3 ? "green" : "white",
+              }}
+            >
+              3
+            </Radio.Button>
+            <Radio.Button
+              value={4}
+              style={{
+                backgroundColor: numPassengers === 4 ? "green" : "white",
+              }}
+            >
+              4
+            </Radio.Button>
+            <Radio.Button
+              value={5}
+              style={{
+                backgroundColor: numPassengers === 5 ? "green" : "white",
+              }}
+            >
+              5
+            </Radio.Button>
+          </Radio.Group>
+        </Form.Item>
         <Form.Item>
-          <Button type="primary" onClick={handleSearch}>
-            Search Advanced Flights
-          </Button>
+          <Space size={8}>
+            <Button type="primary" onClick={handleSearch}>
+              Search Advanced Flights
+            </Button>
+            <Button type="primary" onClick={() => {}}>
+              Go Back
+            </Button>
+          </Space>
         </Form.Item>
       </Form>
+      {isLoading && <p>Searching for flights...</p>}
+
+      {flightResults.length > 0 && !isLoading && (
+        <FlightSearchResults flightResults={flightResults} />
+      )}
     </div>
   );
 };

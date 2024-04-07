@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, DatePicker, Button, Space, message } from "antd";
+import React, { useState } from "react";
+import { Form, Select, DatePicker, Button, Space, message } from "antd";
 import FlightSearchAdvanced from "./FlightSearchAdvanced";
 import FlightSearchResults from "./FlightSearchResults"; // Import FlightSearchResults
 import "./FlightSearch.css";
 
 const FlightSearchSimple = () => {
-  const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("");
+  const cities = ["New York", "London", "Paris", "Tokyo", "Sydney"]; // Dummy city options
+  const [selectedFromCity, setSelectedFromCity] = useState(cities[0]); // Initialize with first city
+  const [selectedToCity, setSelectedToCity] = useState(cities[1]); // Initialize with second city
   const [departureDate, setDepartureDate] = useState("");
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false); // State for advanced search visibility
   const [flightResults, setFlightResults] = useState([]); // State for search results
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   const toggleAdvancedSearch = () => {
+    setFlightResults([]);
     setIsAdvancedSearchOpen(!isAdvancedSearchOpen); // Toggle advanced search visibility
   };
 
@@ -67,8 +69,9 @@ const FlightSearchSimple = () => {
   ];
 
   const handleSearch = async () => {
+    setFlightResults([]);
     // Basic validation for empty fields
-    if (!fromCity || !toCity || !departureDate) {
+    if (!selectedFromCity || !selectedToCity || !departureDate) {
       message.error(
         "Please fill in all required fields (From City, To City, Departure Date) to search for flights."
       );
@@ -78,7 +81,11 @@ const FlightSearchSimple = () => {
     setIsLoading(true); // Set loading indicator
 
     try {
-      const results = await fetchFlights(fromCity, toCity, departureDate);
+      const results = await fetchFlights(
+        selectedFromCity,
+        selectedToCity,
+        departureDate
+      );
       setFlightResults(results);
     } catch (error) {
       console.error("Error fetching flights:", error);
@@ -103,31 +110,41 @@ const FlightSearchSimple = () => {
               <Form layout="vertical" justify="center" align="middle">
                 <Form.Item
                   label="From City"
-                  className="label"
+                  className="reduced-width-input"
                   required
-                  validationStatus={!fromCity && "error"}
+                  validationStatus={!selectedFromCity && "error"}
                 >
-                  <Input
-                    value={fromCity}
-                    onChange={(e) => setFromCity(e.target.value)}
-                    className="reduced-width-input"
-                  />
+                  <Select
+                    value={selectedFromCity}
+                    onChange={(value) => setSelectedFromCity(value)}
+                  >
+                    {cities.map((city) => (
+                      <Select.Option key={city} value={city}>
+                        {city}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
                 <Form.Item
                   label="To City"
-                  className="label"
+                  className="reduced-width-input"
                   required
-                  validationStatus={!toCity && "error"}
+                  validationStatus={!selectedToCity && "error"}
                 >
-                  <Input
-                    value={toCity}
-                    onChange={(e) => setToCity(e.target.value)}
-                    className="reduced-width-input"
-                  />
+                  <Select
+                    value={selectedToCity}
+                    onChange={(value) => setSelectedToCity(value)}
+                  >
+                    {cities.map((city) => (
+                      <Select.Option key={city} value={city}>
+                        {city}
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
                 <Form.Item
                   label="Departure Date"
-                  className="label"
+                  className="reduced-width-input"
                   required
                   validationStatus={!departureDate && "error"}
                 >
@@ -154,11 +171,11 @@ const FlightSearchSimple = () => {
               </Form>
             </div>
           )}
-          {isLoading && <p>Searching for flights...</p>}
-          {flightResults.length > 0 && !isLoading && (
-            <FlightSearchResults flightResults={flightResults} />
-          )}
         </div>
+        {isLoading && <p>Searching for flights...</p>}
+        {flightResults.length > 0 && !isLoading && (
+          <FlightSearchResults flightResults={flightResults} />
+        )}
       </div>
     </div>
   );

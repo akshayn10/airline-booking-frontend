@@ -2,7 +2,6 @@ import React from "react";
 import { Card } from "antd"; // Import Ant Design components
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import styles from "./FlightSearch.module.css"; // Import CSS Modules styles
-import Slider from "react-slick";
 
 const FlightSearchResults = ({ flightResults }) => {
   const settings = {

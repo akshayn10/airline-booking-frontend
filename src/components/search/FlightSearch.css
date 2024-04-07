@@ -1,28 +1,32 @@
 .flight-search-overlay {
-  position: absolute; /* Position element relative to its parent */
-  top: 0; /* Position at the top of the parent */
-
+  background-color: transparent;
+  display: flex;
+  align-self: center; /* Aligns vertically */
+  justify-content: center; /* Aligns horizontally (optional) */
   display: grid;
   grid-template-rows: auto 1fr;
 }
 
 .background-image {
-  padding: 296px;
-  /*background: url("/home/shashimal/Desktop/UNext/test.jpg");*/
+  padding: 300px;
+  background: url("../../assets/images/searchBackground.png");
   background-attachment: fixed; /* Fix image to viewport */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center; /* Optional: Center the image */
+  height: fit-content;
 }
 
 .flight-search-content {
-  background: url("/home/shashimal/Desktop/UNext/test2.gif");
+  display: flex;
+  align-self: center; /* Aligns vertically */
+  justify-content: center; /* Aligns horizontally (optional) */
+  background: url("../../assets/images/searchContentBackground.gif");
   background-size: cover;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.75
-  ); /* Optional background for content area */
-  padding: 350px; /* Adjust padding as needed */
-  border-radius: 100px; /* Add rounded corners (optional) */
+  height: 70vh;
+  width: 75vh;
+  padding: 20px; /* Adjust padding as needed */
+  border-radius: 5px; /* Add rounded corners (optional) */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 

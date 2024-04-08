@@ -8,7 +8,7 @@
 }
 
 .background-image {
-  padding: 300px;
+  /*padding: 30px;*/
   background: url("../../assets/images/searchBackground.png");
   background-attachment: fixed; /* Fix image to viewport */
   background-repeat: no-repeat;

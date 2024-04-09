@@ -1,0 +1,26 @@
+.payment-details-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.tab {
+    display: inline-block;
+    margin-left: 400px;
+}
+.custom-divider {
+    background-color: rgba(0, 0, 0, 3);
+  }
+
+.nameTab {
+    margin-left: 110px;
+}
+.nameTab1{
+    margin-left: 13.5px;
+}
+.heading{
+    color:brown;
+}
+.passenger {
+    color:blue;
+}

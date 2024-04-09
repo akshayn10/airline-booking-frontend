@@ -27,7 +27,7 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form 
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={typeof selectedFleet?.totalEconomySeats != "number"}
+                                disabled={selectedFleet?.totalEconomySeats == 0}
                             />
                         </Form.Item>
                     </Col>
@@ -40,7 +40,7 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form 
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={typeof selectedFleet?.totalPremiumSeats != "number"}
+                                disabled={selectedFleet?.totalPremiumSeats == 0}
                             />
                         </Form.Item>
                     </Col>
@@ -53,7 +53,7 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form 
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={typeof selectedFleet?.totalBusinessSeats != "number"}
+                                disabled={selectedFleet?.totalBusinessSeats == 0}
                             />
                         </Form.Item>
                     </Col>

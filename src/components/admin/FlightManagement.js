@@ -7,6 +7,7 @@ import AddFlightModal from './AddFlightModal';
 import EditableCell from './common/EditableCell';
 import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
+import dayjs from 'dayjs';
 
 const FlightManagement = () => {
     const [form] = Form.useForm();
@@ -25,22 +26,22 @@ const FlightManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [flightLocationData]);
+    }, []);
 
     useEffect(() => {
         dispatch(GetFleets());
-    }, [fleetData]);
+    }, []);
 
     useEffect(() => {
         dispatch(GetFlights());
-    }, [flightData]);
+    }, []);
 
     const isEditing = (record) => record.id === flightEditingId;
 
     const edit = (record) => {
         form.setFieldsValue({
             ...record,
-            departureAndArrival: [record.departureTime, record.arrivalTime],
+            departureAndArrival: [dayjs(record.departureTime), dayjs(record.arrivalTime)],
         });
         setFlightEditingId(record.id);
     }
@@ -48,12 +49,17 @@ const FlightManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            row.id = id;
-            row.departureTime = row['departureAndArrival'][0];
-            row.arrivalTime = row['departureAndArrival'][1];
-            delete row.departureAndArrival;
+            form.resetFields();
 
-            dispatch(UpdateFlight(row));
+            const updatedFlight = flightData.find(flight => flight.id === id);
+            const updatedFlightCopy = { ...updatedFlight };
+
+            updatedFlightCopy.departureTime = row['departureAndArrival'][0];
+            updatedFlightCopy.arrivalTime = row['departureAndArrival'][1];
+            updatedFlightCopy.departureLocation = row['departureLocation'];
+            updatedFlightCopy.arrivalLocation = row['arrivalLocation'];
+
+            dispatch(UpdateFlight(updatedFlightCopy));
             setFlightEditingId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -69,43 +75,29 @@ const FlightManagement = () => {
     }
 
     const addNewFlight = (newFlight) => {
-        const selectedFleet = fleetData.find(fleet => fleet.id === newFlight.fleetId);
-
-        const newFlightData = {
-            departureLocation: newFlight.departureLocation,
-            arrivalLocation: newFlight.arrivalLocation,
-            departureTime: newFlight.departureTime,
-            arrivalTime: newFlight.arrivalTime,
-            fleet: {
-                id: selectedFleet.id,
-                economyFare: newFlight.economyFare,
-                premiumFare: newFlight.premiumFare,
-                businessFare: newFlight.businessFare
-            }
-        }
-
-        dispatch(AddFlight(newFlightData));
-        setAddFlightModalVisible(false);
+        dispatch(AddFlight(newFlight));
     }
 
-    const handleFlightFleetUpdate = (updatedFleet, flightId) => {
+    const handleFlightFleetUpdate = (updatedFleet) => {
         const existingFlightData = [...flightData];
-        const flightIndex = existingFlightData.findIndex(flight => flight.id === flightId);
+        const flightIndex = existingFlightData.findIndex(flight => flight.id === flightFleetEditingId);
 
         existingFlightData[flightIndex] = {
             ...existingFlightData[flightIndex],
-            departureAndArrival: [
-                existingFlightData[flightIndex].departureTime,
-                existingFlightData[flightIndex].arrivalTime
-            ],
-            fleet: updatedFleet
+            ...updatedFleet
         };
 
-        dispatch(UpdateFlight(existingFlightData[flightIndex], flightId));
+        dispatch(UpdateFlight(existingFlightData[flightIndex]));
     }
 
     const showFleetModal = (record) => {
-        setViewingFleet(record.fleet);
+        const tempViewingFleet = {
+            id: record.fleetId,
+            economyFare: record.economyFare,
+            premiumFare: record.premiumFare,
+            businessFare: record.businessFare
+        }
+        setViewingFleet(tempViewingFleet);
         setFlightFleetEditingId(record.id);
         setFleetInformationModalVisible(true);
     }
@@ -184,7 +176,8 @@ const FlightManagement = () => {
                 editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select'
+                    : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
                 record,
                 selectOptions: flightLocationData.map(({ id, airportName, cityName, country }) => ({
                     label: `${airportName} at ${cityName}, ${country}`,
@@ -241,7 +234,6 @@ const FlightManagement = () => {
                 }}
                 fleetData={fleetData}
                 initialFleet={viewingFleet}
-                editingFlightId={flightFleetEditingId}
             />
         </>
     );

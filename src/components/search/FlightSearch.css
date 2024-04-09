@@ -1,0 +1,45 @@
+.flight-search-overlay {
+  background-color: transparent;
+  display: flex;
+  align-self: center; /* Aligns vertically */
+  justify-content: center; /* Aligns horizontally (optional) */
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.background-image {
+  /*padding: 30px;*/
+  background: url("../../assets/images/searchBackground.png");
+  background-attachment: fixed; /* Fix image to viewport */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center; /* Optional: Center the image */
+  height: fit-content;
+}
+
+.flight-search-content {
+  display: flex;
+  align-self: center; /* Aligns vertically */
+  justify-content: center; /* Aligns horizontally (optional) */
+  background: url("../../assets/images/searchContentBackground.gif");
+  background-size: cover;
+  height: 70vh;
+  width: 75vh;
+  padding: 20px; /* Adjust padding as needed */
+  border-radius: 5px; /* Add rounded corners (optional) */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.reduced-width-input {
+  width: 600px; /* Adjust width as needed */
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Vertically center label and input */
+  font-weight: bold;
+}

@@ -106,7 +106,7 @@ const FlightManagement = () => {
         setFlightFleetEditingId(record.id);
 
         // Determine if the fleet information is editable
-        const isFlightEditable = !record.flightCancelled && !record.flightHasBookings && dayjs(record.arrivalTime).isAfter(dayjs());
+        const isFlightEditable = !record.flightCancelled && !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
 
         // Pass the isEditable flag to the modal
         setFleetInformationModalVisible(true);
@@ -153,7 +153,7 @@ const FlightManagement = () => {
             title: 'Operation / Status',
             dataIndex: 'operation',
             render: (_, record) => {
-                const isCompleted = dayjs(record.arrivalTime).isBefore(dayjs());
+                const isCompleted = dayjs(record.departureTime).isBefore(dayjs());
 
                 // Condition to determine if the row should be editable
                 const editable = isEditing(record) && (!record.flightCancelled || !record.flightHasBookings) && !isCompleted;
@@ -239,7 +239,7 @@ const FlightManagement = () => {
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
-                        pageSize: 10,
+                        pageSize: 5,
                         total: flightData.length,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         onChange: cancel

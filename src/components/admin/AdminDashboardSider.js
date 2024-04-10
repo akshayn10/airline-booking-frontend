@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, Menu, Alert } from 'antd';
+import { Layout, Menu, Alert, notification } from 'antd';
 import FlightIcon from '@mui/icons-material/Flight';
 import ConnectingAirportsIcon from '@mui/icons-material/ConnectingAirports';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useSelector, useDispatch } from 'react-redux';
+import { ResetAPIResponse } from '../../redux/actions/AdminActions';
 const { Sider, Content } = Layout;
 
 const AdminDashboardSider = ({ children }) => {
     const location = useLocation();
+    const dispatch = useDispatch();
+
+    const apiResponseType = useSelector((state) => state.apiErrorReducer.responseType);
+    const apiResponseMessage = useSelector((state) => state.apiErrorReducer.responseMessage);
 
     const [showAlert, setShowAlert] = useState(false);
+
+    const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
+        : location.pathname.startsWith("/admin/flight-location-management") ? "2" : ""];
 
     useEffect(() => {
         const handleResize = () => {
@@ -22,16 +31,24 @@ const AdminDashboardSider = ({ children }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Determine the selectedKeys based on the current path
-    const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
-        : location.pathname.startsWith("/admin/flight-location-management") ? "2" : ""];
+    useEffect(() => {
+        if (apiResponseType && apiResponseMessage) {
+            notification.open({
+                type: apiResponseType,
+                message: apiResponseMessage,
+                placement: 'bottomRight',
+            });
+        }
+
+        dispatch(ResetAPIResponse());
+    }, [apiResponseType, apiResponseMessage, selectedKeys]);
 
     return (
         <Layout>
             {showAlert && (
                 <Alert
-                    message="Warning"
-                    description="Your screen width is too small for a perfect informaiton display. Please enlarge your window for the best experience."
+                    message="Screen Size Warning"
+                    description="Your screen width is too small for a perfect information display. Please enlarge your window for the best experience."
                     type="warning"
                     showIcon
                     closable={false}

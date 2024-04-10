@@ -89,7 +89,7 @@ const FlightLocationManagement = () => {
                         <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
                             Save
                         </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                        <Popconfirm title="Are you sure?" onConfirm={cancel}>
                             <a href={() => false}>Cancel</a>
                         </Popconfirm>
                     </span>
@@ -98,8 +98,8 @@ const FlightLocationManagement = () => {
                         <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
                             Edit
                         </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>
-                            <a href={() => false} disabled={editingFlightLocationId !== ''}>Delete</a>
+                        <Popconfirm title="Are you sure?" onConfirm={() => deleteRow(record.id)}>
+                            <a href={() => false} disabled={editingFlightLocationId !== ''}>Remove</a>
                         </Popconfirm>
                     </span>
                 );

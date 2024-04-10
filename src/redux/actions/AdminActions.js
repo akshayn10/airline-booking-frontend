@@ -1,47 +1,117 @@
 import axios from "../../config/Axois";
-import { GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS } from "../constants/AdminConstants"
+import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants"
+
+export const ResetAPIResponse = () => async (dispatch) => {
+    dispatch({ type: RESET_API_RESPONSE });
+}
 
 export const AddFlightLocation = (flightLocation) => async (dispatch) => {
-    await axios.post("/v1/admin/location", { id: 0, ...flightLocation });
-    dispatch(GetFlightLocations());
+    try {
+        await axios.post("/v1/admin/location", { id: 0, ...flightLocation });
+        dispatch({ type: API_SUCCESS, success: "Flight location created successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location code already exists" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const AddFlight = (flight) => async (dispatch) => {
-    await axios.post("/v1/admin/flight", { id: 0, ...flight });
-    dispatch(GetFlights());
+    try {
+        await axios.post("/v1/admin/flight", { id: 0, ...flight });
+        dispatch({ type: API_SUCCESS, success: "Flight created successfully" });
+        dispatch(GetFlights());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight already booked in between selected departure and arrival time period" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const GetFlightLocations = () => async (dispatch) => {
-    const response = await axios.get("/v1/admin/location");
-    dispatch({ type: GET_FLIGHT_LOCATIONS, payload: response.data });
+    try {
+        const response = await axios.get("/v1/admin/location");
+        dispatch({ type: GET_FLIGHT_LOCATIONS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const GetFleets = () => async (dispatch) => {
-    const response = await axios.get("/v1/admin/fleet");
-    dispatch({ type: GET_FLEETS, payload: response.data });
+    try {
+        const response = await axios.get("/v1/admin/fleet");
+        dispatch({ type: GET_FLEETS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const GetFlights = () => async (dispatch) => {
-    const response = await axios.get("/v1/admin/flight");
-    dispatch({ type: GET_FLIGHTS, payload: response.data });
+    try {
+        const response = await axios.get("/v1/admin/flight");
+        dispatch({ type: GET_FLIGHTS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const UpdateFlightLocation = (flightLocation) => async (dispatch) => {
-    await axios.patch("/v1/admin/location", flightLocation);
-    dispatch(GetFlightLocations());
+    try {
+        await axios.patch("/v1/admin/location", flightLocation);
+        dispatch({ type: API_SUCCESS, success: "Flight location updated successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location code already exists" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const UpdateFlight = (flight) => async (dispatch) => {
-    await axios.patch("/v1/admin/flight", flight);
-    dispatch(GetFlights());
+    try {
+        await axios.patch("/v1/admin/flight", flight);
+        dispatch({ type: API_SUCCESS, success: "Flight updated successfully" });
+        dispatch(GetFlights());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight already booked in between selected departure and arrival time period" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const DeleteFlightLocation = (flightLocationId) => async (dispatch) => {
-    await axios.delete(`/v1/admin/location/${flightLocationId}`);
-    dispatch(GetFlightLocations());
+    try {
+        await axios.delete(`/v1/admin/location/${flightLocationId}`);
+        dispatch({ type: API_SUCCESS, success: "Flight location deleted successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location already available in active flights" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
-export const DeleteFlight = (flightId) => async (dispatch) => {
-    await axios.delete(`/v1/admin/flight/${flightId}`);
-    dispatch(GetFlights());
+export const CancelFlight = (flightId) => async (dispatch) => {
+    try {
+        await axios.delete(`/v1/admin/flight/${flightId}`);
+        dispatch({ type: API_SUCCESS, success: "Flight cancelled successfully" });
+        dispatch(GetFlights());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight already booked by customers" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }

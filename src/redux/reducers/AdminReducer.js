@@ -1,4 +1,4 @@
-import { GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS } from "../constants/AdminConstants";
+import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants";
 
 const flightLocationsState = {
     isLoading: false,
@@ -13,6 +13,24 @@ const fleetsState = {
 const flightsState = {
     isLoading: false,
     flights: [],
+}
+
+const apiResponse = {
+    responseType: '',
+    responseMessage: ''
+}
+
+export const ApiErrorReducer = (state = apiResponse, action) => {
+    if (action.type === API_ERROR) {
+        return { ...state, responseType: 'error', responseMessage: action.error }
+    } else if (action.type === API_SUCCESS) {
+        return { ...state, responseType: 'success', responseMessage: action.success }
+    } else if (action.type === RESET_API_RESPONSE) {
+        return apiResponse;
+    }
+    else {
+        return state;
+    }
 }
 
 export const AdminFlightLocationReducer = (state = flightLocationsState, action) => {

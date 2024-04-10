@@ -71,15 +71,27 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
         },
         {
             title: initialFleet.flightHasBookings ? 'Remaining Economy Seats' : 'Total Economy Seats',
-            dataIndex: initialFleet.flightHasBookings ? 'remainingEconomySeats' : 'totalEconomySeats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingEconomySeats} / ${record.totalEconomySeats}` :
+                    record.totalEconomySeats;
+            }
         },
         {
             title: initialFleet.flightHasBookings ? 'Remaining Premium Seats' : 'Total Premium Seats',
-            dataIndex: initialFleet.flightHasBookings ? 'remainingPremiumSeats' : 'totalPremiumSeats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingPremiumSeats} / ${record.totalPremiumSeats}` :
+                    record.totalPremiumSeats;
+            }
         },
         {
             title: initialFleet.flightHasBookings ? 'Remaining Business Seats' : 'Total Business Seats',
-            dataIndex: initialFleet.flightHasBookings ? 'remainingBusinessSeats' : 'totalBusinessSeats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingBusinessSeats} / ${record.totalBusinessSeats}` :
+                    record.totalBusinessSeats;
+            }
         },
     ];
 
@@ -94,6 +106,7 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
                 isEditable && <Button key="submit" type="primary" onClick={onSave}>Save</Button>,
             ]}
             style={{ top: '5%' }}
+            width={'max-content'}
         >
             <FleetSelection
                 isEditable={isEditable}

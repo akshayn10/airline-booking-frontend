@@ -10,7 +10,7 @@ const FlightSearchSimple = () => {
   const dispatch = useDispatch();
   const cities = useSelector(
     (state) => state.flightLocationsReducer.flightLocations
-  ); // Dummy city options
+  );
 
   const [selectedFromCity, setSelectedFromCity] = useState(cities[0]); // Initialize with first city
   const [selectedToCity, setSelectedToCity] = useState(cities[1]); // Initialize with second city

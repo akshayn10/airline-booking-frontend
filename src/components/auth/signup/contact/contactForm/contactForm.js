@@ -3,11 +3,17 @@ import styles from "./contactForm.module.css";
 import CountryDropdown from "./countryDropdown";
 import PhoneNumber from "./phoneNumber";
 import { useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
+import { SaveContactDetails } from "../../../../../redux/actions/AuthActions";
 
-const ContactForm = () => {
+const ContactForm = ({ email }) => {
+  const dispatch = useDispatch();
   const [selectedCountry, setSelectedCountry] = useState();
 
   const onFinish = (values) => {
+    values = { ...values, email: email };
+    console.log(values);
+    dispatch(SaveContactDetails(values));
     console.log("Received values of form: ", values);
   };
   useEffect(() => {

@@ -1,11 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { notification, Space } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./loginForm.css";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from 'react';
+import { LoginUser, ResetLoginResponseState } from "../../../../redux/actions/AuthActions";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const loginResponse = useSelector((state) => ({
+    status: state.loginResponseReducer.status,
+    message: state.loginResponseReducer.message,
+    data: state.loginResponseReducer.data,
+  }));
+  useEffect(() => {
+    dispatch(ResetLoginResponseState());
+    console.log("loginResponse", loginResponse);
+  },[])
+
+
+
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+      // description:
+        // "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+    });
+  };
+  useEffect(() => {
+    console.log("loginResponse", loginResponse)
+    if (loginResponse.status === true) {
+      openNotificationWithIcon("success", "Login Success");
+    } else if(loginResponse.status === false) {
+      openNotificationWithIcon("error", loginResponse.message);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[loginResponse]);
+
   const onFinish = (values) => {
+    dispatch(LoginUser(values));
     console.log("Received values of form: ", values);
   };
   return (
@@ -60,6 +96,7 @@ const LoginForm = () => {
           </Button>
         </Form.Item>
       </Form>
+      <>{contextHolder}</>
     </div>
   );
 };

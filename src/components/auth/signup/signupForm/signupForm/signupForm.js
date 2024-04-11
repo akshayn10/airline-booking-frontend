@@ -1,11 +1,16 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./signupForm.css";
+import { useDispatch } from "react-redux";
+import { RegisterUser } from "../../../../../redux/actions/AuthActions";
 
-const SignupForm = ({next}) => {
+const SignupForm = ({ next,setEmail }) => {
+  const dispatch = useDispatch();
   const onFinish = (values) => {
-    next()
+    // dispatch(RegisterUser(values));
+    setEmail(values.email);
     console.log("Received values of form: ", values);
+    next();
   };
 
   return (
@@ -124,7 +129,6 @@ const SignupForm = ({next}) => {
         </Form.Item>
         <Form.Item>
           <Button
-          onClick={next}
             shape="round"
             type="primary"
             htmlType="submit"

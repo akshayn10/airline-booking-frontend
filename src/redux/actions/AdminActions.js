@@ -1,4 +1,4 @@
-import axios from "../../config/Axois";
+import axios from "../../config/Axios";
 import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants"
 
 export const ResetAPIResponse = () => async (dispatch) => {

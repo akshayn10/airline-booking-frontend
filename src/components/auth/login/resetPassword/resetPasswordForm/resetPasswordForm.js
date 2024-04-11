@@ -1,15 +1,23 @@
 import { Input, Form, Button } from "antd";
 import styles from "./resetPasswordForm.module.css";
 import { LockOutlined } from "@mui/icons-material";
-
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { ResetPassword } from "../../../../../redux/actions/AuthActions";
 const ResetPasswordForm = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const email = location.state.email;
   const onFinish = (values) => {
+    values = { ...values, email: email };
+    dispatch(ResetPassword(values))
     console.log("Success:", values);
   };
   return (
     <div className={styles.container}>
+      {email}
       <Form onFinish={onFinish}>
-      <Form.Item
+        <Form.Item
           name="password"
           rules={[
             {

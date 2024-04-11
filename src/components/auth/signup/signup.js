@@ -7,20 +7,21 @@ import { Steps } from "antd";
 import ConfirmEmail from "./confirmEmail/confirmEmail";
 import Contact from "./contact/contact";
 
-export const SignupSection = ({ next }) => {
+export const SignupSection = ({ next,setEmail }) => {
   return (
     <div className="signup__section">
       <div className="signup__welcome">
         <SignupWelcome />
       </div>
       <div className="signup__form">
-        <SignupForm next={next} />
+        <SignupForm setEmail={setEmail} next={next} />
       </div>
     </div>
   );
 };
 
 const Signup = () => {
+  const [email, setEmail] = useState('');
   const [current, setCurrent] = useState(0);
   const next = () => {
     setCurrent(current + 1);
@@ -31,11 +32,11 @@ const Signup = () => {
   const steps = [
     {
       title: "Signup",
-      content: <SignupSection next={next} />,
+      content: <SignupSection setEmail={setEmail} next={next} />,
     },
     {
       title: "Confirm Email",
-      content: <ConfirmEmail next={next} />,
+      content: <ConfirmEmail next={next} email={email} />,
     },
     {
       title: "Contact Details",

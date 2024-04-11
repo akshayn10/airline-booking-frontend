@@ -2,10 +2,35 @@ import { Input, Form, Button } from "antd";
 import styles from "./forgotPasswordForm.module.css";
 import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { SendOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import OTP from "../../../signup/confirmEmail/otp";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { ForgotPassword, ForgotPasswordConfirmation } from "../../../../../redux/actions/AuthActions";
 
 const ForgotPasswordForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
+  const [disableEmailSubmitButton, setDisableEmailSubmitButton] =
+    useState(false);
+  const handleOtpSubmit = () => {
+    const otpData = {
+      email: email,
+      otp: otp
+    }
+    dispatch(ForgotPasswordConfirmation(otpData))
+    const routeState = { email: email };
+    // navigate("/auth/reset-password", { state: routeState });
+
+  };
   const onFinish = (values) => {
+    setEmail(values.email);
+    dispatch(ForgotPassword(values))
+    setShowOtp(true);
+    setDisableEmailSubmitButton(true);
     console.log("Success:", values);
   };
   return (
@@ -31,14 +56,14 @@ const ForgotPasswordForm = () => {
           />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="login__button">
+          <Button disabled={disableEmailSubmitButton} type="primary" htmlType="submit" className="login__button">
             Send Email
           </Button>
         </Form.Item>
       </Form>
-      <Form.Item>
-        <Link to="/auth/login">Back to Login</Link>
-      </Form.Item>
+      {showOtp && <OTP handleOtpSubmit={handleOtpSubmit} setOtp={setOtp} />}
+
+      <Link to="/auth/login">Back to Login</Link>
     </div>
   );
 };

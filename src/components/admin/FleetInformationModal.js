@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'antd';
 import FleetSelection from './common/FleetSelection';
 
-const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet }) => {
+const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, initialFleet, isEditable }) => {
     const [form] = Form.useForm();
 
     const [selectedFleetId, setSelectedFleetId] = useState('');
@@ -12,7 +12,17 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
     useEffect(() => {
         const selectedFlightFleet = fleetData.find(fleet => fleet.id === initialFleet.id);
         setSelectedFleetId(initialFleet.id);
-        setSelectedFleet(selectedFlightFleet);
+
+        if (initialFleet.flightHasBookings) {
+            setSelectedFleet({
+                ...selectedFlightFleet,
+                remainingEconomySeats: initialFleet.remainingEconomySeats,
+                remainingPremiumSeats: initialFleet.remainingPremiumSeats,
+                remainingBusinessSeats: initialFleet.remainingBusinessSeats,
+            });
+        } else {
+            setSelectedFleet(selectedFlightFleet);
+        }
 
         // Place initialFleet on top
         const sortedData = [
@@ -60,16 +70,28 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
             dataIndex: 'model',
         },
         {
-            title: 'Total Economy Seats',
-            dataIndex: 'totalEconomySeats',
+            title: initialFleet.flightHasBookings ? 'Remaining Economy Seats' : 'Total Economy Seats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingEconomySeats} / ${record.totalEconomySeats}` :
+                    record.totalEconomySeats;
+            }
         },
         {
-            title: 'Total Premium Seats',
-            dataIndex: 'totalPremiumSeats',
+            title: initialFleet.flightHasBookings ? 'Remaining Premium Seats' : 'Total Premium Seats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingPremiumSeats} / ${record.totalPremiumSeats}` :
+                    record.totalPremiumSeats;
+            }
         },
         {
-            title: 'Total Business Seats',
-            dataIndex: 'totalBusinessSeats',
+            title: initialFleet.flightHasBookings ? 'Remaining Business Seats' : 'Total Business Seats',
+            render: (text, record) => {
+                return initialFleet.flightHasBookings ?
+                    `${record.remainingBusinessSeats} / ${record.totalBusinessSeats}` :
+                    record.totalBusinessSeats;
+            }
         },
     ];
 
@@ -79,15 +101,18 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
             title="Select a Fleet"
             onCancel={onCancel}
             footer={[
-                <Button key="back" onClick={onCancel}>Cancel</Button>,
-                <Button key="submit" type="primary" onClick={onSave}>Save</Button>,
+                // Conditionally render buttons based on isEditable
+                isEditable && <Button key="back" onClick={onCancel}>Cancel</Button>,
+                isEditable && <Button key="submit" type="primary" onClick={onSave}>Save</Button>,
             ]}
-            style={{ top: '5%', }}
+            style={{ top: '5%' }}
+            width={'max-content'}
         >
             <FleetSelection
+                isEditable={isEditable}
                 rowSelection={rowSelection}
                 columns={columns}
-                fleetData={sortedFleetData}
+                fleetData={isEditable ? sortedFleetData : [selectedFleet]} // Conditionally limit to selectedFleet if not editable
                 selectedFleet={selectedFleet}
                 form={form} />
         </Modal>

@@ -106,6 +106,7 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
             onCancel={handleCancel}
             onOk={onOk}
             style={{ top: '5%' }}
+            width={'max-content'}
         >
             {submitAttempted && !selectedFleetId && (
                 <Alert message="Please select a fleet before adding a flight." type="warning" showIcon style={{ marginBottom: 16 }} />
@@ -170,7 +171,8 @@ const AddFlightModal = ({ visible, onCreate, onCancel, fleetData, flightLocation
                 columns={columns}
                 fleetData={fleetData}
                 selectedFleet={selectedFleet}
-                form={form} />
+                form={form}
+                isEditable={true} />
         </Modal>
     );
 }

@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { AdminFleetReducer, AdminFlightLocationReducer, AdminFlightsReducer } from './reducers/AdminReducer'
+import { AdminFleetReducer, AdminFlightLocationReducer, AdminFlightsReducer, ApiErrorReducer } from './reducers/AdminReducer'
 import { PastBookingsReducer, UpcomingTripsReducer } from './reducers/UserReducer';
 import { CountryListReducer } from './reducers/AuthReducer';
 
 const store = configureStore({
         reducer: {
+                apiErrorReducer: ApiErrorReducer,
                 flightLocationsReducer: AdminFlightLocationReducer,
                 fleetsReducer: AdminFleetReducer,
                 flightsReducer: AdminFlightsReducer,

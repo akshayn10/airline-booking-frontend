@@ -1,3 +1,7 @@
 export const GET_FLIGHT_LOCATIONS = "GET_FLIGHT_LOCATIONS";
 export const GET_FLEETS = "GET_FLEETS";
 export const GET_FLIGHTS = "GET_FLIGHTS";
+
+export const API_ERROR = "API_ERROR";
+export const API_SUCCESS = "API_SUCCESS";
+export const RESET_API_RESPONSE = "RESET_API_RESPONSE";

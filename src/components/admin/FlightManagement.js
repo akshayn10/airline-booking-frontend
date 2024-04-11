@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Form, Popconfirm, Table, Typography } from 'antd';
+import { Button, Form, Popconfirm, Table, Typography, Space } from 'antd';
+import Chip from '@mui/material/Chip';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import './common/styles.css';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
 import EditableCell from './common/EditableCell';
-import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
+import { AddFlight, CancelFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
 import dayjs from 'dayjs';
 
@@ -23,6 +25,7 @@ const FlightManagement = () => {
 
     const [addFlightModalVisible, setAddFlightModalVisible] = useState(false);
     const [fleetInformationModalVisible, setFleetInformationModalVisible] = useState(false);
+    const [isFleetEditable, setIsFleetEditable] = useState(false);
 
     useEffect(() => {
         dispatch(GetFlightLocations());
@@ -67,7 +70,7 @@ const FlightManagement = () => {
     }
 
     const deleteRow = async (id) => {
-        dispatch(DeleteFlight(id));
+        dispatch(CancelFlight(id));
     }
 
     const cancel = () => {
@@ -95,11 +98,21 @@ const FlightManagement = () => {
             id: record.fleetId,
             economyFare: record.economyFare,
             premiumFare: record.premiumFare,
-            businessFare: record.businessFare
-        }
+            businessFare: record.businessFare,
+            remainingEconomySeats: record.remainingEconomySeats,
+            remainingPremiumSeats: record.remainingPremiumSeats,
+            remainingBusinessSeats: record.remainingBusinessSeats,
+            flightHasBookings: record.flightHasBookings,
+        };
         setViewingFleet(tempViewingFleet);
         setFlightFleetEditingId(record.id);
+
+        // Determine if the fleet information is editable
+        const isFlightEditable = !record.flightCancelled && !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
+
+        // Pass the isEditable flag to the modal
         setFleetInformationModalVisible(true);
+        setIsFleetEditable(isFlightEditable);
     }
 
     const columns = [
@@ -120,7 +133,7 @@ const FlightManagement = () => {
         {
             title: 'Departure Time and Arrival Time',
             dataIndex: 'departureAndArrival',
-            width: '25%',
+            width: '20%',
             editable: true,
             render: (_, record) => {
                 return (
@@ -133,35 +146,52 @@ const FlightManagement = () => {
         {
             title: 'Fleet Information',
             dataIndex: 'fleet',
-            width: '5%',
+            width: '10%',
             render: (_, record) => (
-                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
+                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)} className='actions-center'>View</a>
             ),
         },
         {
-            title: 'Operation',
+            title: 'Operation / Status',
             dataIndex: 'operation',
             render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
-                            Save
-                        </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a href={() => false}>Cancel</a>
-                        </Popconfirm>
-                    </span>
-                ) : (
-                    <span>
-                        <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ marginRight: 8, whiteSpace: 'nowrap' }}>
-                            Edit
-                        </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>
-                            <a href={() => false} disabled={flightEditingId !== ''}>Delete</a>
-                        </Popconfirm>
-                    </span>
-                );
+                const isCompleted = dayjs(record.departureTime).isBefore(dayjs());
+
+                // Condition to determine if the row should be editable
+                const editable = isEditing(record) && (!record.flightCancelled || !record.flightHasBookings) && !isCompleted;
+
+                // Display different content based on flight status
+                if (record.flightCancelled) {
+                    return <span className='actions-center'><Chip label={"Cancelled Flight"} /></span>;
+                } else if (record.flightHasBookings) {
+                    return <span className='actions-center'><Chip label={"Booked Flight"} className='actions-center' /></span>;
+                } else if (isCompleted) {
+                    return <span className='actions-center'><Chip label={"Completed Flight"} className='actions-center' /></span>;
+                } else if (editable) {
+                    // If the row is editable and flight status is active
+                    return (
+                        <Space size="large" className='actions-center'>
+                            <Typography.Link onClick={() => save(record.id)} style={{ whiteSpace: 'nowrap' }}>
+                                Save
+                            </Typography.Link>
+                            <Popconfirm title="Are you sure?" onConfirm={cancel}>
+                                <a href={() => false}>Cancel</a>
+                            </Popconfirm>
+                        </Space>
+                    );
+                } else {
+                    // If the flight is active but not currently being edited
+                    return (
+                        <Space size="large" className='actions-center'>
+                            <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
+                                Edit
+                            </Typography.Link>
+                            <Popconfirm title="Are you sure?" onConfirm={() => deleteRow(record.id)}>
+                                <a href={() => false} disabled={flightEditingId !== ''}>Remove</a>
+                            </Popconfirm>
+                        </Space>
+                    );
+                }
             },
         },
     ];
@@ -210,7 +240,7 @@ const FlightManagement = () => {
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
-                        pageSize: 10,
+                        pageSize: 5,
                         total: flightData.length,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         onChange: cancel
@@ -234,6 +264,7 @@ const FlightManagement = () => {
                 }}
                 fleetData={fleetData}
                 initialFleet={viewingFleet}
+                isEditable={isFleetEditable}
             />
         </>
     );

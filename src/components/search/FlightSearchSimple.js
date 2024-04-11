@@ -125,7 +125,16 @@ const FlightSearchSimple = () => {
                   validationStatus={!selectedFromCity && "error"}
                 >
                   <Select
+                    showSearch
+                    style={{ width: "100%" }}
+                    placeholder="Please select"
                     value={selectedFromCity}
+                    filterOption={(inputValue, option) =>
+                      option.children
+                        .join("")
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
                     onChange={(value) => setSelectedFromCity(value)}
                   >
                     {cities.map((city) => (
@@ -143,7 +152,16 @@ const FlightSearchSimple = () => {
                   validationStatus={!selectedToCity && "error"}
                 >
                   <Select
+                    showSearch
+                    style={{ width: "100%" }}
+                    placeholder="Please select"
                     value={selectedToCity}
+                    filterOption={(inputValue, option) =>
+                      option.children
+                        .join("")
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
                     onChange={(value) => setSelectedToCity(value)}
                   >
                     {cities.map((city) => (

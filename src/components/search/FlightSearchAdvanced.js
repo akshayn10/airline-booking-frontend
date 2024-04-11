@@ -21,7 +21,6 @@ const FlightSearchAdvanced = () => {
     (state) => state.flightLocationsReducer.flightLocations
   );
 
-  // Dummy city options
   const [selectedFromCity, setSelectedFromCity] = useState(cities[0]); // Initialize with first city
   const [selectedToCity, setSelectedToCity] = useState(cities[1]); // Initialize with second city
   const [flightNumber, setFlightNumber] = useState("");
@@ -110,7 +109,15 @@ const FlightSearchAdvanced = () => {
                 validationStatus={!selectedFromCity && "error"}
               >
                 <Select
-                  value={selectedFromCity}
+                  showSearch
+                  style={{ width: "100%" }}
+                  placeholder="Please select"
+                  filterOption={(inputValue, option) =>
+                    option.children
+                      .join("")
+                      .toLowerCase()
+                      .includes(inputValue.toLowerCase())
+                  }
                   onChange={(value) => setSelectedFromCity(value)}
                 >
                   {cities.map((city) => (
@@ -128,7 +135,15 @@ const FlightSearchAdvanced = () => {
                 validationStatus={!selectedToCity && "error"}
               >
                 <Select
-                  value={selectedToCity}
+                  showSearch
+                  style={{ width: "100%" }}
+                  placeholder="Please select"
+                  filterOption={(inputValue, option) =>
+                    option.children
+                      .join("")
+                      .toLowerCase()
+                      .includes(inputValue.toLowerCase())
+                  }
                   onChange={(value) => setSelectedToCity(value)}
                 >
                   {cities.map((city) => (

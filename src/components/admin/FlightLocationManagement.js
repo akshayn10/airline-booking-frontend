@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Form, Popconfirm, Table, Typography, Space } from 'antd';
-import './common/styles.css';
 import EditableCell from './common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
-import { AddFlightLocation, DeleteFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
+import { AddFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
 
 const FlightLocationManagement = () => {
     const [form] = Form.useForm();
@@ -42,10 +41,6 @@ const FlightLocationManagement = () => {
         }
     }
 
-    const deleteRow = async (id) => {
-        dispatch(DeleteFlightLocation(id));
-    }
-
     const cancel = () => {
         setEditingFlightLocationId('');
     }
@@ -79,14 +74,16 @@ const FlightLocationManagement = () => {
             dataIndex: 'code',
             width: '10%',
             editable: true,
+            align: 'center'
         },
         {
             title: 'Operation',
             dataIndex: 'operation',
+            align: 'center',
             render: (_, record) => {
                 const editable = isEditing(record);
                 return (
-                    <Space size='large' className='actions-center'>
+                    <Space size='large'>
                         {editable ? (
                             <>
                                 <Typography.Link onClick={() => save(record.id)} style={{ whiteSpace: 'nowrap' }}>
@@ -97,14 +94,9 @@ const FlightLocationManagement = () => {
                                 </Popconfirm>
                             </>
                         ) : (
-                            <>
-                                <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
-                                    Edit
-                                </Typography.Link>
-                                <Popconfirm title="Are you sure?" onConfirm={() => deleteRow(record.id)}>
-                                    <a href={() => false} disabled={editingFlightLocationId !== ''}>Remove</a>
-                                </Popconfirm>
-                            </>
+                            <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
+                                Edit
+                            </Typography.Link>
                         )}
                     </Space>
                 );

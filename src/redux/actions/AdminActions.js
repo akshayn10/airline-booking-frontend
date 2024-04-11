@@ -95,21 +95,7 @@ export const DeleteFlightLocation = (flightLocationId) => async (dispatch) => {
         dispatch(GetFlightLocations());
     } catch (error) {
         if (error.response?.status === 400) {
-            dispatch({ type: API_ERROR, error: "Flight location already available in active flights" });
-        } else {
-            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
-        }
-    }
-}
-
-export const CancelFlight = (flightId) => async (dispatch) => {
-    try {
-        await axios.delete(`/v1/admin/flight/${flightId}`);
-        dispatch({ type: API_SUCCESS, success: "Flight cancelled successfully" });
-        dispatch(GetFlights());
-    } catch (error) {
-        if (error.response?.status === 400) {
-            dispatch({ type: API_ERROR, error: "Flight already booked by customers" });
+            dispatch({ type: API_ERROR, error: "Flight location already available in existing flight records" });
         } else {
             dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
         }

@@ -44,7 +44,7 @@ const EditableCell = ({
             break;
         case 'select':
             inputNode = (
-                <Select>
+                <Select showSearch>
                     {selectOptions.map(opt => (
                         <Option key={opt.value} value={opt.value}>{opt.label}</Option>
                     ))}

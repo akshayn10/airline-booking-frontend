@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Form, Popconfirm, Table, Typography, Space } from 'antd';
 import Chip from '@mui/material/Chip';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
-import './common/styles.css';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
 import EditableCell from './common/EditableCell';
-import { AddFlight, CancelFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
+import { AddFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
 import dayjs from 'dayjs';
 
@@ -69,10 +68,6 @@ const FlightManagement = () => {
         }
     }
 
-    const deleteRow = async (id) => {
-        dispatch(CancelFlight(id));
-    }
-
     const cancel = () => {
         setFlightEditingId('');
     }
@@ -108,7 +103,7 @@ const FlightManagement = () => {
         setFlightFleetEditingId(record.id);
 
         // Determine if the fleet information is editable
-        const isFlightEditable = !record.flightCancelled && !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
+        const isFlightEditable = !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
 
         // Pass the isEditable flag to the modal
         setFleetInformationModalVisible(true);
@@ -147,30 +142,30 @@ const FlightManagement = () => {
             title: 'Fleet Information',
             dataIndex: 'fleet',
             width: '10%',
+            align: 'center',
             render: (_, record) => (
-                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)} className='actions-center'>View</a>
+                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {
             title: 'Operation / Status',
             dataIndex: 'operation',
+            align: 'center',
             render: (_, record) => {
                 const isCompleted = dayjs(record.departureTime).isBefore(dayjs());
 
                 // Condition to determine if the row should be editable
-                const editable = isEditing(record) && (!record.flightCancelled || !record.flightHasBookings) && !isCompleted;
+                const editable = isEditing(record) && !record.flightHasBookings && !isCompleted;
 
                 // Display different content based on flight status
-                if (record.flightCancelled) {
-                    return <span className='actions-center'><Chip label={"Cancelled Flight"} /></span>;
-                } else if (record.flightHasBookings) {
-                    return <span className='actions-center'><Chip label={"Booked Flight"} className='actions-center' /></span>;
+                if (record.flightHasBookings) {
+                    return <span><Chip label={"Has Bookings"} /></span>;
                 } else if (isCompleted) {
-                    return <span className='actions-center'><Chip label={"Completed Flight"} className='actions-center' /></span>;
+                    return <span><Chip label={"Completed"} /></span>;
                 } else if (editable) {
                     // If the row is editable and flight status is active
                     return (
-                        <Space size="large" className='actions-center'>
+                        <Space size="large">
                             <Typography.Link onClick={() => save(record.id)} style={{ whiteSpace: 'nowrap' }}>
                                 Save
                             </Typography.Link>
@@ -182,14 +177,9 @@ const FlightManagement = () => {
                 } else {
                     // If the flight is active but not currently being edited
                     return (
-                        <Space size="large" className='actions-center'>
-                            <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
-                                Edit
-                            </Typography.Link>
-                            <Popconfirm title="Are you sure?" onConfirm={() => deleteRow(record.id)}>
-                                <a href={() => false} disabled={flightEditingId !== ''}>Remove</a>
-                            </Popconfirm>
-                        </Space>
+                        <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
+                            Edit
+                        </Typography.Link>
                     );
                 }
             },

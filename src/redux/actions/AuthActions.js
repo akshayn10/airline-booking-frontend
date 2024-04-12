@@ -9,6 +9,8 @@ import {
 } from "../constants/AuthConstants";
 import countryList from "../../assets/json/countries.json";
 import axios from "../../config/Axios";
+import { jwtDecode } from "jwt-decode";
+import { clearLocalStorage } from "../../util/localStorageUtils";
 
 export const getCountryList = () => async (dispatch) => {
   dispatch({
@@ -56,12 +58,22 @@ export const ConfirmEmail = (confirmEmailData) => async (dispatch) => {
 };
 
 export const LoginUser = (loginUserData) => async (dispatch) => {
+  clearLocalStorage();
   try {
     const response = await axios.post("/auth/login", { ...loginUserData });
     const { accessToken, refreshToken, user } = response.data.data;
+
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("username", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
+    const decodedToken = jwtDecode(accessToken);
+    const { role, sub, exp } = decodedToken;
+    console.log("Role:", role);
+    console.log("Email:", sub);
+    console.log("Expiration Time:", new Date(exp * 1000));
+    localStorage.setItem("role", role);
+    localStorage.setItem("email", sub);
+    localStorage.setItem("exp", exp);
 
     console.log(accessToken, refreshToken, user);
     dispatch({
@@ -72,9 +84,11 @@ export const LoginUser = (loginUserData) => async (dispatch) => {
     });
     dispatch({
       type: AUTHENTICATED,
-      status: response.data.success,
-      data: response.data.data,
-      message: response.data.message,
+      authenticated: true,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user: user,
+      role: role,
     });
   } catch (error) {
     if (error.response?.status === 400 && error.response.data) {
@@ -98,7 +112,7 @@ export const LoginUser = (loginUserData) => async (dispatch) => {
 };
 export const ResetLoginResponseState = () => async (dispatch) => {
   dispatch({
-    type: RESET_LOGIN_STATE
+    type: RESET_LOGIN_STATE,
   });
 };
 export const SaveContactDetails = (contactDetails) => async (dispatch) => {

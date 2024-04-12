@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { AdminFleetReducer, AdminFlightLocationReducer, AdminFlightsReducer, ApiErrorReducer } from './reducers/AdminReducer'
 import { PastBookingsReducer, UpcomingTripsReducer } from './reducers/UserReducer';
-import { CountryListReducer, LoginResponseReducer } from './reducers/AuthReducer';
+import { AuthenticationStateReducer, CountryListReducer, LoginResponseReducer } from './reducers/AuthReducer';
 
 const store = configureStore({
         reducer: {
@@ -16,6 +16,7 @@ const store = configureStore({
                 countryListReducer: CountryListReducer,
 
                 loginResponseReducer: LoginResponseReducer,
+                authenticationStateReducer:AuthenticationStateReducer
 
         }
 });

@@ -4,6 +4,7 @@ import {
   GET_COUNTRY_LIST,
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
+  REFRESH_TOKEN,
   RESET_LOGIN_STATE,
 } from "../constants/AuthConstants";
 const countryListState = {
@@ -40,7 +41,6 @@ export const AuthenticationStateReducer = (
   action
 ) => {
   console.log(AuthenticationState,"Auth");
-  console.log("action",action);
   switch (action.type) {
     case AUTHENTICATED:
       return {
@@ -51,6 +51,11 @@ export const AuthenticationStateReducer = (
         user: action.user,
         role: action.role,
       };
+    case REFRESH_TOKEN:
+      return {
+        ...state,
+        accessToken: action.accessToken,
+      }
 
     default:
       return state;

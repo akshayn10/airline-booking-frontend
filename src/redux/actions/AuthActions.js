@@ -91,7 +91,7 @@ export const LoginUser = (loginUserData) => async (dispatch) => {
       role: role,
     });
   } catch (error) {
-    if (error.response?.status === 400 && error.response.data) {
+    if (error.response.data) {
       const apiResponse = error.response.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {

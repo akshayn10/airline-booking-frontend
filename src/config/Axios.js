@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     const status = error.response ? error.response.status : null;
     const errorMessage = error.response ? error.response.data.message : null;
-    if (status === 400) {
+    if (status === 401) {
       if (errorMessage === "JWT Access Token Expired") {
         const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {

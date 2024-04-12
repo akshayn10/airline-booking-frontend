@@ -1,40 +1,49 @@
 import React, { useEffect } from "react";
-import { notification, Space } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./loginForm.css";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   LoginUser,
   ResetLoginResponseState,
 } from "../../../../redux/actions/AuthActions";
+import { useNotificationContext } from "../../../../context/notificationContext";
 
 const LoginForm = () => {
+  const {openNotification} = useNotificationContext();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginResponse = useSelector((state) => ({
     status: state.loginResponseReducer.status,
     message: state.loginResponseReducer.message,
     data: state.loginResponseReducer.data,
   }));
+  const authRole = useSelector(
+    (state) => state.authenticationStateReducer.role
+  );
   useEffect(() => {
     dispatch(ResetLoginResponseState());
-    console.log("loginResponse", loginResponse);
   }, []);
 
-  const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type, message,description) => {
-    api[type]({
-      message: message,
-      description:description
-    });
-  };
+  
   useEffect(() => {
-    console.log("loginResponse", loginResponse);
     if (loginResponse.status === true) {
-      openNotificationWithIcon("success", "Login Success");
+      openNotification("success", "Login Success");
+      setTimeout(() => {
+      if (authRole) {
+        if (authRole === "ADMIN") {
+          navigate("/admin");
+        }
+        if (authRole === "USER") {
+          navigate("/user/dashboard");
+        }
+      }
+      },1000)
+
     } else if (loginResponse.status === false) {
-      openNotificationWithIcon("error", loginResponse.message);
+      openNotification("error", loginResponse.message);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginResponse]);
@@ -95,7 +104,6 @@ const LoginForm = () => {
           </Button>
         </Form.Item>
       </Form>
-      <>{contextHolder}</>
     </div>
   );
 };

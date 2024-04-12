@@ -14,6 +14,11 @@ const loginResponseState = {
   data: null,
   message: null,
 };
+const AuthenticationState = {
+  accessToken: localStorage.getItem('accessToken') || null,
+  refreshToken: localStorage.getItem('refreshToken') || null,
+  user: JSON.parse(localStorage.getItem('user')) || null,
+};
 
 export const CountryListReducer = (state = countryListState, action) => {
   switch (action.type) {

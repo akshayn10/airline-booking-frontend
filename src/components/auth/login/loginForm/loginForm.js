@@ -5,8 +5,10 @@ import { Button, Form, Input } from "antd";
 import "./loginForm.css";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useMemo } from 'react';
-import { LoginUser, ResetLoginResponseState } from "../../../../redux/actions/AuthActions";
+import {
+  LoginUser,
+  ResetLoginResponseState,
+} from "../../../../redux/actions/AuthActions";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -18,27 +20,24 @@ const LoginForm = () => {
   useEffect(() => {
     dispatch(ResetLoginResponseState());
     console.log("loginResponse", loginResponse);
-  },[])
-
-
+  }, []);
 
   const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (type, message) => {
+  const openNotificationWithIcon = (type, message,description) => {
     api[type]({
       message: message,
-      // description:
-        // "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+      description:description
     });
   };
   useEffect(() => {
-    console.log("loginResponse", loginResponse)
+    console.log("loginResponse", loginResponse);
     if (loginResponse.status === true) {
       openNotificationWithIcon("success", "Login Success");
-    } else if(loginResponse.status === false) {
+    } else if (loginResponse.status === false) {
       openNotificationWithIcon("error", loginResponse.message);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[loginResponse]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loginResponse]);
 
   const onFinish = (values) => {
     dispatch(LoginUser(values));

@@ -1,6 +1,7 @@
 import {
   API_ERROR,
   API_SUCCESS,
+  AUTHENTICATED,
   GET_COUNTRY_LIST,
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
@@ -53,36 +54,24 @@ export const ConfirmEmail = (confirmEmailData) => async (dispatch) => {
     }
   }
 };
-// export const LoginUser = (loginUserData) => async (dispatch) => {
-//   try {
-//     await axios.post("/auth/login", { ...loginUserData });
-//     dispatch({
-//       type: API_SUCCESS,
-//       success: "Login Successful",
-//     });
-//   } catch (error) {
-//     if (error.response?.status === 400) {
-//       dispatch({ type: API_ERROR, error: "User not exist with email" });
-//     } else {
-//       dispatch({
-//         type: API_ERROR,
-//         error: "Something went wrong from server-side",
-//       });
-//     }
-//   }
-// };
 
 export const LoginUser = (loginUserData) => async (dispatch) => {
   try {
     const response = await axios.post("/auth/login", { ...loginUserData });
-    const { accessToken, refreshToken, username } = response.data.data;
+    const { accessToken, refreshToken, user } = response.data.data;
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("username", username);
+    localStorage.setItem("username", JSON.stringify(user));
 
-    console.log(accessToken, refreshToken, username);
+    console.log(accessToken, refreshToken, user);
     dispatch({
       type: LOGIN_SUCCESS,
+      status: response.data.success,
+      data: response.data.data,
+      message: response.data.message,
+    });
+    dispatch({
+      type: AUTHENTICATED,
       status: response.data.success,
       data: response.data.data,
       message: response.data.message,

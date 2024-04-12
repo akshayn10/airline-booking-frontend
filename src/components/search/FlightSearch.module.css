@@ -1,15 +1,3 @@
-.flight-search-results {
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Space between cards */
-}
-
-.cardTitle {
-  color: blue;
-  background-color: #e0f2ff;
-  padding: 4px;
-}
-
 .flightTime {
   display: flex;
   align-items: center;
@@ -30,4 +18,18 @@
   text-decoration: none; /* Remove underline from link */
   margin-top: 8px; /* Add space above the button */
   display: inline-block; /* Allow text wrapping within the button */
+}
+
+.flightResultRow {
+  display: flex; /* Enable flexbox layout */
+  flex-wrap: nowrap; /* Prevent items from wrapping onto multiple lines */
+  align-items: center; /* Align content vertically within the row */
+  /* Add other styling for margins, padding, etc. as needed */
+}
+
+.searchResultsContainer {
+  display: flex;
+  justify-content: center; /* Horizontally center content */
+  align-items: center; /* Vertically center content */
+  /* Add other styles like width, height, or padding as needed */
 }

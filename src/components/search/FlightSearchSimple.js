@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Select, DatePicker, Button, Space, message } from "antd";
+import { Form, Select, DatePicker, Button, Space, message, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import FlightSearchAdvanced from "./FlightSearchAdvanced";
 import FlightSearchResults from "./FlightSearchResults"; // Import FlightSearchResults
 import { GetFlightLocations } from "../../redux/actions/SearchAction";
 import "./FlightSearch.css";
+import background from "/home/shashimal/Desktop/airline-booking-frontend/src/assets/images/searchBackground.png";
+
+const styles = {
+  width: "100%", // Set width and height as needed
+  height: "100vh",
+  backgroundImage: `url(${background})`,
+  backgroundPosition: "center", // Adjust as needed (e.g., 'center top')
+  backgroundSize: "cover", // Adjust as needed (e.g., 'contain', 'auto')
+  backgroundRepeat: "no-repeat", // Adjust as needed
+  backgroundAttachment: "fixed",
+};
 
 const FlightSearchSimple = () => {
   const dispatch = useDispatch();
@@ -34,6 +46,62 @@ const FlightSearchSimple = () => {
   };
 
   const mockData = [
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
+    {
+      airline: "Airline A",
+      flightNumber: "AA123",
+      departureTime: "10:00",
+      arrivalTime: "15:00",
+      price: 250.0,
+    },
+    {
+      airline: "Airline B",
+      flightNumber: "BB456",
+      departureTime: "12:00",
+      arrivalTime: "17:00",
+      price: 300.0,
+    },
     {
       airline: "Airline A",
       flightNumber: "AA123",
@@ -108,7 +176,7 @@ const FlightSearchSimple = () => {
   };
 
   return (
-    <div class="background-image">
+    <div style={styles}>
       <div className="flight-search-overlay">
         {/* Wrapper for potential styling (CSS not included here) */}
 
@@ -199,14 +267,30 @@ const FlightSearchSimple = () => {
                   </Space>
                 </Form.Item>
               </Form>
+              {isLoading && (
+                <p>
+                  <div className={styles.spinnerContainer}>
+                    <Spin
+                      indicator={
+                        <LoadingOutlined
+                          style={{
+                            fontSize: 200,
+                          }}
+                          spin
+                        />
+                      }
+                    />
+                  </div>
+                </p>
+              )}
             </div>
           )}
         </div>
-        {isLoading && <p>Searching for flights...</p>}
-        {flightResults.length > 0 && !isLoading && (
-          <FlightSearchResults flightResults={flightResults} />
-        )}
       </div>
+
+      {flightResults.length > 0 && !isLoading && (
+        <FlightSearchResults flightResults={flightResults} />
+      )}
     </div>
   );
 };

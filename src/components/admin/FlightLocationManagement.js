@@ -129,6 +129,7 @@ const FlightLocationManagement = () => {
             </Button>
             <Form form={form} component={false}>
                 <Table
+                    loading={useSelector((state) => state.flightLocationsReducer.isLoading)}
                     components={{
                         body: {
                             cell: EditableCell,

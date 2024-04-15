@@ -220,6 +220,7 @@ const FlightManagement = () => {
             </Button>
             <Form form={form} component={false}>
                 <Table
+                    loading={useSelector((state) => state.flightsReducer.isLoading)}
                     components={{
                         body: {
                             cell: EditableCell,

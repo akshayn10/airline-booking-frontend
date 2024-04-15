@@ -1,15 +1,37 @@
 import { Input, Form, Button } from "antd";
 import styles from "./resetPasswordForm.module.css";
 import { LockOutlined } from "@mui/icons-material";
-
+import { useLocation } from 'react-router-dom';
+import { useEffect} from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { ResetPassword } from "../../../../../redux/actions/AuthActions";
+import { useNotificationContext } from "../../../../../context/notificationContext";
 const ResetPasswordForm = () => {
+  const { openNotification } = useNotificationContext();
+  const navigate = useNavigate();
+  const resetPasswordResponse = useSelector((state) => state.resetPasswordResponseReducer);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const email = location.state.email;
   const onFinish = (values) => {
+    values = { ...values, email: email };
+    dispatch(ResetPassword(values))
     console.log("Success:", values);
   };
+  useEffect(() => {
+    if (resetPasswordResponse.status === true) {
+      openNotification("success", resetPasswordResponse.data);
+      navigate("/auth/login");
+    } else if (resetPasswordResponse.status === false) {
+      openNotification("error", resetPasswordResponse.message);
+    }
+  }, [resetPasswordResponse]);
   return (
     <div className={styles.container}>
+      {email}
       <Form onFinish={onFinish}>
-      <Form.Item
+        <Form.Item
           name="password"
           rules={[
             {

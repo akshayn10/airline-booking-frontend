@@ -19,7 +19,6 @@ const ForgotPassword = () => {
           <h1 style={{ marginTop: "10%" }}>Forgot Password</h1>
           <img src={forgotPassword} alt="forgotPassword" />
         </div>
-
         <ForgotPasswordForm className={styles.forgotPassword__form} />
       </div>
     </div>

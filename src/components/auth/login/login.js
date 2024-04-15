@@ -5,12 +5,12 @@ import background from '../../../assets/images/airline.jpg';
 
 const Login = () => {
   const styles = {
-    width: "100%", // Set width and height as needed
+    width: "100%", 
     height: "100vh",
     backgroundImage: `url(${background})`,
-    backgroundPosition: "center", // Adjust as needed (e.g., 'center top')
-    backgroundSize: "cover", // Adjust as needed (e.g., 'contain', 'auto')
-    backgroundRepeat: "no-repeat", // Adjust as needed
+    backgroundPosition: "center", 
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat", 
   };
   return (
     <div style={styles}>

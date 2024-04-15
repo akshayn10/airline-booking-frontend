@@ -6,8 +6,19 @@ import PhoneNumber from "../../auth/signup/contact/contactForm/phoneNumber";
 import { useEffect } from "react";
 import { useState } from "react";
 import UserImage from "./userImage/userImage";
+import { useDispatch, useSelector } from "react-redux";
+import { GetUserDetailsByEmail, UpdateUserDetails } from "../../../redux/actions/UserActions";
 
 const UserAccountManagement = () => {
+  const dispatch = useDispatch();
+  const authState = useSelector((state) => state.authenticationStateReducer);
+  const getUserAccountDetails = (email) => {
+    dispatch(GetUserDetailsByEmail(email));
+  };
+  useEffect(() => {
+    getUserAccountDetails(authState.user.email);
+  }, []);
+
   const initialFormValues = {
     firstName: "John",
     lastName: "Doe",
@@ -23,6 +34,7 @@ const UserAccountManagement = () => {
   };
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    dispatch(UpdateUserDetails(values))
   };
   const [selectedCountry, setSelectedCountry] = useState();
 

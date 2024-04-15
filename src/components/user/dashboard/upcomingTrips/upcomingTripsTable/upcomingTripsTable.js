@@ -46,7 +46,6 @@ const upcomingTripsColumns = [
     key: "actions",
     render: (_, record) => (
       <Space size="middle">
-        <a>Check-in Online</a>
         <a>Modify Booking</a>
       </Space>
     ),

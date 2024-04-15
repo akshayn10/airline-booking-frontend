@@ -1,0 +1,34 @@
+.payment-details-container {
+    background-image: url('./image/recipt-background.jpg');
+    background-size: cover; 
+    background-position: center; 
+    background-attachment: fixed; 
+    height: 100vh; 
+}
+.tab {
+    display: inline-block;
+    margin-left: 400px;
+}
+.custom-divider {
+    background-color: rgba(0, 0, 0, 3);
+  }
+
+.nameTab {
+    margin-left: 90px;
+}
+.nameTab1{
+    margin-left: 13.5px;
+}
+.heading{
+    color:brown;
+}
+.passenger {
+    color:blue;
+}
+
+.recipt-body {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center; /* Vertical centering */
+    height: 100vh; 
+}

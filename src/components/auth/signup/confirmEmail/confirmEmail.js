@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./confirmEmail.module.css";
 import OTP from "./otp";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNotificationContext } from "../../../../context/notificationContext";
+import { ConfirmEmailWithOTP } from "../../../../redux/actions/AuthActions";
 const ConfirmEmail = ({ next, email }) => {
+  const { openNotification } = useNotificationContext();
+  const confirmEmailResponse = useSelector((state) => state.confirmEmailResponseReducer);
   const dispatch = useDispatch();
   const[otp,setOtp] = useState('')
   const handleOtpSubmit = () => {
@@ -11,9 +15,16 @@ const ConfirmEmail = ({ next, email }) => {
       otp: otp,
     };
     console.log(otpData);
-    dispatch(ConfirmEmail(otpData));
-    next()
+    dispatch(ConfirmEmailWithOTP(otpData));
   };
+  useEffect(() => {
+    if (confirmEmailResponse.status === true) {
+      openNotification("success", confirmEmailResponse.data);
+      next();
+    } else if (confirmEmailResponse.status === false) {
+      openNotification("error", confirmEmailResponse.message);
+    }
+  }, [confirmEmailResponse]);
 
   return (
     <div className={styles.confirm_email_container}>

@@ -15,6 +15,7 @@ axiosInstance.interceptors.request.use(
       !jwtInterceptionExcludedUrls.some((url) => config.url.startsWith(url))
     ) {
       const token = localStorage.getItem("accessToken");
+      console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

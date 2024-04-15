@@ -1,7 +1,10 @@
 import {
   GET_PAST_BOOKINGS,
   GET_UPCOMING_TRIPS,
+  GET_USER_DETAILS_BY_EMAIL_FAILURE,
+  GET_USER_DETAILS_BY_EMAIL_SUCCESS,
 } from "../constants/UserConstants";
+import axios from "../../config/Axios";
 const pastBookings = [
     {
         bookingReference: 'REF123456789',
@@ -82,3 +85,67 @@ export const getUpcomingTrips = () => async (dispatch) => {
     payload: upcomingTrips,
   });
 };
+
+export const GetUserDetailsByEmail = (email) => async (dispatch) => {
+  try {
+    const response = await axios.get(`/user/by-email/${email}`);
+    dispatch({
+      type: GET_USER_DETAILS_BY_EMAIL_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
+    });
+  } catch (error) {
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: GET_USER_DETAILS_BY_EMAIL_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: GET_USER_DETAILS_BY_EMAIL_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
+  }
+};
+
+export const UpdateUserDetails = (userDetails) => async (dispatch) => {
+  try {
+    const response =  await axios.put(`/user/${userDetails.email}`, {
+      ...userDetails,
+    });
+
+    dispatch({
+      type: GET_USER_DETAILS_BY_EMAIL_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
+    });
+  } catch (error) {
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: GET_USER_DETAILS_BY_EMAIL_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: GET_USER_DETAILS_BY_EMAIL_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
+  }
+};
+

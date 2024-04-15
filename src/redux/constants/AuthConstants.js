@@ -1,7 +1,5 @@
 export const GET_COUNTRY_LIST = "GET_COUNTRY_LIST"
 
-export const API_SUCCESS = "API_SUCCESS"
-export const API_ERROR = "API_ERROR"
 
 // Login constants
 export const LOGIN_USER = "LOGIN_USER"

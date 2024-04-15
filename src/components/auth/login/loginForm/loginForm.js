@@ -15,13 +15,8 @@ const LoginForm = () => {
   const {openNotification} = useNotificationContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const loginResponse = useSelector((state) => ({
-    status: state.loginResponseReducer.status,
-    message: state.loginResponseReducer.message,
-    data: state.loginResponseReducer.data,
-  }));
-  const authRole = useSelector(
-    (state) => state.authenticationStateReducer.role
+  const loginResponse = useSelector((state) => state.loginResponseReducer); 
+  const authRole = useSelector((state) => state.authenticationStateReducer.role
   );
   useEffect(() => {
     dispatch(ResetLoginResponseState());

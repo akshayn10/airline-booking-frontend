@@ -1,12 +1,25 @@
 import {
-  API_ERROR,
-  API_SUCCESS,
+  ADD_CONTACT_DETAILS_FAILURE,
+  ADD_CONTACT_DETAILS_SUCCESS,
   AUTHENTICATED,
+  CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_SUCCESS,
+  EMAIL_CONFIRMATION_FAILURE,
+  EMAIL_CONFIRMATION_SUCCESS,
+  FORGOT_PASSWORD_CONFIRMATION_FAILURE,
+  FORGOT_PASSWORD_CONFIRMATION_SUCCESS,
+  FORGOT_PASSWORD_FAILURE,
+  FORGOT_PASSWORD_SUCCESS,
   GET_COUNTRY_LIST,
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
+  REGISTER_FAILURE,
+  REGISTER_SUCCESS,
   RESET_LOGIN_STATE,
+  RESET_PASSWORD_FAILURE,
+  RESET_PASSWORD_SUCCESS,
 } from "../constants/AuthConstants";
+
 import countryList from "../../assets/json/countries.json";
 import axios from "../../config/Axios";
 import { jwtDecode } from "jwt-decode";
@@ -20,38 +33,66 @@ export const getCountryList = () => async (dispatch) => {
 };
 
 export const RegisterUser = (registerUserData) => async (dispatch) => {
+  clearLocalStorage();
   try {
-    await axios.post("/auth/register", { ...registerUserData });
+    const response = await axios.post("/auth/register", {
+      ...registerUserData,
+    });
+
     dispatch({
-      type: API_SUCCESS,
-      success: "Flight location created successfully",
+      type: REGISTER_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    if (error.response?.status === 400) {
-      dispatch({ type: API_ERROR, error: "User Name already exist" });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: REGISTER_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
     } else {
       dispatch({
-        type: API_ERROR,
-        error: "Something went wrong from server-side",
+        type: REGISTER_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
       });
     }
   }
 };
 
-export const ConfirmEmail = (confirmEmailData) => async (dispatch) => {
+export const ConfirmEmailWithOTP = (confirmEmailData) => async (dispatch) => {
   try {
-    await axios.post("/auth/email-confirmation", { ...confirmEmailData });
+    const response = await axios.post("/auth/email-confirmation", {
+      ...confirmEmailData,
+    });
     dispatch({
-      type: API_SUCCESS,
-      success: "Email Created successfully",
+      type: EMAIL_CONFIRMATION_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    if (error.response?.status === 400) {
-      dispatch({ type: API_ERROR, error: "User with email already exist" });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: EMAIL_CONFIRMATION_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
     } else {
       dispatch({
-        type: API_ERROR,
-        error: "Something went wrong from server-side",
+        type: EMAIL_CONFIRMATION_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
       });
     }
   }
@@ -75,7 +116,6 @@ export const LoginUser = (loginUserData) => async (dispatch) => {
     localStorage.setItem("email", sub);
     localStorage.setItem("exp", exp);
 
-    console.log(accessToken, refreshToken, user);
     dispatch({
       type: LOGIN_SUCCESS,
       status: response.data.success,
@@ -117,77 +157,163 @@ export const ResetLoginResponseState = () => async (dispatch) => {
 };
 export const SaveContactDetails = (contactDetails) => async (dispatch) => {
   try {
-    await axios.post("/auth/contact-details", { ...contactDetails });
+    const response = await axios.post("/auth/contact-details", {
+      ...contactDetails,
+    });
     dispatch({
-      type: API_SUCCESS,
-      success: "Contact Saved",
+      type: ADD_CONTACT_DETAILS_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    dispatch({
-      type: API_ERROR,
-      error: "Something went wrong from server-side",
-    });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: ADD_CONTACT_DETAILS_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: ADD_CONTACT_DETAILS_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
   }
 };
 
 export const ForgotPassword = (forgotPasswordData) => async (dispatch) => {
   try {
-    await axios.post("/auth/forgot-password", { ...forgotPasswordData });
+    const response = await axios.post("/auth/forgot-password", {
+      ...forgotPasswordData,
+    });
+
     dispatch({
-      type: API_SUCCESS,
-      success: "Forgot password request Successful",
+      type: FORGOT_PASSWORD_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    dispatch({
-      type: API_ERROR,
-      error: "Something went wrong from server-side",
-    });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: FORGOT_PASSWORD_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: FORGOT_PASSWORD_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
   }
 };
 
 export const ForgotPasswordConfirmation =
   (forgotPasswordConfirmationData) => async (dispatch) => {
     try {
-      await axios.post("/auth/forgot-password-confirmation", {
+      const response = await axios.post("/auth/forgot-password-confirmation", {
         ...forgotPasswordConfirmationData,
       });
+
       dispatch({
-        type: API_SUCCESS,
-        success: "Forgot password Confirmation Successful",
+        type: FORGOT_PASSWORD_CONFIRMATION_SUCCESS,
+        status: response.data.success,
+        message: response.data.message,
+        data: response.data.data,
       });
     } catch (error) {
-      dispatch({
-        type: API_ERROR,
-        error: "Something went wrong from server-side",
-      });
+      if (error.response.data) {
+        const apiResponse = error.response.data;
+        console.log(apiResponse);
+        if (apiResponse.success === false) {
+          dispatch({
+            type: FORGOT_PASSWORD_CONFIRMATION_FAILURE,
+            status: apiResponse.success,
+            message: apiResponse.message,
+          });
+        }
+      } else {
+        dispatch({
+          type: FORGOT_PASSWORD_CONFIRMATION_FAILURE,
+          status: "FAILED",
+          message: "Something went wrong from server-side",
+        });
+      }
     }
   };
 export const ResetPassword = (resetPasswordData) => async (dispatch) => {
   try {
-    await axios.post("/auth/reset-password", { ...resetPasswordData });
+    const response = await axios.post("/auth/reset-password", {
+      ...resetPasswordData,
+    });
     dispatch({
-      type: API_SUCCESS,
-      success: "Password reset Successful",
+      type: RESET_PASSWORD_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    dispatch({
-      type: API_ERROR,
-      error: "Something went wrong from server-side",
-    });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: RESET_PASSWORD_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: REGISTER_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
   }
 };
 
 export const ChangePassword = (changePasswordData) => async (dispatch) => {
   try {
-    await axios.post("/auth/change-password", { ...changePasswordData });
+    const response = await axios.post("/auth/change-password", {
+      ...changePasswordData,
+    });
+
     dispatch({
-      type: API_SUCCESS,
-      success: "Password Change Successful",
+      type: CHANGE_PASSWORD_SUCCESS,
+      status: response.data.success,
+      message: response.data.message,
+      data: response.data.data,
     });
   } catch (error) {
-    dispatch({
-      type: API_ERROR,
-      error: "Something went wrong from server-side",
-    });
+    if (error.response.data) {
+      const apiResponse = error.response.data;
+      console.log(apiResponse);
+      if (apiResponse.success === false) {
+        dispatch({
+          type: CHANGE_PASSWORD_FAILURE,
+          status: apiResponse.success,
+          message: apiResponse.message,
+        });
+      }
+    } else {
+      dispatch({
+        type: CHANGE_PASSWORD_FAILURE,
+        status: "FAILED",
+        message: "Something went wrong from server-side",
+      });
+    }
   }
 };

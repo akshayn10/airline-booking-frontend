@@ -158,10 +158,10 @@ const FlightManagement = () => {
                 const editable = isEditing(record) && !record.flightHasBookings && !isCompleted;
 
                 // Display different content based on flight status
-                if (record.flightHasBookings) {
-                    return <span><Chip label={"Has Bookings"} /></span>;
-                } else if (isCompleted) {
-                    return <span><Chip label={"Completed"} /></span>;
+                if (isCompleted) {
+                    return <Chip label={"Completed"} />;
+                } else if (record.flightHasBookings) {
+                    return <Chip label={"Has Bookings"} />;
                 } else if (editable) {
                     // If the row is editable and flight status is active
                     return (

@@ -98,7 +98,7 @@ const FleetInformationModal = ({ visible, onFleetUpdate, onCancel, fleetData, in
     return (
         <Modal
             open={visible}
-            title={initialFleet.flightHasBookings ? "Fleet Information" : "Select a Fleet"}
+            title={initialFleet.isEditable ? "Select a Fleet" : "Fleet Information"}
             onCancel={onCancel}
             footer={[
                 // Conditionally render buttons based on isEditable

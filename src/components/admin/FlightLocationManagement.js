@@ -16,7 +16,7 @@ const FlightLocationManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [])
+    }, []);
 
     const isEditing = (record) => record.id === editingFlightLocationId;
 
@@ -47,7 +47,6 @@ const FlightLocationManagement = () => {
 
     const addFlightLocation = (newLocation) => {
         dispatch(AddFlightLocation(newLocation));
-        setNewFlightLocationModalVisible(false);
     }
 
     const columns = [

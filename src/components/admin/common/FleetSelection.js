@@ -30,7 +30,9 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={!isEditable || selectedFleet?.totalEconomySeats === 0}
+                                disabled={isEditable && selectedFleet?.totalEconomySeats === 0}
+                                readOnly={!isEditable && selectedFleet?.totalEconomySeats === 0}
+                                required
                             />
                         </Form.Item>
                     </Col>
@@ -42,7 +44,9 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={!isEditable || selectedFleet?.totalPremiumSeats === 0}
+                                disabled={isEditable && selectedFleet?.totalPremiumSeats === 0}
+                                readOnly={!isEditable && selectedFleet?.totalPremiumSeats === 0}
+                                required
                             />
                         </Form.Item>
                     </Col>
@@ -54,7 +58,9 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
-                                disabled={!isEditable || selectedFleet?.totalBusinessSeats === 0}
+                                disabled={isEditable && selectedFleet?.totalBusinessSeats === 0}
+                                readOnly={!isEditable && selectedFleet?.totalBusinessSeats === 0}
+                                required
                             />
                         </Form.Item>
                     </Col>

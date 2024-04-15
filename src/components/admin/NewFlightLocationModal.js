@@ -16,6 +16,7 @@ const NewFlightLocationModal = ({ visible, onCreate, onCancel }) => {
                     .then((values) => {
                         form.resetFields();
                         onCreate(values);
+                        onCancel();
                     })
                     .catch((info) => {
                         console.log('Validate Failed:', info);

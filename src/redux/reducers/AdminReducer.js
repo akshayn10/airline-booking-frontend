@@ -1,4 +1,4 @@
-import { CREATE_FLIGHT, CREATE_FLIGHT_LOCATION, DELETE_FLIGHT, DELETE_FLIGHT_LOCATION, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, UPDATE_FLIGHT, UPDATE_FLIGHT_LOCATION } from "../constants/AdminConstants";
+import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants";
 
 const flightLocationsState = {
     isLoading: false,
@@ -15,41 +15,41 @@ const flightsState = {
     flights: [],
 }
 
-export const AdminFlightLocationReducer = (state = flightLocationsState, action) => {
-    switch (action.type) {
-        case CREATE_FLIGHT_LOCATION:
-            return { ...state, flightLocations: action.payload }
-        case UPDATE_FLIGHT_LOCATION:
-            return { ...state, flightLocations: action.payload }
-        case DELETE_FLIGHT_LOCATION:
-            return { ...state, flightLocations: action.payload }
-        case GET_FLIGHT_LOCATIONS:
-            return { ...state, flightLocations: action.payload }
-        default:
-            return state;
+const apiResponse = {
+    responseType: '',
+    responseMessage: ''
+}
+
+export const ApiErrorReducer = (state = apiResponse, action) => {
+    if (action.type === API_ERROR) {
+        return { ...state, responseType: 'error', responseMessage: action.error }
+    } else if (action.type === API_SUCCESS) {
+        return { ...state, responseType: 'success', responseMessage: action.success }
+    } else if (action.type === RESET_API_RESPONSE) {
+        return apiResponse;
     }
+    else {
+        return state;
+    }
+}
+
+export const AdminFlightLocationReducer = (state = flightLocationsState, action) => {
+    if (action.type === GET_FLIGHT_LOCATIONS)
+        return { ...state, flightLocations: action.payload }
+    else
+        return state;
 }
 
 export const AdminFleetReducer = (state = fleetsState, action) => {
-    switch (action.type) {
-        case GET_FLEETS:
-            return { ...state, fleets: action.payload }
-        default:
-            return state;
-    }
+    if (action.type === GET_FLEETS)
+        return { ...state, fleets: action.payload }
+    else
+        return state;
 }
 
 export const AdminFlightsReducer = (state = flightsState, action) => {
-    switch (action.type) {
-        case CREATE_FLIGHT:
-            return { ...state, flights: action.payload }
-        case GET_FLIGHTS:
-            return { ...state, flights: action.payload }
-        case UPDATE_FLIGHT:
-            return { ...state, flights: action.payload }
-        case DELETE_FLIGHT:
-            return { ...state, flights: action.payload }
-        default:
-            return state;
-    }
+    if (action.type === GET_FLIGHTS)
+        return { ...state, flights: action.payload }
+    else
+        return state;
 }

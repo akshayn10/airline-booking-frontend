@@ -1,171 +1,103 @@
-import { CREATE_FLIGHT, CREATE_FLIGHT_LOCATION, DELETE_FLIGHT, DELETE_FLIGHT_LOCATION, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, UPDATE_FLIGHT, UPDATE_FLIGHT_LOCATION } from "../constants/AdminConstants"
+import axios from "../../config/Axios";
+import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants"
 
-let flightLocations = [
-    {
-        id: 1,
-        country: 'Sri Lanka',
-        cityName: 'Katunayake',
-        airportName: 'Katunayake International Airport',
-        code: '941'
-    },
-    {
-        id: 2,
-        country: 'United Arab Emirates',
-        cityName: 'Dubai',
-        airportName: 'Dubai International Airport',
-        code: '971'
-    },
-];
-
-let fleets = [
-    {
-        id: 1,
-        code: '1200',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: undefined
-    },
-    {
-        id: 2,
-        code: '1201',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    },
-    {
-        id: 3,
-        code: '1202',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: undefined
-    },
-    {
-        id: 4,
-        code: '1203',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    },
-    {
-        id: 5,
-        code: '1204',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: undefined
-    },
-    {
-        id: 6,
-        code: '1205',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    },
-    {
-        id: 7,
-        code: '1206',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: undefined
-    },
-    {
-        id: 8,
-        code: '1207',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    },
-    {
-        id: 9,
-        code: '1208',
-        model: 'Boeing',
-        totalEconomySeats: 50,
-        totalPremiumSeats: 30,
-        totalBusinessSeats: undefined
-    },
-    {
-        id: 10,
-        code: '1209',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    },
-    {
-        id: 11,
-        code: '1210',
-        model: 'AirBus',
-        totalEconomySeats: 100,
-        totalPremiumSeats: 60,
-        totalBusinessSeats: 60
-    }
-];
-
-let flights = [];
+export const ResetAPIResponse = () => async (dispatch) => {
+    dispatch({ type: RESET_API_RESPONSE });
+}
 
 export const AddFlightLocation = (flightLocation) => async (dispatch) => {
-    flightLocations = [...flightLocations, { id: (flightLocations.length + 1), ...flightLocation }];
-    dispatch({ type: CREATE_FLIGHT_LOCATION, payload: flightLocations });
+    try {
+        await axios.post("/v1/admin/location", { id: 0, ...flightLocation });
+        dispatch({ type: API_SUCCESS, success: "Flight location created successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location code already exists" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const AddFlight = (flight) => async (dispatch) => {
-    flights = [...flights, { id: (flights.length + 1), ...flight }];
-    dispatch({ type: CREATE_FLIGHT, payload: flights });
+    try {
+        await axios.post("/v1/admin/flight", { id: 0, ...flight });
+        dispatch({ type: API_SUCCESS, success: "Flight created successfully" });
+        dispatch(GetFlights());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight already booked in between selected departure and arrival time period" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const GetFlightLocations = () => async (dispatch) => {
-    dispatch({ type: GET_FLIGHT_LOCATIONS, payload: flightLocations });
+    try {
+        const response = await axios.get("/v1/admin/location");
+        dispatch({ type: GET_FLIGHT_LOCATIONS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const GetFleets = () => async (dispatch) => {
-    dispatch({ type: GET_FLEETS, payload: fleets });
+    try {
+        const response = await axios.get("/v1/admin/fleet");
+        dispatch({ type: GET_FLEETS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const GetFlights = () => async (dispatch) => {
-    dispatch({ type: GET_FLIGHTS, payload: flights });
+    try {
+        const response = await axios.get("/v1/admin/flight");
+        dispatch({ type: GET_FLIGHTS, payload: response.data });
+    } catch (error) {
+        dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+    }
 }
 
 export const UpdateFlightLocation = (flightLocation) => async (dispatch) => {
-    const existingFlightLocations = [...flightLocations];
-    const index = existingFlightLocations.findIndex((item) => item.id === flightLocation.id);
-    const item = existingFlightLocations[index];
-    existingFlightLocations.splice(index, 1, {
-        ...item,
-        ...flightLocation,
-    });
-    flightLocations = existingFlightLocations;
-
-    dispatch({ type: UPDATE_FLIGHT_LOCATION, payload: flightLocations });
+    try {
+        await axios.patch("/v1/admin/location", flightLocation);
+        dispatch({ type: API_SUCCESS, success: "Flight location updated successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location code already exists" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const UpdateFlight = (flight) => async (dispatch) => {
-    const existingFlightData = [...flights];
-    const index = existingFlightData.findIndex((item) => flight.id === item.id);
-    const item = existingFlightData[index];
-    existingFlightData.splice(index, 1, {
-        ...item,
-        ...flight,
-    });
-    flights = existingFlightData;
-
-    dispatch({ type: UPDATE_FLIGHT, payload: flights });
+    try {
+        await axios.patch("/v1/admin/flight", flight);
+        dispatch({ type: API_SUCCESS, success: "Flight updated successfully" });
+        dispatch(GetFlights());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight already booked in between selected departure and arrival time period" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }
 
 export const DeleteFlightLocation = (flightLocationId) => async (dispatch) => {
-    flightLocations = flightLocations.filter((item) => item.id !== flightLocationId);
-
-    dispatch({ type: DELETE_FLIGHT_LOCATION, payload: flightLocations });
-}
-
-export const DeleteFlight = (flightId) => async (dispatch) => {
-    flights = flights.filter((item) => item.id !== flightId);
-
-    dispatch({ type: DELETE_FLIGHT, payload: flights });
+    try {
+        await axios.delete(`/v1/admin/location/${flightLocationId}`);
+        dispatch({ type: API_SUCCESS, success: "Flight location deleted successfully" });
+        dispatch(GetFlightLocations());
+    } catch (error) {
+        if (error.response?.status === 400) {
+            dispatch({ type: API_ERROR, error: "Flight location already available in existing flight records" });
+        } else {
+            dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
+        }
+    }
 }

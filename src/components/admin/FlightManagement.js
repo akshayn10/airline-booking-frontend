@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Form, Popconfirm, Table, Typography } from 'antd';
+import { Button, Form, Popconfirm, Table, Typography, Space } from 'antd';
+import Chip from '@mui/material/Chip';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FleetInfomationModal from './FleetInformationModal';
 import AddFlightModal from './AddFlightModal';
 import EditableCell from './common/EditableCell';
-import { AddFlight, DeleteFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
+import { AddFlight, GetFleets, GetFlightLocations, GetFlights, UpdateFlight } from '../../redux/actions/AdminActions';
 import { formatDate } from '../../util/DateConversion';
+import dayjs from 'dayjs';
 
 const FlightManagement = () => {
     const [form] = Form.useForm();
@@ -22,25 +24,26 @@ const FlightManagement = () => {
 
     const [addFlightModalVisible, setAddFlightModalVisible] = useState(false);
     const [fleetInformationModalVisible, setFleetInformationModalVisible] = useState(false);
+    const [isFleetEditable, setIsFleetEditable] = useState(false);
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [flightLocationData]);
+    }, []);
 
     useEffect(() => {
         dispatch(GetFleets());
-    }, [fleetData]);
+    }, []);
 
     useEffect(() => {
         dispatch(GetFlights());
-    }, [flightData]);
+    }, []);
 
     const isEditing = (record) => record.id === flightEditingId;
 
     const edit = (record) => {
         form.setFieldsValue({
             ...record,
-            departureAndArrival: [record.departureTime, record.arrivalTime],
+            departureAndArrival: [dayjs(record.departureTime), dayjs(record.arrivalTime)],
         });
         setFlightEditingId(record.id);
     }
@@ -48,20 +51,21 @@ const FlightManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
-            row.id = id;
-            row.departureTime = row['departureAndArrival'][0];
-            row.arrivalTime = row['departureAndArrival'][1];
-            delete row.departureAndArrival;
+            form.resetFields();
 
-            dispatch(UpdateFlight(row));
+            const updatedFlight = flightData.find(flight => flight.id === id);
+            const updatedFlightCopy = { ...updatedFlight };
+
+            updatedFlightCopy.departureTime = row['departureAndArrival'][0];
+            updatedFlightCopy.arrivalTime = row['departureAndArrival'][1];
+            updatedFlightCopy.departureLocation = row['departureLocation'];
+            updatedFlightCopy.arrivalLocation = row['arrivalLocation'];
+
+            dispatch(UpdateFlight(updatedFlightCopy));
             setFlightEditingId('');
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
-    }
-
-    const deleteRow = async (id) => {
-        dispatch(DeleteFlight(id));
     }
 
     const cancel = () => {
@@ -69,45 +73,41 @@ const FlightManagement = () => {
     }
 
     const addNewFlight = (newFlight) => {
-        const selectedFleet = fleetData.find(fleet => fleet.id === newFlight.fleetId);
-
-        const newFlightData = {
-            departureLocation: newFlight.departureLocation,
-            arrivalLocation: newFlight.arrivalLocation,
-            departureTime: newFlight.departureTime,
-            arrivalTime: newFlight.arrivalTime,
-            fleet: {
-                id: selectedFleet.id,
-                economyFare: newFlight.economyFare,
-                premiumFare: newFlight.premiumFare,
-                businessFare: newFlight.businessFare
-            }
-        }
-
-        dispatch(AddFlight(newFlightData));
-        setAddFlightModalVisible(false);
+        dispatch(AddFlight(newFlight));
     }
 
-    const handleFlightFleetUpdate = (updatedFleet, flightId) => {
+    const handleFlightFleetUpdate = (updatedFleet) => {
         const existingFlightData = [...flightData];
-        const flightIndex = existingFlightData.findIndex(flight => flight.id === flightId);
+        const flightIndex = existingFlightData.findIndex(flight => flight.id === flightFleetEditingId);
 
         existingFlightData[flightIndex] = {
             ...existingFlightData[flightIndex],
-            departureAndArrival: [
-                existingFlightData[flightIndex].departureTime,
-                existingFlightData[flightIndex].arrivalTime
-            ],
-            fleet: updatedFleet
+            ...updatedFleet
         };
 
-        dispatch(UpdateFlight(existingFlightData[flightIndex], flightId));
+        dispatch(UpdateFlight(existingFlightData[flightIndex]));
     }
 
     const showFleetModal = (record) => {
-        setViewingFleet(record.fleet);
+        const tempViewingFleet = {
+            id: record.fleetId,
+            economyFare: record.economyFare,
+            premiumFare: record.premiumFare,
+            businessFare: record.businessFare,
+            remainingEconomySeats: record.remainingEconomySeats,
+            remainingPremiumSeats: record.remainingPremiumSeats,
+            remainingBusinessSeats: record.remainingBusinessSeats,
+            flightHasBookings: record.flightHasBookings,
+        };
+        setViewingFleet(tempViewingFleet);
         setFlightFleetEditingId(record.id);
+
+        // Determine if the fleet information is editable
+        const isFlightEditable = !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
+
+        // Pass the isEditable flag to the modal
         setFleetInformationModalVisible(true);
+        setIsFleetEditable(isFlightEditable);
     }
 
     const columns = [
@@ -128,7 +128,7 @@ const FlightManagement = () => {
         {
             title: 'Departure Time and Arrival Time',
             dataIndex: 'departureAndArrival',
-            width: '25%',
+            width: '20%',
             editable: true,
             render: (_, record) => {
                 return (
@@ -141,35 +141,47 @@ const FlightManagement = () => {
         {
             title: 'Fleet Information',
             dataIndex: 'fleet',
-            width: '5%',
+            width: '10%',
+            align: 'center',
             render: (_, record) => (
                 <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {
-            title: 'Operation',
+            title: 'Operation / Status',
             dataIndex: 'operation',
+            align: 'center',
             render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
-                            Save
-                        </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a href={() => false}>Cancel</a>
-                        </Popconfirm>
-                    </span>
-                ) : (
-                    <span>
-                        <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
+                const isCompleted = dayjs(record.departureTime).isBefore(dayjs());
+
+                // Condition to determine if the row should be editable
+                const editable = isEditing(record) && !record.flightHasBookings && !isCompleted;
+
+                // Display different content based on flight status
+                if (isCompleted) {
+                    return <Chip label={"Completed"} />;
+                } else if (record.flightHasBookings) {
+                    return <Chip label={"Has Bookings"} />;
+                } else if (editable) {
+                    // If the row is editable and flight status is active
+                    return (
+                        <Space size="large">
+                            <Typography.Link onClick={() => save(record.id)} style={{ whiteSpace: 'nowrap' }}>
+                                Save
+                            </Typography.Link>
+                            <Popconfirm title="Are you sure?" onConfirm={cancel}>
+                                <a href={() => false}>Cancel</a>
+                            </Popconfirm>
+                        </Space>
+                    );
+                } else {
+                    // If the flight is active but not currently being edited
+                    return (
+                        <Typography.Link disabled={flightEditingId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
                             Edit
                         </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>
-                            <a href={() => false} disabled={flightEditingId !== ''}>Delete</a>
-                        </Popconfirm>
-                    </span>
-                );
+                    );
+                }
             },
         },
     ];
@@ -184,7 +196,8 @@ const FlightManagement = () => {
                 editing: isEditing(record),
                 dataIndex: col.dataIndex,
                 title: col.title,
-                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select' : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
+                inputType: col.dataIndex === 'departureLocation' || col.dataIndex === 'arrivalLocation' ? 'select'
+                    : col.dataIndex === 'departureAndArrival' ? 'rangePicker' : 'text',
                 record,
                 selectOptions: flightLocationData.map(({ id, airportName, cityName, country }) => ({
                     label: `${airportName} at ${cityName}, ${country}`,
@@ -217,7 +230,7 @@ const FlightManagement = () => {
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
-                        pageSize: 10,
+                        pageSize: 5,
                         total: flightData.length,
                         showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                         onChange: cancel
@@ -241,7 +254,7 @@ const FlightManagement = () => {
                 }}
                 fleetData={fleetData}
                 initialFleet={viewingFleet}
-                editingFlightId={flightFleetEditingId}
+                isEditable={isFleetEditable}
             />
         </>
     );

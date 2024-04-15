@@ -19,8 +19,8 @@ const getItem =(label, key, icon, children, type)=> {
 }
 const items = [
   getItem("Dashboard", "1", <PieChartOutlined />),
-  getItem("Flights", "2", <FlightIcon />),
-  getItem("Reports", "3", <AssessmentIcon />),
+  // getItem("Flights", "2", <FlightIcon />),
+  // getItem("Reports", "3", <AssessmentIcon />),
 ];
 const UserNavbar = ({ children }) => {
   const navigate = useNavigate();

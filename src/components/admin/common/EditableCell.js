@@ -35,7 +35,6 @@ const EditableCell = ({
             if (dataIndex === "departureAndArrival") {
                 rules.push({
                     validator: async (_, value) => {
-                        console.log(value)
                         if (value && value[0] && value[1] && value[0].isSame(value[1], 'minute')) {
                             throw new Error('Departure and arrival datetime must be different!');
                         }
@@ -45,7 +44,7 @@ const EditableCell = ({
             break;
         case 'select':
             inputNode = (
-                <Select>
+                <Select showSearch>
                     {selectOptions.map(opt => (
                         <Option key={opt.value} value={opt.value}>{opt.label}</Option>
                     ))}

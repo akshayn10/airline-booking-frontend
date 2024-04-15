@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { Button, Form, Popconfirm, Table, Typography } from 'antd';
+import { Button, Form, Popconfirm, Table, Typography, Space } from 'antd';
 import EditableCell from './common/EditableCell';
 import NewFlightLocationModal from './NewFlightLocationModal';
-import { AddFlightLocation, DeleteFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
+import { AddFlightLocation, GetFlightLocations, UpdateFlightLocation } from '../../redux/actions/AdminActions';
 
 const FlightLocationManagement = () => {
     const [form] = Form.useForm();
@@ -16,7 +16,7 @@ const FlightLocationManagement = () => {
 
     useEffect(() => {
         dispatch(GetFlightLocations());
-    }, [dispatch, flightLocationData])
+    }, []);
 
     const isEditing = (record) => record.id === editingFlightLocationId;
 
@@ -30,6 +30,8 @@ const FlightLocationManagement = () => {
     const save = async (id) => {
         try {
             const row = await form.validateFields();
+            form.resetFields();
+
             row.id = id;
 
             dispatch(UpdateFlightLocation(row));
@@ -39,17 +41,12 @@ const FlightLocationManagement = () => {
         }
     }
 
-    const deleteRow = async (id) => {
-        dispatch(DeleteFlightLocation(id));
-    }
-
     const cancel = () => {
         setEditingFlightLocationId('');
     }
 
     const addFlightLocation = (newLocation) => {
         dispatch(AddFlightLocation(newLocation));
-        setNewFlightLocationModalVisible(false);
     }
 
     const columns = [
@@ -76,30 +73,31 @@ const FlightLocationManagement = () => {
             dataIndex: 'code',
             width: '10%',
             editable: true,
+            align: 'center'
         },
         {
             title: 'Operation',
             dataIndex: 'operation',
+            align: 'center',
             render: (_, record) => {
                 const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
-                            Save
-                        </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a href={() => false}>Cancel</a>
-                        </Popconfirm>
-                    </span>
-                ) : (
-                    <span>
-                        <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ marginRight: 8 }}>
-                            Edit
-                        </Typography.Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => deleteRow(record.id)}>
-                            <a href={() => false} disabled={editingFlightLocationId !== ''}>Delete</a>
-                        </Popconfirm>
-                    </span>
+                return (
+                    <Space size='large'>
+                        {editable ? (
+                            <>
+                                <Typography.Link onClick={() => save(record.id)} style={{ whiteSpace: 'nowrap' }}>
+                                    Save
+                                </Typography.Link>
+                                <Popconfirm title="Are you sure?" onConfirm={cancel}>
+                                    <a href={() => false}>Cancel</a>
+                                </Popconfirm>
+                            </>
+                        ) : (
+                            <Typography.Link disabled={editingFlightLocationId !== ''} onClick={() => edit(record)} style={{ whiteSpace: 'nowrap' }}>
+                                Edit
+                            </Typography.Link>
+                        )}
+                    </Space>
                 );
             },
         },

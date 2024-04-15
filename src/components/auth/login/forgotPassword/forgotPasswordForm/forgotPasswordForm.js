@@ -4,12 +4,23 @@ import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OTP from "../../../signup/confirmEmail/otp";
-import { useDispatch } from "react-redux";
-import { useState } from "react";
-import { ForgotPassword, ForgotPasswordConfirmation } from "../../../../../redux/actions/AuthActions";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import {
+  ForgotPassword,
+  ForgotPasswordConfirmation,
+} from "../../../../../redux/actions/AuthActions";
+import { useNotificationContext } from "../../../../../context/notificationContext";
 
 const ForgotPasswordForm = () => {
   const dispatch = useDispatch();
+  const { openNotification } = useNotificationContext();
+  const forgotPasswordResponse = useSelector(
+    (state) => state.forgotPasswordResponseReducer
+  );
+  const forgotPasswordConfirmationResponse = useSelector(
+    (state) => state.forgotPasswordConfirmationResponseReducer
+  );
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -19,16 +30,29 @@ const ForgotPasswordForm = () => {
   const handleOtpSubmit = () => {
     const otpData = {
       email: email,
-      otp: otp
-    }
-    dispatch(ForgotPasswordConfirmation(otpData))
-    const routeState = { email: email };
-    // navigate("/auth/reset-password", { state: routeState });
-
+      otp: otp,
+    };
+    dispatch(ForgotPasswordConfirmation(otpData));
   };
+  useEffect(() => {
+    if (forgotPasswordResponse.status === true) {
+      openNotification("success", forgotPasswordResponse.data);
+    } else if (forgotPasswordResponse.status === false) {
+      openNotification("error", forgotPasswordResponse.message);
+    }
+  }, [forgotPasswordResponse]);
+  useEffect(() => {
+    if (forgotPasswordConfirmationResponse.status === true) {
+      openNotification("success", forgotPasswordConfirmationResponse.data);
+      const routeState = { email: email };
+      navigate("/auth/reset-password", { state: routeState });
+    } else if (forgotPasswordConfirmationResponse.status === false) {
+      openNotification("error", forgotPasswordConfirmationResponse.message);
+    }
+  }, [forgotPasswordConfirmationResponse]);
   const onFinish = (values) => {
     setEmail(values.email);
-    dispatch(ForgotPassword(values))
+    dispatch(ForgotPassword(values));
     setShowOtp(true);
     setDisableEmailSubmitButton(true);
     console.log("Success:", values);
@@ -56,7 +80,12 @@ const ForgotPasswordForm = () => {
           />
         </Form.Item>
         <Form.Item>
-          <Button disabled={disableEmailSubmitButton} type="primary" htmlType="submit" className="login__button">
+          <Button
+            disabled={disableEmailSubmitButton}
+            type="primary"
+            htmlType="submit"
+            className="login__button"
+          >
             Send Email
           </Button>
         </Form.Item>

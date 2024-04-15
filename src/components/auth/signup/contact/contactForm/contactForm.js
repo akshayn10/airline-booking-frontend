@@ -3,19 +3,31 @@ import styles from "./contactForm.module.css";
 import CountryDropdown from "./countryDropdown";
 import PhoneNumber from "./phoneNumber";
 import { useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SaveContactDetails } from "../../../../../redux/actions/AuthActions";
-
+import { useNotificationContext } from "../../../../../context/notificationContext";
+import { useNavigate } from "react-router-dom";
 const ContactForm = ({ email }) => {
+  const { openNotification } = useNotificationContext();
+  const navigate = useNavigate();
+  const addContactDetailsResponse = useSelector((state) => state.addContactDetailsResponseReducer);
   const dispatch = useDispatch();
   const [selectedCountry, setSelectedCountry] = useState();
 
   const onFinish = (values) => {
-    values = { ...values, email: email };
-    console.log(values);
-    dispatch(SaveContactDetails(values));
-    console.log("Received values of form: ", values);
+    const submitValues = { ...values, email: email };
+    console.log(submitValues);
+    dispatch(SaveContactDetails(submitValues));
+    console.log("Received values of form: ", submitValues);
   };
+  useEffect(() => {
+    if (addContactDetailsResponse.status === true) {
+      openNotification("success", addContactDetailsResponse.data);
+      navigate("/auth/login");
+    } else if (addContactDetailsResponse.status === false) {
+      openNotification("error", addContactDetailsResponse.message);
+    }
+  }, [addContactDetailsResponse]);
   useEffect(() => {
     console.log("hello",selectedCountry)
   }

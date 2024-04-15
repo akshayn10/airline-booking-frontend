@@ -1,17 +1,32 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import "./signupForm.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RegisterUser } from "../../../../../redux/actions/AuthActions";
+import { useNotificationContext } from "../../../../../context/notificationContext";
+import { useEffect, useState } from "react";
 
-const SignupForm = ({ next,setEmail }) => {
+const SignupForm = ({ next, setEmail }) => {
+  const { openNotification } = useNotificationContext();
+  const registerResponse = useSelector((state) => ({
+    status: state.registerResponseReducer.status,
+    message: state.registerResponseReducer.message,
+    data: state.registerResponseReducer.data,
+  }));
   const dispatch = useDispatch();
   const onFinish = (values) => {
-    // dispatch(RegisterUser(values));
+    dispatch(RegisterUser(values));
     setEmail(values.email);
     console.log("Received values of form: ", values);
-    next();
   };
+  useEffect(() => {
+    if (registerResponse.status === true) {
+      openNotification("success", registerResponse.data);
+      next();
+    } else if (registerResponse.status === false) {
+      openNotification("error", registerResponse.message);
+    }
+  }, [registerResponse]);
 
   return (
     <div className="signupForm__container">

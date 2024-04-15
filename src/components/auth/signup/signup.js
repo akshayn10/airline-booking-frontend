@@ -7,7 +7,7 @@ import { Steps } from "antd";
 import ConfirmEmail from "./confirmEmail/confirmEmail";
 import Contact from "./contact/contact";
 
-export const SignupSection = ({ next,setEmail }) => {
+export const SignupSection = ({ next, setEmail }) => {
   return (
     <div className="signup__section">
       <div className="signup__welcome">
@@ -21,7 +21,7 @@ export const SignupSection = ({ next,setEmail }) => {
 };
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [current, setCurrent] = useState(0);
   const next = () => {
     setCurrent(current + 1);
@@ -40,7 +40,7 @@ const Signup = () => {
     },
     {
       title: "Contact Details",
-      content: <Contact />,
+      content: <Contact email={email} />,
     },
   ];
   const items = steps.map((item) => ({
@@ -60,10 +60,7 @@ const Signup = () => {
       <div className="signup__text">User Signup</div>
       <div className="signup__container">
         <div className="steps_container">
-          <Steps
-            current={current}
-            items={items}
-          />
+          <Steps current={current} items={items} />
         </div>
         <div>{steps[current].content}</div>
       </div>

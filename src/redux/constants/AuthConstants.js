@@ -1,7 +1,5 @@
 export const GET_COUNTRY_LIST = "GET_COUNTRY_LIST"
 
-export const API_SUCCESS = "API_SUCCESS"
-export const API_ERROR = "API_ERROR"
 
 // Login constants
 export const LOGIN_USER = "LOGIN_USER"
@@ -10,6 +8,8 @@ export const LOGIN_FAILURE = "LOGIN_FAILURE";
 export const RESET_LOGIN_STATE = "RESET_LOGIN_STATE";
 
 export const AUTHENTICATED = "AUTHENTICATED"
+export const REFRESH_TOKEN = "REFRESH_TOKEN"
+export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_FAILURE"
 
 // Register constants
 export const REGISTER_USER = "REGISTER_USER"

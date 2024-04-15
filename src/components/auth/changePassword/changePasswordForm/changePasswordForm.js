@@ -1,21 +1,39 @@
 import { Input, Form, Button } from "antd";
 import styles from "./changePasswordForm.module.css";
 import { LockOutlined } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { ChangePassword } from "../../../../redux/actions/AuthActions";
+import { useNotificationContext } from "../../../../context/notificationContext";
+import { useEffect } from "react";
 const ChangePasswordForm = () => {
   const dispatch = useDispatch();
+  const email = localStorage.getItem("email");
+  const changePasswordResponse = useSelector(
+    (state) => state.changePasswordResponseReducer
+  );
+  const { openNotification } = useNotificationContext();
+  const navigate = useNavigate();
   const onFinish = (values) => {
+    values = { ...values, email: email };
     dispatch(ChangePassword(values));
     console.log("Success:", values);
   };
+
+  useEffect(() => {
+    if (changePasswordResponse.status === true) {
+      openNotification("success", changePasswordResponse.data);
+      navigate("/auth/login");
+    } else if (changePasswordResponse.status === false) {
+      openNotification("error", changePasswordResponse.message);
+    }
+  }, [changePasswordResponse]);
   return (
     <div className={styles.container}>
       <Form onFinish={onFinish}>
         <Form.Item
-          name="currentPassword"
+          name="oldPassword"
           rules={[
             {
               required: true,
@@ -36,7 +54,7 @@ const ChangePasswordForm = () => {
           />
         </Form.Item>
         <Form.Item
-          name="password"
+          name="newPassword"
           rules={[
             {
               required: true,

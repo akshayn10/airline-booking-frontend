@@ -1,41 +1,59 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Card,Col,Row,Divider,Button,QRCode} from "antd";
 import "./Recipt.css"
-import  html2pdf  from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf'
+import axios from 'axios';
+import { useLocation } from "react-router-dom";
+
 
 function Recipt(){
-    const noOfPassengers = 5;
-    const unitPrice = 15000;
-    const ticketCost = noOfPassengers*unitPrice;
-
-    const totalPassengers= Array.from({ length: noOfPassengers }, (_, index) => index + 1);
     const today =new Date();
 
-    const reciptRef = useRef(null);
+    const [booking, setBooking] = useState([]);
+    const [flight, setFlight] = useState([]);
+
+    const location =useLocation();
+    const passingData = location.state;
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await axios.get(`http://localhost:8080/booking/v1/getByFlight/${passingData.flightNo}`);
+            const response1 = await axios.get(`http://localhost:8080/booking/v1/getPassengers/${passingData.bookingId}`);
+            setFlight(response.data);
+            setBooking(response1.data);
+          } catch (error) {
+            console.error('Error fetching passengers', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     const downloadPDF = () => {
-        const opt = {
-            margin: 1,
-            filename: 'receipt.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf().from(reciptRef.current).set(opt).save();
+        const input = document.getElementById('pdf-content');
+        html2canvas(input).then((canvas)=>{
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, 'PNG' ,0, 0);
+            pdf.save('downloaded-file.pdf');
+        });
     };
     
     return(
-        <div className="payment-details-container" ref={reciptRef}>
-            <Col span={10}>
-                        <Card hoverable style={{width:'1200px',border:'5px'}}>
+        <div  className="payment-details-container" >
+            <div className="recipt-body">
+                <Col>
+                        <Card id="pdf-content" hoverable style={{width:'1200px',border:'5px'}}>
                         <h1>Recipt</h1>
                         <p>Your booking has confirmed. Thank you for choosing Air Canada.<br></br><b>Please bring your receipt to the airport.</b></p>
                         <p></p>
-                        <h2>Main Contact Information <span class="tab"></span> Booking Reference :52546589</h2>
+                        <h2>Main Contact Information <span class="tab"></span> Booking Reference : {passingData.bookingId}</h2>
                         <Divider className="custom-divider" />
                             <Row>
                                 <Col span={15}>
-                                <h3>Name <span class="nameTab"></span>: John <br></br> Email <span class="nameTab"></span>: John@123.com <br></br> Purchased tickets <span class="nameTab1"></span>: 10</h3>
+                                <h3>Name <span class="nameTab"></span>: John <br></br> Email <span class="nameTab"></span>: John@123.com <br></br> Purchased tickets <span class="nameTab1"></span>: {booking.length > 0 ? booking.length : 'Loading...'}</h3>
                             </Col>
                             <Col>
                                 <Card hoverable style={{color:"#eeeee4"}}>
@@ -48,86 +66,92 @@ function Recipt(){
                                 </Card>
                             </Col>
                             </Row>
-                                <h3>Time : {today.getHours()} : {today.getMinutes()}</h3>
+                                <h3>Date -- {today.getDay()} : {today.getMonth()} : {today.getFullYear()}</h3>
+                                <h3>Time -- {today.getHours()} : {today.getMinutes()}</h3>
                            <h2 className="heading">Flight details</h2> <Divider/>
                            <Card hoverable>
                             <Row>
                                 <Col span={4}>
-                                    <h3>Aircraft Name</h3>
+                                    <h3>Aircraft Id</h3>
                                 </Col>
                                 <Col span={4}>
-                                    <h3>Departure</h3>
+                                    <h3>Aircraft model</h3>
                                 </Col>
                                 <Col span={4}>
                                     <h3>Departure time</h3>
                                 </Col>
                                 <Col span={4}>
-                                    <h3>Arrival</h3>
+                                    <h3>Departure</h3>
                                 </Col>
                                 <Col span={4}>
                                     <h3>Arrival Time</h3>
                                 </Col>
                                 <Col>
-                                    <h3>Flight no</h3>
+                                    <h3>Arrival</h3>
                                 </Col>
                             </Row>
                             <Row>
                                 <Col span={4}>
-                                    <p>Aircraft Name</p>
+                                    <p>{flight?.id}</p>
                                 </Col>
                                 <Col span={4}>
-                                    <p>From</p>
+                                    <p>{flight?.fleet?.model}</p>
                                 </Col>
                                 <Col span={4}>
-                                    <p>Departure time</p>
+                                    <p>{flight?.departureTime}</p>
                                 </Col>
                                 <Col span={4}>
-                                    <p>To</p>
+                                    <p>{flight?.departureLocation?.airportName}</p>
                                 </Col>
                                 <Col span={4}>
-                                    <p>Arrival Time</p>
+                                    <p>{flight?.arrivalTime}</p>
                                 </Col>
                                 <Col>
-                                    <p>Flight no</p>
+                                    <p>{flight?.arrivalLocation?.airportName}</p>
                                 </Col>
                             </Row>
                             </Card>
                             <h2 className="heading">Passenger Information</h2> <Divider/>
                            <Card hoverable>
-                            {totalPassengers.map((number,index) =>(
-                                <div key={index}>
-                            <h3 className="passenger">Passenger {number}</h3>
+                            {booking.map((passenger) =>(
+                                <div>
+                            <h3 className="passenger">Passenger {passenger.firstName}</h3>
+                        
                             <Row>
                                 <Col span={7}>
-                                    <h3>Name <span class="nameTab"></span>: Name</h3>
+                                    <h3>Name <span class="nameTab"></span>: {passenger.firstName}</h3>
                                 </Col>
                                 <Col span={7}>
-                                    <h3>Ticket no <span class="nameTab"></span>: 14125</h3>
+                                    <h3>Last Name <span class="nameTab"></span>: {passenger.lastName}</h3>
                                 </Col>
                                 <Col span={7}>
-                                    <h3>Seat no <span class="nameTab"></span>: 45</h3>
+                                    <h3>Date of birth <span class="nameTab"></span>: {passenger.dateOfBirth}</h3>
                                 </Col>    
                             </Row>
                             <Row>
                             <Col span={7}>
-                                    <h3>Meal <span class="nameTab"></span>: Vegetarian</h3>
+                                    <h3>Meal <span class="nameTab"></span>: {passenger.mealPreference}</h3>
                                 </Col>
                                 <Col span={7}>
-                                    <h3>Passport no <span class="nameTab"></span>: 14125</h3>
+                                    <h3>Passport no <span class="nameTab"></span>: {passenger.passportNo}</h3>
                                 </Col>
                                 <Col span={7}>
-                                    <h3>Gender <span class="nameTab"></span>: Male</h3>
+                                    <h3>Gender <span class="nameTab"></span>: {passenger.gender}</h3>
                                 </Col>
                             </Row>
                             </div>
                             ))}
                             </Card>
                             <QRCode type="canvas" value="https://www.airarabia.com/en" />
+                            <h2 className="heading"><span class="nameTab"></span>Please Bring the printed recipt to Airport</h2>
                         </Card>
-                    </Col>
+                        <Row>
                     <Button type="primary" onClick={downloadPDF} danger style={{ width: '200px' }}>
                         Print Recipt 
-                </Button>
+                        </Button>
+                        </Row>
+                        </Col>
+                    </div>
         </div>
     );
 }

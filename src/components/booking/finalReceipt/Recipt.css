@@ -1,8 +1,9 @@
 .payment-details-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    background-image: url('./image/recipt-background.jpg');
+    background-size: cover; 
+    background-position: center; 
+    background-attachment: fixed; 
+    height: 100vh; 
 }
 .tab {
     display: inline-block;
@@ -13,7 +14,7 @@
   }
 
 .nameTab {
-    margin-left: 110px;
+    margin-left: 90px;
 }
 .nameTab1{
     margin-left: 13.5px;
@@ -23,4 +24,11 @@
 }
 .passenger {
     color:blue;
+}
+
+.recipt-body {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center; /* Vertical centering */
+    height: 100vh; 
 }

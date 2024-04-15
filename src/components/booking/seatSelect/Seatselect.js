@@ -1,20 +1,55 @@
-import React, {useState} from "react"; 
-import { Row, Col, Alert,Space,message,Button } from 'antd'; 
-import { useLocation,useParams,Link} from "react-router-dom";
+import React, {useState,useEffect} from "react"; 
+import { Row, Col, Card,Space,message,Button } from 'antd'; 
+import { useLocation,useParams,Link,useNavigate} from "react-router-dom";
 import EventSeatOutlinedIcon from '@mui/icons-material/EventSeatOutlined';
 import FlightClassOutlinedIcon from '@mui/icons-material/FlightClassOutlined';
 import './Seatselect.css'
+import axios from "axios";
 
 function Seatselect() {
 
-    const noOfPassengers = 5;
-
-    const totalSeatsInThePlane=68;
-    const totalSeats = Array.from({ length: totalSeatsInThePlane }, (_, index) => index + 1);
-    const [selectedSeats, setSelectedSeats] = useState([]);
-    const bookedSeats = [1,2,3,4,5,10,12,19,25];
-
     
+    const navigate = useNavigate();
+    const [selectedSeats, setSelectedSeats] = useState([]);
+    const bookedSeats = [1,2];
+
+    const location = useLocation();
+    const passingData = location.state;
+    const noOfPassengers = passingData.totalPassengers;
+
+    const [flightDetail, setFlightDetail] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/booking/v1/getByFlight/${passingData.flightNo}`);
+                console.log('Flight Details:', response.data);
+                setFlightDetail(response.data);
+            } catch (error) {
+                console.error('Error fetching Flights', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+
+    let totalSeatsInThePlane;
+    let costPerSeat;
+    if(passingData.seatType === "economy"){
+        totalSeatsInThePlane = flightDetail.remainingEconomySeats;
+        costPerSeat = flightDetail.economySeatFare;
+
+    }else if(passingData.seatType === "business"){
+        totalSeatsInThePlane = flightDetail.remainingPremiumSeats;
+        costPerSeat = flightDetail.premiumSeatFare;
+
+    }else {
+        totalSeatsInThePlane = flightDetail.remainingBusinessSeats;
+        costPerSeat = flightDetail.businessSeatFare;
+    }
+    const totalSeats = Array.from({ length: totalSeatsInThePlane}, (_, index) => index + 1);
+    
+
     const clicked = (index) => {
         console.log("noOfPassengers is : "+noOfPassengers);
         const updatedSeats = [...selectedSeats];
@@ -33,19 +68,26 @@ function Seatselect() {
         setSelectedSeats(updatedSeats);
     };
 
-    const isSeatDisabled = (seatnumber) =>{
-        
+    const isSeatDisabled = (seatnumber) => {
             if(bookedSeats.includes(seatnumber)){
                 return seatnumber;
             }
-    
+    }
+
+    const buttonClicked = () => {
+        const passingDataTransfer = {
+            totalPassengers : noOfPassengers,
+            flightNo : 4,
+            costPerSeat : costPerSeat,
+            bookingId : passingData.bookingId
+        };
+        navigate('/booking/payment-details', { state: passingDataTransfer});
     }
 
     return (
         <div className='root-container'>              
             <div className="mainclass">
-                <div className="selectedSeat"><h1>Select your seats below</h1> </div>
-
+                <div className="selectedSeat"><h1>Select your {passingData.seatType} seats below </h1> </div>
                     <Row gutter={[180, 16]}>
                         {totalSeats.map((number, index) => (
                             <Col span={5} key={number}>
@@ -67,11 +109,11 @@ function Seatselect() {
                 </div>
                 <br></br>
                 <div style={{ display: 'flex', justifyContent: 'center'}}>
-                <Link to="/booking/payment-details">
-                <Button type="primary" danger>
+
+                <Button type="primary" danger onClick={buttonClicked}>
                     Proceed to Checkout
                 </Button>
-                </Link>
+
             </div>
             </div>
         </div>

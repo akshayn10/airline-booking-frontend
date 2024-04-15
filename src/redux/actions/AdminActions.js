@@ -1,5 +1,5 @@
-import axios from "../../config/Axios";
-import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, RESET_API_RESPONSE } from "../constants/AdminConstants"
+import axios from "../../config/Axois";
+import { API_ERROR, API_SUCCESS, GET_FLEETS, GET_FLIGHT_LOCATIONS, GET_FLIGHTS, FLIGHT_LOCATIONS_LOADING, RESET_API_RESPONSE, FLIGHTS_LOADING } from "../constants/AdminConstants"
 
 export const ResetAPIResponse = () => async (dispatch) => {
     dispatch({ type: RESET_API_RESPONSE });
@@ -35,6 +35,7 @@ export const AddFlight = (flight) => async (dispatch) => {
 
 export const GetFlightLocations = () => async (dispatch) => {
     try {
+        dispatch({ type: FLIGHT_LOCATIONS_LOADING });
         const response = await axios.get("/v1/admin/location");
         dispatch({ type: GET_FLIGHT_LOCATIONS, payload: response.data });
     } catch (error) {
@@ -53,6 +54,7 @@ export const GetFleets = () => async (dispatch) => {
 
 export const GetFlights = () => async (dispatch) => {
     try {
+        dispatch({ type: FLIGHTS_LOADING });
         const response = await axios.get("/v1/admin/flight");
         dispatch({ type: GET_FLIGHTS, payload: response.data });
     } catch (error) {

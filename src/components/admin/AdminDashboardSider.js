@@ -18,7 +18,8 @@ const AdminDashboardSider = ({ children }) => {
     const [showAlert, setShowAlert] = useState(false);
 
     const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
-        : location.pathname.startsWith("/admin/flight-location-management") ? "2" : ""];
+        : location.pathname.startsWith("/admin/flight-location-management") ? "2" 
+        : location.pathname.startsWith("/admin/admin-report") ? "3": ""];
 
     useEffect(() => {
         const handleResize = () => {
@@ -63,7 +64,10 @@ const AdminDashboardSider = ({ children }) => {
                     <Menu.Item key="2" icon={<ConnectingAirportsIcon />}>
                         <Link to="flight-location-management">Flight Location Management</Link>
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<ExitToAppIcon />} style={{ position: 'absolute', bottom: 0 }}>
+                    <Menu.Item key="3" icon={<ConnectingAirportsIcon />}>
+                        <Link to="admin-report">Reports</Link>
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<ExitToAppIcon />} style={{ position: 'absolute', bottom: 0 }}>
                         <Link to="">Logout</Link>
                     </Menu.Item>
                 </Menu>

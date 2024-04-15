@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import AdminRouter from "../components/admin/AdminRouter";
 import AuthRouter from "../components/auth/AuthRouter";
 import UserRouter from "../components/user/userRouter";
+import BookingRouter from "../components/booking/BookingRouter";
 import SearchRouter from "../components/search/SearchRouter";
 import FlightSearchSimple from "../components/search/FlightSearchSimple";
 import ProtectedRoute from "../authConfig/ProtectedRoute";
@@ -31,6 +32,7 @@ const ParentRouter = () => {
       {/* Render FlightSearchSimple on empty path */}
       <Route path="/search/*" element={<SearchRouter />} />{" "}
       {/* Nested routing for search section */}
+      <Route path = "/booking/*" element={<BookingRouter/>}/>
     </Routes>
   );
 };

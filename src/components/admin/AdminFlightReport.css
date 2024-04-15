@@ -1,0 +1,14 @@
+.adminReportcontainer {
+    /* display: flex;
+    justify-content: center; /* Horizontally center the card */
+    /* margin-top: 20px; */ 
+  }
+  .h1 {
+    text-align: center;
+    color:brown;
+}
+.vertical-line {
+    width: 1px;
+    height: 100%;
+    background-color: #d9d9d9;
+}

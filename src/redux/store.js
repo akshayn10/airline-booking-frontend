@@ -9,7 +9,10 @@ import {
   UpcomingTripsReducer,
 } from "./reducers/UserReducer";
 import { CountryListReducer } from "./reducers/AuthReducer";
-import { SearchFlightLocationReducer } from "./reducers/SearchReducer";
+import {
+  SearchFlightLocationReducer,
+  SearchFlightsReducer,
+} from "./reducers/SearchReducer";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +25,7 @@ const store = configureStore({
     countryListReducer: CountryListReducer,
 
     searchFlightLocationReducer: SearchFlightLocationReducer,
+    searchFlightsReducer: SearchFlightsReducer,
   },
 });
 

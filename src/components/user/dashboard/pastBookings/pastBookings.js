@@ -14,7 +14,6 @@ const PastBookings = ({ userEmail }) => {
   );
 
   useEffect(() => {
-    console.log(userEmail, "User at Past bookings");
     dispatch(GetPastBookings(userEmail));
   }, []);
 

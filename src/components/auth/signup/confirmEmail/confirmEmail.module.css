@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 60vh;
+    height: 50vh;
     padding: 0 10% 0 10%;
     background-color: azure;
   }
@@ -24,28 +24,17 @@
     margin-bottom: 2rem;
   }
   
-  .confirm_email_container button {
+  .confirm_email_container .resend__button {
     border: none;
-    color: white;
-    padding: 15px 32px;
+    color: red;
     text-align: center;
     text-decoration: none;
-    font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 20px;
   }
-  .resend__button{
-    background-color: #45A049;
-  }
-  .continue__button{
-
-    background-color: #5296b6; /* Green */
-
-
-  }
   
   .confirm_email_container button:hover {
-    background-color: #000000; /* Green with darker shade on hover */
+ color: #000000; 
   }
   

@@ -137,7 +137,7 @@ export const GetUpcomingTrips = (userEmail) => async (dispatch) => {
 };
 export const CancelBooking = (bookingId) => async (dispatch) => {
   try {
-    const response = await axios.get(`/book/cancel-booking/${bookingId}`);
+    const response = await axios.put(`/booking/cancel-booking/${bookingId}`);
     console.log(response);
     dispatch({
       type: CANCEL_BOOKING_SUCCESS,

@@ -28,17 +28,6 @@ const pastBookingsColumns = [
     title: "Seat Numbers",
     dataIndex: "seatNumbers",
     key: "seatNumbers",
-    render: (text) => text.join(", "),
-  },
-  {
-    title: "Booking Status",
-    dataIndex: "bookingStatus",
-    key: "bookingStatus",
-  },
-  {
-    title: "Seat Numbers",
-    dataIndex: "seatNumbers",
-    key: "seatNumbers",
   },
   {
     title: "Total Cost",
@@ -47,9 +36,9 @@ const pastBookingsColumns = [
   },
   {
     title: "Status",
-    dataIndex: "isCancelled",
+    dataIndex: "cancelled",
     key: "status",
-    render: (isCancelled) => (isCancelled ? "Cancelled" : "Done"),
+    render: (cancelled) => (cancelled ? "Cancelled" : "Done"),
   },
 ];
 

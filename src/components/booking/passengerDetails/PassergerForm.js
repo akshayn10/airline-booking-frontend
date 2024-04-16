@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select, DatePicker, Card, Row, Col,Button,message } from 'antd';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate,Link, useLocation } from 'react-router-dom';
 import './PassengerForm.css';
 import axios from '../../../config/Axios';
 import moment from 'moment';
@@ -8,9 +8,13 @@ import moment from 'moment';
 const { Option } = Select;
 
 function PassengerForm() {
-    const noOfPassengers=1;
-    const passengerNo = Array.from({ length: noOfPassengers }, (_, index) => index + 1);
+
     const navigate = useNavigate();
+    
+    const location = useLocation(); 
+    const noOfPassengers = location.state;
+    console.log('pasednpassenger no : ',noOfPassengers);
+    const passengerNo = Array.from({ length: noOfPassengers }, (_, index) => index + 1);
 
     const [passengerDetails, setPassengerDetails] = useState([]);
     //validation
@@ -27,44 +31,82 @@ function PassengerForm() {
         };
         setPassengerDetails(updatedPassengerDetails);
     };
+
+
+    // const handlePassengerNo = ( value)=> {
+    //     noOfPassengers = value;
+    //     passengerNo = Array.from({ length: noOfPassengers }, (_, index) => index + 1);
+    // }
     
 
     const [flight, setFlight] = useState([]);
 
-    const onFinish = ()=>{
+    const handleClick = async () => {
         console.log("Current date",passengerDetails);
-        
-        const bookingDetails = {
-            totalCost: 150.00,
-            travelDate: "2024-05-20",
-            seatTypeBooked: seatType,
-            noOfSeatBooked: 5,
-            flightId: 4,
-            passengers: passengerDetails
-        };
-        
-            message.info('Submitted');
-            axios.post('http://localhost:8080/booking/v1/book', bookingDetails) // Use Axios to send POST request
-          
-            .then(response => {
-                console.log('Passenger created:', response.data);
-                const bookingId = response.data.bookingId; // got booking id from back end
-                const flightId = response.data.flightId; // got flight id from backend
-                console.log("Bookin id is :",bookingId);
-                console.log("Flight id is :",flightId); 
 
-                const passingData = {
-                    totalPassengers : noOfPassengers,
-                    flightNo : flightId,
-                    seatType : seatType,
-                    bookingId : bookingId
-                };
-                message.info('Passing  now');
-                navigate('/booking/seat-select', { state: passingData });
-            })
-            .catch(error => {
-                console.error('Error creating user:', error);
-            });
+        const isAnyPassengerIncomplete = passengerDetails.some(passenger => {
+            return (
+                !passenger.firstName ||
+                !passenger.lastName ||
+                !passenger.passportNo ||
+                !passenger.mealPreference ||
+                !passenger.dateOfBirth ||
+                !passenger.gender
+            );
+        });
+
+        const isAnyPassengerunder18 = passengerDetails.some(passenger => {
+            let today = moment();
+            let birthDate = moment(passenger.dateOfBirth);
+            let age = today.diff(birthDate,'years');
+            console.log('age is : ',age);
+            return age < 18;
+        })
+        
+        if(isAnyPassengerIncomplete){
+            message.error('Please fill all the fields');
+            return;
+        }if(isAnyPassengerunder18){
+            message.error('Passenger age should greater than 18');
+            return;
+        }
+        else{
+        
+            const bookingDetails = {
+                totalCost: 150.00,
+                travelDate: "2024-05-20",
+                seatTypeBooked: seatType,
+                noOfSeatBooked: 5,
+                flightId: 4,
+                passengers: passengerDetails
+            };
+            
+                
+                axios.post('http://localhost:8080/booking/v1/book', bookingDetails) // Use Axios to send POST request
+            
+                .then(response => {
+                    message.info('Submitted');
+                    
+                    console.log('Passenger created:', response.data);
+                    const bookingId = response.data.bookingId; // got booking id from back end
+                    const flightId = response.data.flightId; // got flight id from backend
+                    console.log("Bookin id is :",bookingId);
+                    console.log("Flight id is :",flightId); 
+
+                    const passingData = {
+                        totalPassengers : noOfPassengers,
+                        flightNo : flightId,
+                        seatType : seatType,
+                        bookingId : bookingId
+                    };
+                    message.info('Passing  now');
+                    navigate('/booking/seat-select', { state: passingData });
+                })
+                .catch(error => {
+                    message.error('Error in passing data');
+                    console.error('Error creating user:', error);
+                });
+        }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -91,7 +133,7 @@ function PassengerForm() {
                     <Card bordered={true} style={{ width: '1500px', background: '#6E6E7F'}} >
                         <h3>Adult : {number}</h3>
 
-                        <Form layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+                        <Form layout="vertical" onFinishFailed={onFinishFailed}>
                             <Row gutter={[16, 16]}>
                                 <Col span={8}>
                                     <Form.Item  className ="bold-label" label="First Name" name="firstName" rules={[{ required: true, message: 'Please input your First Name!' }]}>
@@ -136,7 +178,7 @@ function PassengerForm() {
                 </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button type="primary" htmlType="submit" danger style={{ width: '200px' }}>
+                <Button type="primary" htmlType="submit" onClick={handleClick} danger style={{ width: '200px' }}>
                         Submit 
                 </Button>
             </div>

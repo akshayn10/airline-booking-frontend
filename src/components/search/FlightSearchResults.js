@@ -1,7 +1,9 @@
 import React from "react";
-import { Card } from "antd"; // Import Ant Design components
+import { Button, Card, Input, Form } from "antd"; // Import Ant Design components
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import styles from "./FlightSearch.module.css"; // Import CSS Modules styles
+import { useNavigate,Link } from 'react-router-dom';
+
 
 const FlightSearchResults = ({ flightResults }) => {
   const settings = {
@@ -11,6 +13,18 @@ const FlightSearchResults = ({ flightResults }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
+
+  let noOfPassengers;
+  const navigate = useNavigate();
+  const buttonClicked = () =>{
+    const passingData = noOfPassengers;
+    console.log('passing data : ',passingData);
+    navigate('/booking/passenger-form', { state: passingData });
+  }
+
+  const handleFormChange = (value) =>{
+    noOfPassengers = value;
+  }
 
   return (
     <div className="flight-search-results">
@@ -36,12 +50,22 @@ const FlightSearchResults = ({ flightResults }) => {
           <p className={styles.price}>
             Price: {flight.price.toFixed(2)} (currency unit)
           </p>
+
           <a href="#" className={styles.bookNowButton}>
-            Book Now
           </a>
           {/* Add any additional flight details you want to display */}
         </Card>
       ))}
+                <Form>
+            <Form.Item>
+            <Input type = "number" name= "passengers" onChange={(e) => handleFormChange( e.target.value)}>
+            </Input>
+            </Form.Item>
+          </Form>
+          <Button onClick={buttonClicked} className={styles.bookNowButton}>
+            Book Now
+            </Button>
+
     </div>
   );
 };

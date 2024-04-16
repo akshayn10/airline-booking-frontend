@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card,Form,Input,Row,Col,Divider,Button } from "antd";
+import { Card,Form,Input,Row,Col,Divider,Button, message } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import {Route,Routes,Link} from "react-router-dom"
 import { runes } from 'runes2'
@@ -8,7 +8,31 @@ import './PaymentForm.css';
 
 function PaymentForm(){
     const location = useLocation();
-    const passingData = location.state;
+    // const passingData = location.state;
+
+    const passingData = {
+        totalPassengers : 4,
+        flightNo : 4,
+        seatType : "economy",
+        bookingId : 15
+    };
+
+    const[nameOnCard, setNameOnCard] = useState('');
+    const[cardNo, setcardNo] = useState('');
+    const[cvcNo, setcvcNo] = useState('');
+    const[month, setMonth] = useState('');
+    const[date, setDate] = useState('');
+
+    const [cardDetails, setCardDetails] = useState({
+        nameOnCard: '',
+        cardNo: '',
+        cvcNo: '',
+        month: '',
+        date: ''
+    });
+
+
+
 
     const noOfPassengers = passingData.totalPassengers;
     console.log("No of passengers : ",noOfPassengers);
@@ -23,6 +47,27 @@ function PaymentForm(){
     const navigate = useNavigate();
 
     const buttonClicked = () => {
+        const isAnyFieldIncomplete = (cardDetails)=> {
+            return (
+                !nameOnCard||
+                !cardNo||
+                !cvcNo||
+                !month||
+                !date
+            )
+        };
+        console.log('isAnyFieldIncomplete ',isAnyFieldIncomplete);
+
+        if(isAnyFieldIncomplete){
+            message.error('All fields should be filled');
+            return;
+        }if(month===null || month<1 && month>12){
+            message.error('Invalid month');
+            return;
+        }if(date<1 && date>31){
+            message.error('Invalid date');
+            return;
+        }
         const passingDataTransfer = {
             totalPassengers : noOfPassengers,  // check and delete
             flightNo : passingData.flightNo,
@@ -30,8 +75,15 @@ function PaymentForm(){
             bookingId : passingData.bookingId
         };
         navigate('/booking/final-recipt', { state: passingDataTransfer});
+        
     }
 
+    const handleCardFormChange = (fieldName, value) => {
+        setCardDetails(prevState => ({
+            ...prevState,
+            [fieldName]: value
+        }));
+    };
 
 
     return(
@@ -45,21 +97,31 @@ function PaymentForm(){
                         <Form>
 
                                     <Form.Item label="Name On Card" name="nameOnCard" rules={[{required: true, message:'Please enter!'}]}>
-                                       <Input maxLength={20}/>
+                                       <Input maxLength={20} onChange={e => handleCardFormChange(nameOnCard,e.target.value)}/>
                                     </Form.Item>
 
                                     <Form.Item label="Card number" name="cardNo" rules={[{required: true, message:'Please enter!'}]}>
                                     <Input type = "number" count={{ show: true, max: 16, strategy: (txt) => runes(txt).length, exceedFormatter: (txt, { max }) => runes(txt).slice(0, max).join(''), }}
-                                                    placeholder="1234-5678-9874-5612" onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16); }}/>
+                                                  onChange={e =>handleCardFormChange(cardNo,e.target.value)}  placeholder="1234-5678-9874-5612" onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16); }}/>
                                     </Form.Item>
                       
                                     <Form.Item label="CVC no" name="cvcNo" rules={[{required: true, message:'Please enter!'}]}>
-                                        <Input type="number" placeholder="123" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); }} />
+                                        <Input type="number" onChange={e =>handleCardFormChange(cvcNo,e.target.value)} placeholder="123" maxLength={3} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); }} />
                                     </Form.Item>
                             
-                                    <Form.Item label="Exp Date" name="expDate" rules={[{required: true, message:'Please enter!'}]}>
-                                        <Input type="number" placeholder="mmdd" maxLength={4} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); }} />
-                                    </Form.Item>
+                                        <Row>
+                                            <Col>
+                                            <Form.Item label="Exp month" name="month" rules={[{required: true, message:'Please enter!'}]}>
+                                            <Input type="number"  onChange={e =>handleCardFormChange(month,e.target.value)} placeholder="mm" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
+                                            </Form.Item>
+                                            </Col>
+                                            <Col>
+                                            <Form.Item label="Exp Date" name="date" rules={[{required: true, message:'Please enter!'}]}>
+                                            <Input type="number" onChange={e => handleCardFormChange(date,e.target.value)} placeholder="dd" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
+                                            </Form.Item>
+                                            </Col>
+                                        </Row>
+                                    
                                 
                             <Divider />
                             <Button type="primary" onClick={buttonClicked} danger>Click to pay</Button>

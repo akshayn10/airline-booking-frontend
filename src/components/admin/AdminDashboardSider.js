@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Layout, Menu, Alert, notification } from 'antd';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Layout, Menu, Alert, notification, Button } from 'antd';
 import FlightIcon from '@mui/icons-material/Flight';
 import ConnectingAirportsIcon from '@mui/icons-material/ConnectingAirports';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useSelector, useDispatch } from 'react-redux';
 import { ResetAPIResponse } from '../../redux/actions/AdminActions';
+import { clearLocalStorage } from '../../util/localStorageUtils';
+import { ResetAuthentication } from '../../redux/actions/AuthActions';
 const { Sider, Content } = Layout;
 
 const AdminDashboardSider = ({ children }) => {
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const logout = () => {
+        clearLocalStorage();
+        dispatch(ResetAuthentication());
+        navigate("/auth/login");
+    }
 
     const apiResponseType = useSelector((state) => state.apiErrorReducer.responseType);
     const apiResponseMessage = useSelector((state) => state.apiErrorReducer.responseMessage);
@@ -68,7 +76,7 @@ const AdminDashboardSider = ({ children }) => {
                         <Link to="admin-report">Reports</Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<ExitToAppIcon />} style={{ position: 'absolute', bottom: 0 }}>
-                        <Link to="">Logout</Link>
+                        <Link onClick={logout}>Logout</Link>
                     </Menu.Item>
                 </Menu>
             </Sider>

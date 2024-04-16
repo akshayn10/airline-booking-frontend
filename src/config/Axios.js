@@ -19,6 +19,7 @@ axiosInstance.interceptors.request.use(
     ) {
       const token = localStorage.getItem("accessToken");
       if (isTokenExpired()) {
+        console.log("Token expired");
         const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken) {
           refreshAccessToken(refreshToken);
@@ -78,7 +79,7 @@ async function refreshAccessToken(refreshToken) {
     console.log("Access token refreshed successfully.");
   } catch (error) {
     console.error("Error refreshing access token:", error.message);
-    const apiResponse = error.response.data;
+    const apiResponse = error.response?.data;
     window.alert(apiResponse.message);
 
     throw error;

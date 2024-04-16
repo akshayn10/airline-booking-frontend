@@ -96,8 +96,8 @@ export const GetUserDetailsByEmail = (email) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -129,8 +129,8 @@ export const UpdateUserDetails = (userDetails) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({

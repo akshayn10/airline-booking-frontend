@@ -15,8 +15,10 @@ import {
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
   REFRESH_TOKEN,
+  REFRESH_TOKEN_SUCCESS,
   REGISTER_FAILURE,
   REGISTER_SUCCESS,
+  RESET_AUTHENTICATION,
   RESET_LOGIN_STATE,
   RESET_PASSWORD_FAILURE,
   RESET_PASSWORD_SUCCESS,
@@ -64,7 +66,7 @@ const resetPasswordResponseState = {
   status: null,
   data: null,
   message: null,
-}
+};
 const AuthenticationState = {
   authenticated: isAuthenticated(),
   accessToken: localStorage.getItem("accessToken") || null,
@@ -89,7 +91,7 @@ export const AuthenticationStateReducer = (
   state = AuthenticationState,
   action
 ) => {
-  console.log(AuthenticationState,"Auth");
+  console.log(AuthenticationState, "Auth");
   switch (action.type) {
     case AUTHENTICATED:
       return {
@@ -100,18 +102,23 @@ export const AuthenticationStateReducer = (
         user: action.user,
         role: action.role,
       };
-    case REFRESH_TOKEN:
+    case REFRESH_TOKEN_SUCCESS:
       return {
         ...state,
         accessToken: action.accessToken,
-      }
+      };
+    case RESET_AUTHENTICATION:
+      return {
+        authenticated: null,
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        role: null,
+      };
 
     default:
       return state;
-      
   }
-  
-
 };
 export const LoginResponseReducer = (state = loginResponseState, action) => {
   switch (action.type) {
@@ -140,7 +147,10 @@ export const LoginResponseReducer = (state = loginResponseState, action) => {
       return state;
   }
 };
-export const RegisterResponseReducer = (state = registerResponseState, action) => {
+export const RegisterResponseReducer = (
+  state = registerResponseState,
+  action
+) => {
   switch (action.type) {
     case REGISTER_SUCCESS:
       return {
@@ -161,7 +171,10 @@ export const RegisterResponseReducer = (state = registerResponseState, action) =
   }
 };
 
-export const ConfirmEmailResponseReducer = (state = confirmEmailResponseState, action) => {
+export const ConfirmEmailResponseReducer = (
+  state = confirmEmailResponseState,
+  action
+) => {
   switch (action.type) {
     case EMAIL_CONFIRMATION_SUCCESS:
       return {
@@ -182,8 +195,10 @@ export const ConfirmEmailResponseReducer = (state = confirmEmailResponseState, a
   }
 };
 
-
-export const AddContactDetailsResponseReducer = (state = addContactDetailsResponseState, action) => {
+export const AddContactDetailsResponseReducer = (
+  state = addContactDetailsResponseState,
+  action
+) => {
   switch (action.type) {
     case ADD_CONTACT_DETAILS_SUCCESS:
       return {
@@ -204,8 +219,10 @@ export const AddContactDetailsResponseReducer = (state = addContactDetailsRespon
   }
 };
 
-
-export const ForgotPasswordResponseReducer = (state = forgotPasswordResponseState, action) => {
+export const ForgotPasswordResponseReducer = (
+  state = forgotPasswordResponseState,
+  action
+) => {
   switch (action.type) {
     case FORGOT_PASSWORD_SUCCESS:
       return {
@@ -226,7 +243,10 @@ export const ForgotPasswordResponseReducer = (state = forgotPasswordResponseStat
   }
 };
 
-export const ForgotPasswordConfirmationResponseReducer = (state = forgotPasswordConfirmationResponseState, action) => {
+export const ForgotPasswordConfirmationResponseReducer = (
+  state = forgotPasswordConfirmationResponseState,
+  action
+) => {
   switch (action.type) {
     case FORGOT_PASSWORD_CONFIRMATION_SUCCESS:
       return {
@@ -247,7 +267,10 @@ export const ForgotPasswordConfirmationResponseReducer = (state = forgotPassword
   }
 };
 
-export const ResetPasswordResponseReducer = (state = resetPasswordResponseState, action) => {
+export const ResetPasswordResponseReducer = (
+  state = resetPasswordResponseState,
+  action
+) => {
   switch (action.type) {
     case RESET_PASSWORD_SUCCESS:
       return {
@@ -268,7 +291,10 @@ export const ResetPasswordResponseReducer = (state = resetPasswordResponseState,
   }
 };
 
-export const ChangePasswordResponseReducer = (state = changePasswordResponseState, action) => {
+export const ChangePasswordResponseReducer = (
+  state = changePasswordResponseState,
+  action
+) => {
   switch (action.type) {
     case CHANGE_PASSWORD_SUCCESS:
       return {

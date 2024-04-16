@@ -3,7 +3,7 @@ import { Card,Col,Row,Divider,Button,QRCode} from "antd";
 import "./Recipt.css"
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf'
-import axios from 'axios';
+import axios from '../../../config/Axios';
 import { useLocation } from "react-router-dom";
 
 

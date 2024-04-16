@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Select, DatePicker, Card, Row, Col,Button,message } from 'antd';
 import { useNavigate,Link } from 'react-router-dom';
 import './PassengerForm.css';
-import axios from 'axios';
+import axios from '../../../config/Axios';
 import moment from 'moment';
 
 const { Option } = Select;

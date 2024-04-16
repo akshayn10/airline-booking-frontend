@@ -15,6 +15,7 @@ import {
   LOGIN_SUCCESS,
   REGISTER_FAILURE,
   REGISTER_SUCCESS,
+  RESET_AUTHENTICATION,
   RESET_LOGIN_STATE,
   RESET_PASSWORD_FAILURE,
   RESET_PASSWORD_SUCCESS,
@@ -283,6 +284,11 @@ export const ResetPassword = (resetPasswordData) => async (dispatch) => {
       });
     }
   }
+};
+export const ResetAuthentication = () => async (dispatch) => {
+  dispatch({
+    type: RESET_AUTHENTICATION,
+  });
 };
 
 export const ChangePassword = (changePasswordData) => async (dispatch) => {

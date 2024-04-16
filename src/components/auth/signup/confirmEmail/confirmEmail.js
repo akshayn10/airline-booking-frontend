@@ -6,16 +6,20 @@ import { useNotificationContext } from "../../../../context/notificationContext"
 import { ConfirmEmailWithOTP } from "../../../../redux/actions/AuthActions";
 const ConfirmEmail = ({ next, email }) => {
   const { openNotification } = useNotificationContext();
-  const confirmEmailResponse = useSelector((state) => state.confirmEmailResponseReducer);
+  const confirmEmailResponse = useSelector(
+    (state) => state.confirmEmailResponseReducer
+  );
   const dispatch = useDispatch();
-  const[otp,setOtp] = useState('')
-  const handleOtpSubmit = () => {
+  const handleOtpSubmit = (otp) => {
     const otpData = {
       email: email,
       otp: otp,
     };
     console.log(otpData);
     dispatch(ConfirmEmailWithOTP(otpData));
+  };
+  const handleResendOtp = () => {
+    dispatch(ConfirmEmailWithOTP({ email: email }));
   };
   useEffect(() => {
     if (confirmEmailResponse.status === true) {
@@ -35,10 +39,10 @@ const ConfirmEmail = ({ next, email }) => {
         to verify and continue using our services.
       </p>
       <div className={styles.actions}>
-        {/* <button className={styles.resend__button}>
+        <button onClick={handleResendOtp} className={styles.resend__button}>
           Resend Confirmation Code
-        </button> */}
-        <OTP handleOtpSubmit={handleOtpSubmit} setOtp={setOtp}/>
+        </button>
+        <OTP handleOtpSubmit={handleOtpSubmit} />
       </div>
     </div>
   );

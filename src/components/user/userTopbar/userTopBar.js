@@ -3,11 +3,20 @@ import { Button, Dropdown } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { clearLocalStorage } from "../../../util/localStorageUtils";
+import { useDispatch} from "react-redux";
+import { ResetAuthentication } from "../../../redux/actions/AuthActions";
 
 
 const UserTopBar = () => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const logout = () => {
-        window.alert("Logout")
+        clearLocalStorage();
+        dispatch(ResetAuthentication());
+        navigate("/auth/login");
     }
   const items = [
     {

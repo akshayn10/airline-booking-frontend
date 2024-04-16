@@ -23,11 +23,10 @@ const ForgotPasswordForm = () => {
   );
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [disableEmailSubmitButton, setDisableEmailSubmitButton] =
     useState(false);
-  const handleOtpSubmit = () => {
+  const handleOtpSubmit = (otp) => {
     const otpData = {
       email: email,
       otp: otp,
@@ -37,6 +36,8 @@ const ForgotPasswordForm = () => {
   useEffect(() => {
     if (forgotPasswordResponse.status === true) {
       openNotification("success", forgotPasswordResponse.data);
+      setShowOtp(true);
+      setDisableEmailSubmitButton(true);
     } else if (forgotPasswordResponse.status === false) {
       openNotification("error", forgotPasswordResponse.message);
     }
@@ -53,8 +54,7 @@ const ForgotPasswordForm = () => {
   const onFinish = (values) => {
     setEmail(values.email);
     dispatch(ForgotPassword(values));
-    setShowOtp(true);
-    setDisableEmailSubmitButton(true);
+
     console.log("Success:", values);
   };
   return (
@@ -90,7 +90,7 @@ const ForgotPasswordForm = () => {
           </Button>
         </Form.Item>
       </Form>
-      {showOtp && <OTP handleOtpSubmit={handleOtpSubmit} setOtp={setOtp} />}
+      {showOtp && <OTP handleOtpSubmit={handleOtpSubmit}/>}
 
       <Link to="/auth/login">Back to Login</Link>
     </div>

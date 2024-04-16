@@ -1,7 +1,10 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import store from "../redux/store";
-import { REFRESH_TOKEN } from "../redux/constants/AuthConstants";
+import {
+  REFRESH_TOKEN_SUCCESS,
+} from "../redux/constants/AuthConstants";
+import { isTokenExpired } from "../util/AuthUtils";
 
 const jwtInterceptionExcludedUrls = ["/auth"];
 
@@ -15,6 +18,12 @@ axiosInstance.interceptors.request.use(
       !jwtInterceptionExcludedUrls.some((url) => config.url.startsWith(url))
     ) {
       const token = localStorage.getItem("accessToken");
+      if (isTokenExpired()) {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (refreshToken) {
+          refreshAccessToken(refreshToken);
+        }
+      }
       console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -27,29 +36,30 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    if (response.data.error) {
-    }
-    return response;
-  },
-  (error) => {
-    const status = error.response ? error.response.status : null;
-    const errorMessage = error.response ? error.response.data.message : null;
-    if (status === 401) {
-      if (errorMessage === "JWT Access Token Expired") {
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          refreshAccessToken(refreshToken);
-        }
-      }
-    } else {
-    }
-    return Promise.reject(error);
-  }
-);
+// axiosInstance.interceptors.response.use(
+//   (response) => {
+//     if (response.data.error) {
+//     }
+//     return response;
+//   },
+//   (error) => {
+//     const status = error.response ? error.response.status : null;
+//     const errorMessage = error.response ? error.response.data.message : null;
+//     if (status === 401) {
+//       if (errorMessage === "JWT Access Token Expired") {
+//         const refreshToken = localStorage.getItem("refreshToken");
+//         if (refreshToken) {
+//           refreshAccessToken(refreshToken);
+//         }
+//       }
+//     } else {
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default axiosInstance;
+
 async function refreshAccessToken(refreshToken) {
   try {
     const response = await axiosInstance.get(
@@ -61,7 +71,7 @@ async function refreshAccessToken(refreshToken) {
     localStorage.setItem("exp", decodedToken.exp);
 
     store.dispatch({
-      type: REFRESH_TOKEN,
+      type: REFRESH_TOKEN_SUCCESS,
       accessToken: accessToken,
     });
 

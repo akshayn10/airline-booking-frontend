@@ -1,12 +1,12 @@
 import styles from "./contact.module.css";
 import ContactForm from "./contactForm/contactForm";
-const Contact = () => {
+const Contact = ({email}) => {
   return (
     <div className={styles.contact__container}>
       <h1>Contact Details</h1>
       <div className={styles.contactForm__container}>
 
-      <ContactForm/>
+      <ContactForm email={email} />
       </div>
     </div>
   );

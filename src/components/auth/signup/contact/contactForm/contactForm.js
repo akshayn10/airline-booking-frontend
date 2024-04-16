@@ -15,6 +15,7 @@ const ContactForm = ({ email }) => {
   const [selectedCountry, setSelectedCountry] = useState();
 
   const onFinish = (values) => {
+    console.log("Success:", email);
     const submitValues = { ...values, email: email };
     console.log(submitValues);
     dispatch(SaveContactDetails(submitValues));

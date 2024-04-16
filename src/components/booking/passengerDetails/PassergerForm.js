@@ -8,7 +8,7 @@ import moment from 'moment';
 const { Option } = Select;
 
 function PassengerForm() {
-    const noOfPassengers=2;
+    const noOfPassengers=1;
     const passengerNo = Array.from({ length: noOfPassengers }, (_, index) => index + 1);
     const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ function PassengerForm() {
 
     const [flight, setFlight] = useState([]);
 
-    const submitClick = ()=>{
+    const onFinish = ()=>{
         console.log("Current date",passengerDetails);
         
         const bookingDetails = {
@@ -72,13 +72,15 @@ function PassengerForm() {
       };
 
       //validation
-      useEffect(() => {
-        // Check if all form fields are filled
-        const isFormComplete = passengerDetails.every(passenger => 
-            passenger.firstName && passenger.lastName && passenger.passportNo && passenger.mealPreference && passenger.dateOfBirth && passenger.gender
-        );
-        setFormCompleted(isFormComplete);
-    }, [passengerDetails]);
+    //   useEffect(() => {
+    //     // Check if all form fields are filled
+    //     const isFormComplete = passengerDetails.every(passenger => 
+    //         passenger.firstName && passenger.lastName && passenger.passportNo && passenger.mealPreference && passenger.dateOfBirth && passenger.gender
+    //     );
+    //     setFormCompleted(isFormComplete);
+    // }, [passengerDetails]);
+
+
 
 
     return (
@@ -89,7 +91,7 @@ function PassengerForm() {
                     <Card bordered={true} style={{ width: '1500px', background: '#6E6E7F'}} >
                         <h3>Adult : {number}</h3>
 
-                        <Form layout="vertical"  onFinishFailed={onFinishFailed} autoComplete="off">
+                        <Form layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed}>
                             <Row gutter={[16, 16]}>
                                 <Col span={8}>
                                     <Form.Item  className ="bold-label" label="First Name" name="firstName" rules={[{ required: true, message: 'Please input your First Name!' }]}>
@@ -134,7 +136,7 @@ function PassengerForm() {
                 </div>
             ))}
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button type="primary" htmlType="submit" disabled={!formCompleted} danger onClick={submitClick} style={{ width: '200px' }}>
+                <Button type="primary" htmlType="submit" danger style={{ width: '200px' }}>
                         Submit 
                 </Button>
             </div>

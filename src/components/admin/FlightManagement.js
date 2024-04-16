@@ -144,7 +144,7 @@ const FlightManagement = () => {
             width: '10%',
             align: 'center',
             render: (_, record) => (
-                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
+                <a href={() => false} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {

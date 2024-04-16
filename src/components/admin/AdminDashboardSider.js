@@ -33,7 +33,7 @@ const AdminDashboardSider = ({ children }) => {
 
     useEffect(() => {
         const handleResize = () => {
-            setShowAlert(window.innerWidth < 1024 || window.innerHeight < 768);
+            setShowAlert(window.innerWidth < 1024 || window.innerHeight < 640);
         }
 
         window.addEventListener('resize', handleResize);
@@ -59,7 +59,7 @@ const AdminDashboardSider = ({ children }) => {
             {showAlert && (
                 <Alert
                     message="Screen Size Warning"
-                    description="Your screen width is too small for a perfect information display. Please enlarge your window for the best experience."
+                    description="Your screen is too small for a perfect information display. Please enlarge your window for the best experience."
                     type="warning"
                     showIcon
                     closable={false}

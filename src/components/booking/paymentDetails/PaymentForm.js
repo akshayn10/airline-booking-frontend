@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Card,Form,Input,Row,Col,Divider,Button, message } from "antd";
+import { Card,Form,Input,Row,Col,Divider,Button, message, Modal } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import {Route,Routes,Link} from "react-router-dom"
 import { runes } from 'runes2'
 import './PaymentForm.css'; 
+import validator from "validator";
 
 
 function PaymentForm(){
@@ -17,12 +18,6 @@ function PaymentForm(){
         bookingId : 15
     };
 
-    const[nameOnCard, setNameOnCard] = useState('');
-    const[cardNo, setcardNo] = useState('');
-    const[cvcNo, setcvcNo] = useState('');
-    const[month, setMonth] = useState('');
-    const[date, setDate] = useState('');
-
     const [cardDetails, setCardDetails] = useState({
         nameOnCard: '',
         cardNo: '',
@@ -30,9 +25,6 @@ function PaymentForm(){
         month: '',
         date: ''
     });
-
-
-
 
     const noOfPassengers = passingData.totalPassengers;
     console.log("No of passengers : ",noOfPassengers);
@@ -47,26 +39,34 @@ function PaymentForm(){
     const navigate = useNavigate();
 
     const buttonClicked = () => {
-        const isAnyFieldIncomplete = (cardDetails)=> {
+        const isAnyFieldIncomplete = ()=> {
             return (
-                !nameOnCard||
-                !cardNo||
-                !cvcNo||
-                !month||
-                !date
+                !cardDetails.nameOnCard||
+                !cardDetails.cardNo||
+                !cardDetails.cvcNo||
+                !cardDetails.month||
+                !cardDetails.date
             )
         };
-        console.log('isAnyFieldIncomplete ',isAnyFieldIncomplete);
 
-        if(isAnyFieldIncomplete){
+        const countDigits = number => {
+            const numString = Math.abs(number).toString().replace('.', '');
+            return numString.length;
+        };
+
+
+        if(isAnyFieldIncomplete()){
             message.error('All fields should be filled');
             return;
-        }if(month===null || month<1 && month>12){
+        }if( cardDetails.month<=0 || cardDetails.month>=13){
             message.error('Invalid month');
             return;
-        }if(date<1 && date>31){
+        }if(cardDetails.date<1 || cardDetails.date>31){
             message.error('Invalid date');
             return;
+        }
+        if(countDigits(cardDetails.cardNo)<16){
+            message.info('Invalid card');
         }
         const passingDataTransfer = {
             totalPassengers : noOfPassengers,  // check and delete
@@ -97,27 +97,27 @@ function PaymentForm(){
                         <Form>
 
                                     <Form.Item label="Name On Card" name="nameOnCard" rules={[{required: true, message:'Please enter!'}]}>
-                                       <Input maxLength={20} onChange={e => handleCardFormChange(nameOnCard,e.target.value)}/>
+                                       <Input maxLength={20} onChange={e => handleCardFormChange('nameOnCard',e.target.value)}/>
                                     </Form.Item>
 
                                     <Form.Item label="Card number" name="cardNo" rules={[{required: true, message:'Please enter!'}]}>
                                     <Input type = "number" count={{ show: true, max: 16, strategy: (txt) => runes(txt).length, exceedFormatter: (txt, { max }) => runes(txt).slice(0, max).join(''), }}
-                                                  onChange={e =>handleCardFormChange(cardNo,e.target.value)}  placeholder="1234-5678-9874-5612" onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16); }}/>
+                                                  onChange={e =>handleCardFormChange('cardNo',e.target.value)}  placeholder="1234-5678-9874-5612" onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 16); }}/>
                                     </Form.Item>
                       
                                     <Form.Item label="CVC no" name="cvcNo" rules={[{required: true, message:'Please enter!'}]}>
-                                        <Input type="number" onChange={e =>handleCardFormChange(cvcNo,e.target.value)} placeholder="123" maxLength={3} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); }} />
+                                        <Input type="number" onChange={e =>handleCardFormChange('cvcNo',e.target.value)} placeholder="123" maxLength={3} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); }} />
                                     </Form.Item>
                             
                                         <Row>
                                             <Col>
                                             <Form.Item label="Exp month" name="month" rules={[{required: true, message:'Please enter!'}]}>
-                                            <Input type="number"  onChange={e =>handleCardFormChange(month,e.target.value)} placeholder="mm" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
+                                            <Input type="number"  onChange={e =>handleCardFormChange('month',e.target.value)} placeholder="mm" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
                                             </Form.Item>
                                             </Col>
                                             <Col>
                                             <Form.Item label="Exp Date" name="date" rules={[{required: true, message:'Please enter!'}]}>
-                                            <Input type="number" onChange={e => handleCardFormChange(date,e.target.value)} placeholder="dd" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
+                                            <Input type="number" onChange={e => handleCardFormChange('date',e.target.value)} placeholder="dd" maxLength={2} onInput={(e) => {e.target.value = e.target.value.replace(/\D/g, '').slice(0, 2); }} />
                                             </Form.Item>
                                             </Col>
                                         </Row>

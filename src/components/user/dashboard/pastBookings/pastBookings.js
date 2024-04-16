@@ -1,25 +1,43 @@
 import styles from "./pastBookings.module.css";
 import PastBookingsTable from "./pastBookingsTable/pastBookingsTable";
-import { useEffect } from "react";
-import { getPastBookings } from "../../../../redux/actions/UserActions";
+import { useEffect, useState } from "react";
+import { GetPastBookings } from "../../../../redux/actions/UserActions";
 import { useDispatch, useSelector } from "react-redux";
+import { useNotificationContext } from "../../../../context/notificationContext";
 
-const PastBookings = () => {
+const PastBookings = ({ userEmail }) => {
   const dispatch = useDispatch();
-  const pastBookings = useSelector(
-    (state) => state.pastBookingsReducer.pastBookings
+  const { openNotification } = useNotificationContext();
+  const [pastBookings, setPastBookings] = useState(null);
+  const getPastBookingsResponse = useSelector(
+    (state) => state.pastBookingsResponseReducer
   );
 
   useEffect(() => {
-    dispatch(getPastBookings());
-  }, [dispatch,pastBookings]);
+    console.log(userEmail, "User at Past bookings");
+    dispatch(GetPastBookings(userEmail));
+  }, []);
 
-  console.log(pastBookings.length); // Log the booking_time property of the first element of
+  useEffect(() => {
+    if (getPastBookingsResponse?.status === true) {
+      setPastBookings(getPastBookingsResponse.data);
+      openNotification("success", getPastBookingsResponse.message);
+    } else if (getPastBookingsResponse?.status === false) {
+      openNotification("error", getPastBookingsResponse.message);
+    }
+  }, [getPastBookingsResponse]);
+
   return (
     <div className={styles.container}>
-        {pastBookings.length}
       <h1>Past Bookings</h1>
-      <PastBookingsTable pastBookings={pastBookings} />
+      {pastBookings && (
+        <>
+          {pastBookings.length > 0 && (
+            <PastBookingsTable pastBookings={pastBookings} />
+          )}
+          {!pastBookings.length && <p>No Past Bookings found.</p>}
+        </>
+      )}
     </div>
   );
 };

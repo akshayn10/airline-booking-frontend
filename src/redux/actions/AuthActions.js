@@ -47,8 +47,8 @@ export const RegisterUser = (registerUserData) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -79,8 +79,8 @@ export const ConfirmEmailWithOTP = (confirmEmailData) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -132,8 +132,8 @@ export const LoginUser = (loginUserData) => async (dispatch) => {
       role: role,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -168,8 +168,8 @@ export const SaveContactDetails = (contactDetails) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -201,8 +201,8 @@ export const ForgotPassword = (forgotPasswordData) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -235,8 +235,8 @@ export const ForgotPasswordConfirmation =
         data: response.data.data,
       });
     } catch (error) {
-      if (error.response.data) {
-        const apiResponse = error.response.data;
+      if (error.response?.data) {
+        const apiResponse = error.response?.data;
         console.log(apiResponse);
         if (apiResponse.success === false) {
           dispatch({
@@ -266,8 +266,8 @@ export const ResetPassword = (resetPasswordData) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
@@ -304,8 +304,8 @@ export const ChangePassword = (changePasswordData) => async (dispatch) => {
       data: response.data.data,
     });
   } catch (error) {
-    if (error.response.data) {
-      const apiResponse = error.response.data;
+    if (error.response?.data) {
+      const apiResponse = error.response?.data;
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({

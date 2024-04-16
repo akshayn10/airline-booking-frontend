@@ -26,13 +26,18 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                         <Form.Item
                             name="economyFare"
                             label="Economy Fare"
+                            rules={[
+                                {
+                                    required: (isEditable && selectedFleet?.totalEconomySeats !== 0) ?? true,
+                                    message: 'Please input the economy seat fare!',
+                                },
+                            ]}
                         >
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
                                 disabled={isEditable && selectedFleet?.totalEconomySeats === 0}
                                 readOnly={!isEditable}
-                                required
                             />
                         </Form.Item>
                     </Col>
@@ -40,13 +45,18 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                         <Form.Item
                             name="premiumFare"
                             label="Premium Fare"
+                            rules={[
+                                {
+                                    required: (isEditable && selectedFleet?.totalPremiumSeats !== 0) ?? true,
+                                    message: 'Please input the premium seat fare!',
+                                },
+                            ]}
                         >
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
                                 disabled={isEditable && selectedFleet?.totalPremiumSeats === 0}
                                 readOnly={!isEditable}
-                                required
                             />
                         </Form.Item>
                     </Col>
@@ -54,13 +64,18 @@ const FleetSelection = ({ rowSelection, columns, fleetData, selectedFleet, form,
                         <Form.Item
                             name="businessFare"
                             label="Business Fare"
+                            rules={[
+                                {
+                                    required: (isEditable && selectedFleet?.totalBusinessSeats !== 0) ?? true,
+                                    message: 'Please input the business seat fare!',
+                                },
+                            ]}
                         >
                             <InputNumber
                                 style={{ width: '100%' }}
                                 min={0}
                                 disabled={isEditable && selectedFleet?.totalBusinessSeats === 0}
                                 readOnly={!isEditable}
-                                required
                             />
                         </Form.Item>
                     </Col>

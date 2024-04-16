@@ -29,7 +29,7 @@ const LoginForm = () => {
       setTimeout(() => {
       if (authRole) {
         if (authRole === "ADMIN") {
-          navigate("/admin");
+          navigate("/admin/flight-management");
         }
         if (authRole === "USER") {
           navigate("/user/dashboard");

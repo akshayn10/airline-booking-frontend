@@ -3,21 +3,12 @@ import { Button, Dropdown } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { clearLocalStorage } from "../../../util/localStorageUtils";
-import { useDispatch} from "react-redux";
-import { ResetAuthentication } from "../../../redux/actions/AuthActions";
-
+import { logout } from "../../../util/AuthUtils";
 
 const UserTopBar = () => {
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const logout = () => {
-        clearLocalStorage();
-        dispatch(ResetAuthentication());
-        navigate("/auth/login");
-    }
+  const handleLogout = () => {
+    logout();
+  };
   const items = [
     {
       key: "1",
@@ -29,7 +20,16 @@ const UserTopBar = () => {
     },
     {
       key: "3",
-      label: <Button onClick={logout} danger type="primary" style={{color:"white"}}  to="logout">Logout</Button>,
+      label: (
+        <Button
+          onClick={handleLogout}
+          danger
+          type="primary"
+          style={{ color: "white" }}
+        >
+          Logout
+        </Button>
+      ),
     },
   ];
   return (

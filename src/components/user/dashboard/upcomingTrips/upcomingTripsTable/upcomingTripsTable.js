@@ -1,4 +1,4 @@
-import { Button, Space, Table, Popconfirm, message } from "antd";
+import { Button, Space, Table, Popconfirm } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./upcomingTripsTable.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,7 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
       title: "Booking Reference",
       dataIndex: "bookingId",
       key: "bookingId",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: "Flight Details",
@@ -102,7 +102,7 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
   ];
 
   return (
-    <Table className={styles.container} columns={upcomingTripsColumns} dataSource={upcomingTrips} />
+    <Table rowKey={record => record.bookingId} className={styles.container} columns={upcomingTripsColumns} dataSource={upcomingTrips} />
   );
 };
 

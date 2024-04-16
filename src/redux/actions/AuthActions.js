@@ -291,6 +291,12 @@ export const ResetAuthentication = () => async (dispatch) => {
   });
 };
 
+export const LogOutUser = () => async (dispatch) => {
+  dispatch({
+    type: RESET_AUTHENTICATION,
+  });
+};
+
 export const ChangePassword = (changePasswordData) => async (dispatch) => {
   try {
     const response = await axios.post("/auth/change-password", {

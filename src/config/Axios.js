@@ -4,7 +4,7 @@ import store from "../redux/store";
 import {
   REFRESH_TOKEN_SUCCESS,
 } from "../redux/constants/AuthConstants";
-import { isTokenExpired } from "../util/AuthUtils";
+import { logout } from "../util/AuthUtils";
 
 const jwtInterceptionExcludedUrls = ["/auth"];
 
@@ -18,13 +18,6 @@ axiosInstance.interceptors.request.use(
       !jwtInterceptionExcludedUrls.some((url) => config.url.startsWith(url))
     ) {
       const token = localStorage.getItem("accessToken");
-      if (isTokenExpired()) {
-        console.log("Token expired");
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          refreshAccessToken(refreshToken);
-        }
-      }
       console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -36,52 +29,67 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+let failedRequests = [];
+let isTokenRefreshing = false;
 
-// axiosInstance.interceptors.response.use(
-//   (response) => {
-//     if (response.data.error) {
-//     }
-//     return response;
-//   },
-//   (error) => {
-//     const status = error.response ? error.response.status : null;
-//     const errorMessage = error.response ? error.response.data.message : null;
-//     if (status === 401) {
-//       if (errorMessage === "JWT Access Token Expired") {
-//         const refreshToken = localStorage.getItem("refreshToken");
-//         if (refreshToken) {
-//           refreshAccessToken(refreshToken);
-//         }
-//       }
-//     } else {
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const errorMessage = error.response ? error.response.data.message : null;
+    const originalRequestConfig = error.config;
+
+    if (errorMessage !== "JWT Access Token Expired") {
+      return Promise.reject(error);
+    }
+
+    if (isTokenRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedRequests.push({
+          resolve,
+          reject,
+          config: originalRequestConfig,
+          error: error,
+        });
+      });
+    }
+
+    isTokenRefreshing = true;
+
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      try {
+        const response = await axiosInstance.get(
+          `/auth/refresh-token/${refreshToken}`
+        );
+        const { accessToken } = response.data.data;
+        localStorage.setItem("accessToken", accessToken);
+        const decodedToken = jwtDecode(accessToken);
+        localStorage.setItem("exp", decodedToken.exp);
+
+        store.dispatch({
+          type: REFRESH_TOKEN_SUCCESS,
+          accessToken: accessToken,
+        });
+
+        console.log("Access token refreshed successfully.");
+
+        failedRequests.forEach(({ resolve, reject, config }) => {
+          axiosInstance(config)
+            .then((response) => resolve(response))
+            .catch((error) => reject(error));
+        });
+      } catch (error) {
+        console.error(error);
+        failedRequests.forEach(({ reject }) => reject(error));
+        logout();
+        return Promise.reject(error);
+      } finally {
+        failedRequests = [];
+        isTokenRefreshing = false;
+      }
+    }
+    return axiosInstance(originalRequestConfig);
+  }
+);
 
 export default axiosInstance;
-
-async function refreshAccessToken(refreshToken) {
-  try {
-    const response = await axiosInstance.get(
-      `/auth/refresh-token/${refreshToken}`
-    );
-    const { accessToken } = response.data.data;
-    localStorage.setItem("accessToken", accessToken);
-    const decodedToken = jwtDecode(accessToken);
-    localStorage.setItem("exp", decodedToken.exp);
-
-    store.dispatch({
-      type: REFRESH_TOKEN_SUCCESS,
-      accessToken: accessToken,
-    });
-
-    console.log("Access token refreshed successfully.");
-  } catch (error) {
-    console.error("Error refreshing access token:", error.message);
-    const apiResponse = error.response?.data;
-    window.alert(apiResponse.message);
-
-    throw error;
-  }
-}

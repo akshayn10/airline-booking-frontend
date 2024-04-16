@@ -1,3 +1,7 @@
+import { RESET_AUTHENTICATION } from "../redux/constants/AuthConstants";
+import store from "../redux/store";
+import { clearLocalStorage } from "./localStorageUtils";
+
 const isAuthenticated = () => {
   const accessToken = localStorage.getItem("accessToken");
   const exp = localStorage.getItem("exp");
@@ -29,6 +33,12 @@ const isTokenExpired = () => {
   const currentTime = new Date();
 
   return currentTime > expirationTime;
-}
-
-export { isAuthenticated,isTokenExpired };
+};
+const logout = () => {
+  store.dispatch({
+    type: RESET_AUTHENTICATION,
+  });
+  clearLocalStorage();
+  window.location.href = "/auth/login";
+};
+export { isAuthenticated, isTokenExpired, logout };

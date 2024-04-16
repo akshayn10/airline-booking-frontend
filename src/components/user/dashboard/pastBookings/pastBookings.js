@@ -21,7 +21,6 @@ const PastBookings = ({ userEmail }) => {
   useEffect(() => {
     if (getPastBookingsResponse?.status === true) {
       setPastBookings(getPastBookingsResponse.data);
-      openNotification("success", getPastBookingsResponse.message);
     } else if (getPastBookingsResponse?.status === false) {
       openNotification("error", getPastBookingsResponse.message);
     }

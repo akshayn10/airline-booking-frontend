@@ -14,14 +14,12 @@ const UpcomingTrips = ({userEmail}) => {
   );
 
   useEffect(() => {
-      console.log(userEmail, "User at Upcoming trips");
       dispatch(GetUpcomingTrips(userEmail));
   }, []);
 
   useEffect(() => {
     if (getUpcomingTripsResponse?.status === true) {
       setUpcomingTrips(getUpcomingTripsResponse?.data);
-      openNotification("success", getUpcomingTripsResponse.message);
     } else if (getUpcomingTripsResponse?.status === false) {
       openNotification("error", getUpcomingTripsResponse.message);
     }

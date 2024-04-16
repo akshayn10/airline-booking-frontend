@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Alert, notification, Button } from 'antd';
+import { Layout, Menu, Alert, notification } from 'antd';
 import FlightIcon from '@mui/icons-material/Flight';
 import ConnectingAirportsIcon from '@mui/icons-material/ConnectingAirports';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useSelector, useDispatch } from 'react-redux';
 import { ResetAPIResponse } from '../../redux/actions/AdminActions';
@@ -14,6 +15,7 @@ const AdminDashboardSider = ({ children }) => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const logout = () => {
         clearLocalStorage();
         dispatch(ResetAuthentication());
@@ -26,12 +28,12 @@ const AdminDashboardSider = ({ children }) => {
     const [showAlert, setShowAlert] = useState(false);
 
     const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
-        : location.pathname.startsWith("/admin/flight-location-management") ? "2" 
-        : location.pathname.startsWith("/admin/admin-report") ? "3": ""];
+        : location.pathname.startsWith("/admin/flight-location-management") ? "2"
+            : location.pathname.startsWith("/admin/admin-report") ? "3" : ""];
 
     useEffect(() => {
         const handleResize = () => {
-            setShowAlert(window.innerWidth < 1920);
+            setShowAlert(window.innerWidth < 1024 || window.innerHeight < 640);
         }
 
         window.addEventListener('resize', handleResize);
@@ -57,7 +59,7 @@ const AdminDashboardSider = ({ children }) => {
             {showAlert && (
                 <Alert
                     message="Screen Size Warning"
-                    description="Your screen width is too small for a perfect information display. Please enlarge your window for the best experience."
+                    description="Your screen is too small for a perfect information display. Please enlarge your window for the best experience."
                     type="warning"
                     showIcon
                     closable={false}
@@ -69,13 +71,13 @@ const AdminDashboardSider = ({ children }) => {
                     <Menu.Item key="1" icon={<FlightIcon />}>
                         <Link to="flight-management">Flight Management</Link>
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<ConnectingAirportsIcon />}>
+                    <Menu.Item key="2" icon={<LocationOnIcon />} style={{ marginTop: '20%' }}>
                         <Link to="flight-location-management">Flight Location Management</Link>
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<ConnectingAirportsIcon />}>
+                    <Menu.Item key="3" icon={<ConnectingAirportsIcon />} style={{ marginTop: '20%' }}>
                         <Link to="admin-report">Reports</Link>
                     </Menu.Item>
-                    <Menu.Item key="4" icon={<ExitToAppIcon />} style={{ position: 'absolute', bottom: 0 }}>
+                    <Menu.Item key="4" icon={<ExitToAppIcon />} style={{ position: 'absolute', bottom: 20 }}>
                         <Link onClick={logout}>Logout</Link>
                     </Menu.Item>
                 </Menu>

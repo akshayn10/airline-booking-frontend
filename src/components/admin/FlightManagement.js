@@ -106,8 +106,8 @@ const FlightManagement = () => {
         const isFlightEditable = !record.flightHasBookings && dayjs(record.departureTime).isAfter(dayjs());
 
         // Pass the isEditable flag to the modal
-        setFleetInformationModalVisible(true);
         setIsFleetEditable(isFlightEditable);
+        setFleetInformationModalVisible(true);
     }
 
     const columns = [
@@ -144,7 +144,7 @@ const FlightManagement = () => {
             width: '10%',
             align: 'center',
             render: (_, record) => (
-                <a href={() => false} disabled={flightFleetEditingId !== ''} onClick={() => showFleetModal(record)}>View</a>
+                <a href={() => false} onClick={() => showFleetModal(record)}>View</a>
             ),
         },
         {

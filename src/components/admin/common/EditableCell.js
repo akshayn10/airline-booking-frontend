@@ -44,7 +44,12 @@ const EditableCell = ({
             break;
         case 'select':
             inputNode = (
-                <Select showSearch>
+                <Select
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                >
                     {selectOptions.map(opt => (
                         <Option key={opt.value} value={opt.value}>{opt.label}</Option>
                     ))}

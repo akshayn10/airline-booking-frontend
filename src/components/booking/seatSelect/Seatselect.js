@@ -4,7 +4,7 @@ import { useLocation,useParams,Link,useNavigate} from "react-router-dom";
 import EventSeatOutlinedIcon from '@mui/icons-material/EventSeatOutlined';
 import FlightClassOutlinedIcon from '@mui/icons-material/FlightClassOutlined';
 import './Seatselect.css'
-import axios from "axios";
+import axios from '../../../config/Axios';
 
 function Seatselect() {
 

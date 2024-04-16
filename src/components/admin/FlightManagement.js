@@ -27,6 +27,10 @@ const FlightManagement = () => {
     const [isFleetEditable, setIsFleetEditable] = useState(false);
 
     useEffect(() => {
+        document.title = "Flight Management";
+    }, []);
+
+    useEffect(() => {
         dispatch(GetFlightLocations());
     }, []);
 

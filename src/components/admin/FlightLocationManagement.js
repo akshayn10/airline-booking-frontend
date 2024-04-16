@@ -15,6 +15,10 @@ const FlightLocationManagement = () => {
     const [newFlightLocationModalVisible, setNewFlightLocationModalVisible] = useState(false);
 
     useEffect(() => {
+        document.title = "Location Management";
+    }, []);
+
+    useEffect(() => {
         dispatch(GetFlightLocations());
     }, []);
 

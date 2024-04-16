@@ -4,8 +4,8 @@ import styles from "./pastBookingsTable.module.css";
 const pastBookingsColumns = [
   {
     title: "Booking Reference",
-    dataIndex: "bookingReference",
-    key: "bookingReference",
+    dataIndex: "bookingId",
+    key: "bookingId",
     render: (text) => <a>{text}</a>,
   },
   {
@@ -15,14 +15,14 @@ const pastBookingsColumns = [
   },
   {
     title: "Booking Date",
-    dataIndex: "bookingDate",
+    dataIndex: "bookingDateTime",
     key: "bookingDate",
+    render: (text) => new Date(text).toLocaleString(), 
   },
   {
     title: "Passenger Names",
-    dataIndex: "passengerNames",
+    dataIndex: "passengers",
     key: "passengerNames",
-    render: (text) => text.join(", "),
   },
   {
     title: "Seat Numbers",
@@ -36,24 +36,28 @@ const pastBookingsColumns = [
     key: "bookingStatus",
   },
   {
+    title: "Seat Numbers",
+    dataIndex: "seatNumbers",
+    key: "seatNumbers",
+  },
+  {
     title: "Total Cost",
     dataIndex: "totalCost",
     key: "totalCost",
   },
   {
-    title: "Actions",
-    key: "actions",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>View Details</a>
-        <a>Leave Feedback</a>
-      </Space>
-    ),
+    title: "Status",
+    dataIndex: "isCancelled",
+    key: "status",
+    render: (isCancelled) => (isCancelled ? "Cancelled" : "Done"),
   },
 ];
 
 const PastBookingsTable = ({ pastBookings }) => (
-    <Table className={styles.container} columns={pastBookingsColumns} dataSource={pastBookings} />
+  <Table
+    className={styles.container}
+    columns={pastBookingsColumns}
+    dataSource={pastBookings}
+  />
 );
 export default PastBookingsTable;
- 

@@ -6,9 +6,10 @@ import {
   ApiErrorReducer,
 } from "./reducers/AdminReducer";
 import {
+  CancelBookingResponseReducer,
   GetUserByEmailReducer,
-  PastBookingsReducer,
-  UpcomingTripsReducer,
+  PastBookingsResponseReducer,
+  UpcomingTripsResponseReducer,
   UpdateUserReducer,
 } from "./reducers/UserReducer";
 import {
@@ -30,10 +31,9 @@ const store = configureStore({
     flightLocationsReducer: AdminFlightLocationReducer,
     fleetsReducer: AdminFleetReducer,
     flightsReducer: AdminFlightsReducer,
-
-    pastBookingsReducer: PastBookingsReducer,
-    upcomingTripsReducer: UpcomingTripsReducer,
-
+    
+    pastBookingsResponseReducer: PastBookingsResponseReducer,
+    upcomingTripsResponseReducer: UpcomingTripsResponseReducer,
     countryListReducer: CountryListReducer,
 
     loginResponseReducer: LoginResponseReducer,
@@ -47,7 +47,8 @@ const store = configureStore({
     changePasswordResponseReducer:ChangePasswordResponseReducer,
 
     updateUserReducer:UpdateUserReducer,
-    getUserByEmailReducer:GetUserByEmailReducer
+    getUserByEmailReducer:GetUserByEmailReducer,
+    cancelBookingResponseReducer:CancelBookingResponseReducer,
 
 
   },

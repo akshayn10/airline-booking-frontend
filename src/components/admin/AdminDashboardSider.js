@@ -14,6 +14,7 @@ const AdminDashboardSider = ({ children }) => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const logout = () => {
         clearLocalStorage();
         dispatch(ResetAuthentication());
@@ -26,12 +27,12 @@ const AdminDashboardSider = ({ children }) => {
     const [showAlert, setShowAlert] = useState(false);
 
     const selectedKeys = [location.pathname.startsWith("/admin/flight-management") ? "1"
-        : location.pathname.startsWith("/admin/flight-location-management") ? "2" 
-        : location.pathname.startsWith("/admin/admin-report") ? "3": ""];
+        : location.pathname.startsWith("/admin/flight-location-management") ? "2"
+            : location.pathname.startsWith("/admin/admin-report") ? "3" : ""];
 
     useEffect(() => {
         const handleResize = () => {
-            setShowAlert(window.innerWidth < 1920);
+            setShowAlert(window.innerWidth < 1024);
         }
 
         window.addEventListener('resize', handleResize);

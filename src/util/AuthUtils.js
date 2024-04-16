@@ -18,5 +18,17 @@ const isAuthenticated = () => {
     return false;
   }
 };
+const isTokenExpired = () => {
+  const exp = localStorage.getItem("exp");
 
-export { isAuthenticated };
+  if (!exp) {
+    return true;
+  }
+  const expirationTime = new Date(parseInt(exp, 10) * 1000);
+
+  const currentTime = new Date();
+
+  return currentTime > expirationTime;
+}
+
+export { isAuthenticated,isTokenExpired };

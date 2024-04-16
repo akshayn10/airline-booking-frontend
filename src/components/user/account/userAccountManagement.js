@@ -11,27 +11,41 @@ import { GetUserDetailsByEmail, UpdateUserDetails } from "../../../redux/actions
 
 const UserAccountManagement = () => {
   const dispatch = useDispatch();
+  const [initialFormValues, setInitialFormValues] = useState(null);
   const authState = useSelector((state) => state.authenticationStateReducer);
+  const getUserByEmailResponse = useSelector((state) => state.getUserByEmailReducer);
+  const updateUserDetailsResponse = useSelector((state) => state.updateUserReducer);
   const getUserAccountDetails = (email) => {
     dispatch(GetUserDetailsByEmail(email));
   };
   useEffect(() => {
     getUserAccountDetails(authState.user.email);
   }, []);
+  useEffect(() => {
+    if(getUserByEmailResponse.status === true){
+      const responseUserDetails = getUserByEmailResponse.data;
+      setSelectedCountry(responseUserDetails.country);
+      setInitialFormValues({
+        firstName: responseUserDetails.firstName,
+        lastName: responseUserDetails.lastName,
+        email: responseUserDetails.email,
+        username: responseUserDetails.username,
+        addressLine: responseUserDetails.addressLine,
+        city: responseUserDetails.city,
+        zipCode: responseUserDetails.zipCode,
+        country: responseUserDetails.country,
+        state: responseUserDetails.state,
+        phoneNumberPrefix: responseUserDetails.prefix,
+        phoneNumber: responseUserDetails.phone,
+      });
+    
+      console.log(initialFormValues);
+    }
 
-  const initialFormValues = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    username: "johndoe",
-    addressLine: "123 Main St",
-    city: "Colombo",
-    zipCode: "12345",
-    country: "India",
-    state: "Western Province",
-    prefix: "+94",
-    phone: "712345678",
-  };
+  },[getUserByEmailResponse])
+  useEffect(() => {},[updateUserDetailsResponse])
+
+
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
     dispatch(UpdateUserDetails(values))
@@ -44,7 +58,9 @@ const UserAccountManagement = () => {
 
   return (
     <div className={styles.container}>
-      <Form
+      {
+        initialFormValues &&
+        <Form 
         className={styles.form__container}
         onFinish={onFinish}
         initialValues={initialFormValues}
@@ -196,6 +212,8 @@ const UserAccountManagement = () => {
           </Button>
         </Form.Item>
       </Form>
+      }
+      
     </div>
   );
 };

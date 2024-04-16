@@ -1,13 +1,14 @@
 import { Form } from "antd";
 import { InputOTP } from "antd-input-otp"; // Don't forget to import this too!
 import styles from "./confirmEmail.module.css";
-const OTP = ({ setOtp, handleOtpSubmit }) => {
+const OTP = ({ handleOtpSubmit }) => {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
     const otpString = values.otp.join("");
     console.log(otpString);
-    setOtp(otpString);
-    handleOtpSubmit();
+    // setTimeout(() => {
+      handleOtpSubmit(otpString);
+    // },500)
   };
   return (
     <Form onFinish={onFinish}>

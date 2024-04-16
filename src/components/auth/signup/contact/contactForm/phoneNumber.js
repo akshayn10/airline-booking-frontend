@@ -30,7 +30,6 @@ const PhoneNumber = ({ selectedCountry }) => {
             idd: { root, suffixes },
           } = country;
           const combinedIdd = [root, ...suffixes].join("");
-          console.log(combinedIdd, "combinedIdd");
           return combinedIdd;
         });
     }
@@ -42,7 +41,7 @@ const PhoneNumber = ({ selectedCountry }) => {
 
   const { Option } = Select;
   const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
+    <Form.Item name="phoneNumberPrefix" noStyle>
       <Select style={{ width: 90 }}>
         {combinedIddNumbers &&
           combinedIddNumbers.map((iddNumber) => (
@@ -55,8 +54,7 @@ const PhoneNumber = ({ selectedCountry }) => {
   );
   return (
     <Form.Item
-      name="phone"
-      rules={[{ required: true, message: "Please input your phone number!" }]}
+      name="phoneNumber"
     >
       <Input
         type="number"

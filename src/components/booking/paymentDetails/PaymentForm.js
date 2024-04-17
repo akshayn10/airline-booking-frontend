@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {Route,Routes,Link} from "react-router-dom"
 import { runes } from 'runes2'
 import './PaymentForm.css'; 
-import validator from "validator";
 
 
 function PaymentForm(){

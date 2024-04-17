@@ -19,8 +19,8 @@ function Recipt(){
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get(`http://localhost:8080/booking/v1/getByFlight/${passingData.flightNo}`);
-            const response1 = await axios.get(`http://localhost:8080/booking/v1/getPassengers/${passingData.bookingId}`);
+            const response = await axios.get(`http://localhost:8080/booking/getByFlight/3`);
+            const response1 = await axios.get(`http://localhost:8080/booking/getPassengers/${passingData.bookingId}`);
             setFlight(response.data);
             setBooking(response1.data);
           } catch (error) {
@@ -113,7 +113,7 @@ function Recipt(){
                             </Card>
                             <h2 className="heading">Passenger Information</h2> <Divider/>
                            <Card hoverable>
-                            {booking.map((passenger) =>(
+                            {booking && booking.map((passenger) =>(
                                 <div>
                             <h3 className="passenger">Passenger {passenger.firstName}</h3>
                         

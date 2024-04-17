@@ -22,7 +22,7 @@ function Seatselect() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/booking/v1/getByFlight/${passingData.flightNo}`);
+                const response = await axios.get(`http://localhost:8080/booking/getByFlight/3`);
                 console.log('Flight Details:', response.data);
                 setFlightDetail(response.data);
             } catch (error) {

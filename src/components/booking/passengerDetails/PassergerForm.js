@@ -16,8 +16,7 @@ function PassengerForm() {
       );
 
     
-    const location = useLocation(); 
-    const noOfPassengers = location.state;
+    const noOfPassengers = localStorage.getItem("passengerCount")
     console.log('pasednpassenger no : ',noOfPassengers);
     const passengerNo = Array.from({ length: noOfPassengers }, (_, index) => index + 1);
 
@@ -80,7 +79,7 @@ function PassengerForm() {
             const bookingDetails = {
                 seatTypeBooked: seatType,
                 noOfSeatBooked: noOfPassengers,
-                flightId: 4,
+                flightId: 3,
                 passengers: passengerDetails,
                 userEmail:userEmail
             };
@@ -104,6 +103,8 @@ function PassengerForm() {
                         bookingId : bookingId
                     };
                     message.info('Passing  now');
+                    localStorage.removeItem("passengerCount");
+                    localStorage.setItem("isBooking", false);
                     navigate('/booking/seat-select', { state: passingData });
                 })
                 .catch(error => {

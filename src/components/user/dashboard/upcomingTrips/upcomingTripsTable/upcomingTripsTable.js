@@ -71,11 +71,11 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
       dataIndex: "passengers",
       key: "passengerNames",
     },
-    {
-      title: "Seat Numbers",
-      dataIndex: "seatNumbers",
-      key: "seatNumbers",
-    },
+    // {
+    //   title: "Seat Numbers",
+    //   dataIndex: "seatNumbers",
+    //   key: "seatNumbers",
+    // },
     {
       title: "Total Cost",
       dataIndex: "totalCost",

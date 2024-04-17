@@ -2,10 +2,14 @@ import React from "react";
 import { Button, Card, Input, Form } from "antd"; // Import Ant Design components
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import styles from "./FlightSearch.module.css"; // Import CSS Modules styles
-import { useNavigate,Link } from 'react-router-dom';
-
+import { useNavigate, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const FlightSearchResults = ({ flightResults }) => {
+  const isAuthenticated = useSelector(
+    (state) => state.authenticationStateReducer.authenticated
+  );
+
   const settings = {
     dots: true,
     infinite: true,
@@ -16,15 +20,19 @@ const FlightSearchResults = ({ flightResults }) => {
 
   let noOfPassengers;
   const navigate = useNavigate();
-  const buttonClicked = () =>{
-    const passingData = noOfPassengers;
-    console.log('passing data : ',passingData);
-    navigate('/booking/passenger-form', { state: passingData });
-  }
+  const buttonClicked = () => {
+    localStorage.setItem("passengerCount", noOfPassengers);
+    if (isAuthenticated) {
+      navigate("/booking/passenger-form");
+    } else {
+      localStorage.setItem("isBooking", true);
+      navigate("/auth/login");
+    }
+  };
 
-  const handleFormChange = (value) =>{
+  const handleFormChange = (value) => {
     noOfPassengers = value;
-  }
+  };
 
   return (
     <div className="flight-search-results">
@@ -51,21 +59,22 @@ const FlightSearchResults = ({ flightResults }) => {
             Price: {flight.price.toFixed(2)} (currency unit)
           </p>
 
-          <a href="#" className={styles.bookNowButton}>
-          </a>
+          <a href="#" className={styles.bookNowButton}></a>
           {/* Add any additional flight details you want to display */}
         </Card>
       ))}
-                <Form>
-            <Form.Item>
-            <Input type = "number" name= "passengers" onChange={(e) => handleFormChange( e.target.value)}>
-            </Input>
-            </Form.Item>
-          </Form>
-          <Button onClick={buttonClicked} className={styles.bookNowButton}>
-            Book Now
-            </Button>
-
+      <Form>
+        <Form.Item>
+          <Input
+            type="number"
+            name="passengers"
+            onChange={(e) => handleFormChange(e.target.value)}
+          ></Input>
+        </Form.Item>
+      </Form>
+      <Button onClick={buttonClicked} className={styles.bookNowButton}>
+        Book Now
+      </Button>
     </div>
   );
 };

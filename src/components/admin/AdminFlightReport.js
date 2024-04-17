@@ -147,13 +147,13 @@ function AdminFlightReport(){
                             <h3>Flight Id</h3>
                         </Col>
                         <Col span={3}>
-                            <h3>Total seat</h3>
+                            <h3>Total Economy seat</h3>
                         </Col>
                         <Col span={3}>
-                            <h3>Total seat</h3>
+                            <h3>Total Premium seat</h3>
                         </Col>
                         <Col span={3}>
-                            <h3>Total seat</h3>
+                            <h3>Total Business seat</h3>
                         </Col>
                         <Col span={3}>
                             <h3>Departure Location</h3>

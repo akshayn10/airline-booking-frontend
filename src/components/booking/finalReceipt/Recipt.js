@@ -5,9 +5,11 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "../../../config/Axios";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 function Recipt() {
   const today = new Date();
+  const navigate = useNavigate();
 
   const [booking, setBooking] = useState([]);
   // const [flight, setFlight] = useState([]);

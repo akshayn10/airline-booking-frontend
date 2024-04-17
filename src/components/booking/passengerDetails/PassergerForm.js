@@ -85,26 +85,23 @@ function PassengerForm() {
             };
             
                 
-                axios.post('http://localhost:8080/booking', bookingDetails) // Use Axios to send POST request
-            
+                axios.post('http://localhost:8080/booking', bookingDetails) 
                 .then(response => {
                     message.info('Submitted');
                     
                     console.log('Passenger created:', response.data);
-                    const bookingId = response.data.bookingId; // got booking id from back end
-                    const flightId = response.data.flightId; // got flight id from backend
+                    const bookingId = response.data; 
                     console.log("Bookin id is :",bookingId);
-                    console.log("Flight id is :",flightId); 
+
+                    localStorage.setItem("bookingId", bookingId);
 
                     const passingData = {
                         totalPassengers : noOfPassengers,
-                        flightNo : flightId,
+                        flightNo : 3,
                         seatType : seatType,
                         bookingId : bookingId
                     };
                     message.info('Passing  now');
-                    localStorage.removeItem("passengerCount");
-                    localStorage.setItem("isBooking", false);
                     navigate('/booking/seat-select', { state: passingData });
                 })
                 .catch(error => {

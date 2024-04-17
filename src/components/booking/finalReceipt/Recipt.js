@@ -19,6 +19,7 @@ function Recipt() {
     const fetchData = async () => {
       try {
         const bookingId = localStorage.getItem("bookingId");
+        if(!bookingId) return;
         const response = await axios.get(
           `http://localhost:8080/booking/${parseInt(bookingId)}`
         );

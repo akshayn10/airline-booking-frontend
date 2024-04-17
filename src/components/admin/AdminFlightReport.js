@@ -2,6 +2,10 @@ import React, {useEffect, useState} from "react";
 import {Card,Row,Col, Divider, Pagination} from "antd";
 import "./AdminFlightReport.css"
 import axios from "../../config/Axios";
+import CanvasJSReact from '@canvasjs/react-charts';
+
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 function AdminFlightReport(){
     const [currentPage, setCurrentPage] = useState(1);
@@ -13,18 +17,23 @@ function AdminFlightReport(){
     const endIndex1 = startIndex1 + pageSize;
 
     const [flightDetails, setFlightDetails] = useState([]);
-    const [passengerDetails, setPassengerDetails] = useState([]);
+    const [bookedSeatsWithFlightId, setBookedSeatsWithFlightId] = useState([]);
+    const [fleetDetail, setFleetDetail] = useState([]);
+
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:8080/v1/admin/flight');
-                const response1 = await axios.get('http://localhost:8080/passenger/getAllPassengers');
+                const response1 = await axios.get('http://localhost:8080/booking/getBookedSeat');
+                const response2 = await axios.get('http://localhost:8080/v1/admin/fleet');
                 console.log('Flight Details:', response.data);
-                // console.log('Passenger Details:', response1.data);n
+                console.log('Passenger Details:', response1.data);
                 setFlightDetails(response.data);
-                // setPassengerDetails(response1.data);
+                setBookedSeatsWithFlightId(response1.data);
+                setFleetDetail(response2.data);
+
             } catch (error) {
                 console.error('Error fetching Flights', error);
             }
@@ -33,10 +42,11 @@ function AdminFlightReport(){
     }, []);
 
 
-    const visibleBooking = passengerDetails.slice(startIndex1, endIndex1);
+    const visibleBooking = bookedSeatsWithFlightId.slice(startIndex1, endIndex1);
     const visibleFlights = flightDetails.slice(startIndex, endIndex);
 
     const flightDataItems =visibleFlights.map(detail =>
+        
             <Row>
                 <Col span={3}>{detail.id}</Col>
                 <Col span={3}>{detail.remainingEconomySeats}</Col>
@@ -50,20 +60,16 @@ function AdminFlightReport(){
             </Row>
         );
 
-    // const bookingDataItems = visibleBooking.map(passenger =>
-    //     <Row>
+    const bookingDataItems = visibleBooking.map(flight =>
+        <Row>
 
-    //     <Col span={3}>{passenger.id}</Col>
-    //     <Col span={3}>{passenger.firstName}</Col>
-    //     <Col span={3}>{passenger.lastName}</Col>
-    //     <Col span={3}>{passenger.passportNo}</Col>
-    //     <Col span={3}>{passenger.mealPreference}</Col>
-    //     <Col span={3}>{passenger.booking.bookingId}</Col>
-    //     <Col span={3}>{passenger.booking.seatTypeBooked}</Col>
-    //     <Col>{passenger.booking.travelDate}</Col>
-    //     <Divider></Divider>
-    // </Row>
-    //     );
+        <Col span={4}>{flight.flightId}</Col>
+        <Col span={5}>{flight.economySeats}</Col>
+        <Col span={5}>{flight.businessSeats}</Col>
+        <Col span={6}>{flight.premiumSeats}</Col>
+        <Divider></Divider>
+    </Row>
+        );
 
 
     const onPageChange = (page) => {
@@ -73,13 +79,69 @@ function AdminFlightReport(){
         const onPageChange1 = (page) => {
             setCurrentPage1(page);
         };
+
+
+            const ecoChart = {
+                animationEnabled: true,
+                exportEnabled: true,
+                theme: "dark2", // "light1", "dark1", "dark2"
+                title:{
+                    text: "Total Economy Seats"
+                },
+                data: [{
+                    type: "pie",
+                    indexLabel: "{label}",		
+                    startAngle: -90,
+                    dataPoints: fleetDetail.map(item => ({
+                        y: item.totalEconomySeats,
+                        label: item.model
+                    }))
+                }]
+            }
+
+            const businessChart = {
+                animationEnabled: true,
+                exportEnabled: true,
+                theme: "dark2", // "light1", "dark1", "dark2"
+                title:{
+                    text: "Total Business Seats"
+                },
+                data: [{
+                    type: "pie",
+                    indexLabel: "{label}",		
+                    startAngle: -90,
+                    dataPoints: fleetDetail.map(item => ({
+                        y: item.totalBusinessSeats,
+                        label: item.model
+                    }))
+                }]
+            }
+
+            const premiumChart = {
+                animationEnabled: true,
+                exportEnabled: true,
+                theme: "dark2", // "light1", "dark1", "dark2"
+                title:{
+                    text: "Total Premium Seats"
+                },
+                data: [{
+                    type: "pie",
+                    indexLabel: "{label}",		
+                    startAngle: -90,
+                    dataPoints: fleetDetail.map(item => ({
+                        y: item.totalPremiumSeats,
+                        label: item.model
+                    }))
+                }]
+            }
+
     
     return(
         <div className="adminReportcontainer">
             <Col>
                 <Row>
                 <Card hoverable style={{width:"1800px"}}>
-                <h1 className="h1">Flight Report</h1>
+                <h1 className="h1">Flight Details</h1>
                     <Row>
                         <Col span={3}>
                             <h3>Flight Id</h3>
@@ -120,46 +182,43 @@ function AdminFlightReport(){
                 </Row>
                 <Row>
                 <Card hoverable style={{width:"1800px"}}>
-                <h1 className="h1">Passenger Report</h1>
+                <h1 className="h1">Available Seat Details</h1>
                     <Row>
                         <Col span={3}>
-                            <h3>Passenger Id</h3>
+                            <h3>Flight Id</h3>
                         </Col>
-                        <Col span={3}>
-                            <h3>First Name</h3>
+                        <Col span={5}>
+                            <h3>Remaining Economy Seats</h3>
                         </Col>
-                        <Col span={3}>
-                            <h3>Last Name</h3>
+                        <Col span={5}>
+                            <h3>Remaining Business Seats</h3>
                         </Col>
-                        <Col span={3}>
-                            <h3>Passport No</h3>
-                        </Col>
-                        <Col span={3}>
-                            <h3>Meal Preference</h3>
-                        </Col>
-                        <Col span={3}>
-                            <h3>Booking Id</h3>
-                        </Col>
-                        <Col span={3}>
-                            <h3>Seat type</h3>
-                        </Col>
-                        <Col>
-                            <h3>Travel date</h3>
+                        <Col span={5}>
+                            <h3>Remaining Premium Seats</h3>
                         </Col>
                     </Row>
                     <Divider></Divider>
                     <Divider></Divider>
-                    {/* {bookingDataItems} */}
+                    {bookingDataItems}
                     <Pagination
                         style={{ marginTop: "20px" }}
                         current={currentPage1}
                         pageSize={pageSize}
-                        total={passengerDetails.length}
+                        total={bookedSeatsWithFlightId.length}
                         onChange={onPageChange1}
                     />
                 </Card>
                 </Row>
             </Col>
+            <div>
+                <CanvasJSChart options = {ecoChart} />
+                <Divider></Divider>
+                        <Divider></Divider>
+                <CanvasJSChart options = {businessChart} />
+                <Divider></Divider>
+                        <Divider></Divider>
+                <CanvasJSChart options = {premiumChart} />
+		</div>
         </div>
     )
 }

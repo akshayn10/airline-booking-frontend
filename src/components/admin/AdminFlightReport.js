@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Card,Row,Col, Divider, Pagination} from "antd";
 import "./AdminFlightReport.css"
-import axios from "axios";
+import axios from "../../config/Axios";
 
 function AdminFlightReport(){
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,9 +22,9 @@ function AdminFlightReport(){
                 const response = await axios.get('http://localhost:8080/v1/admin/flight');
                 const response1 = await axios.get('http://localhost:8080/passenger/getAllPassengers');
                 console.log('Flight Details:', response.data);
-                console.log('Passenger Details:', response1.data);
+                // console.log('Passenger Details:', response1.data);n
                 setFlightDetails(response.data);
-                setPassengerDetails(response1.data);
+                // setPassengerDetails(response1.data);
             } catch (error) {
                 console.error('Error fetching Flights', error);
             }
@@ -50,20 +50,20 @@ function AdminFlightReport(){
             </Row>
         );
 
-    const bookingDataItems = visibleBooking.map(passenger =>
-        <Row>
+    // const bookingDataItems = visibleBooking.map(passenger =>
+    //     <Row>
 
-        <Col span={3}>{passenger.id}</Col>
-        <Col span={3}>{passenger.firstName}</Col>
-        <Col span={3}>{passenger.lastName}</Col>
-        <Col span={3}>{passenger.passportNo}</Col>
-        <Col span={3}>{passenger.mealPreference}</Col>
-        <Col span={3}>{passenger.booking.bookingId}</Col>
-        <Col span={3}>{passenger.booking.seatTypeBooked}</Col>
-        <Col>{passenger.booking.travelDate}</Col>
-        <Divider></Divider>
-    </Row>
-        );
+    //     <Col span={3}>{passenger.id}</Col>
+    //     <Col span={3}>{passenger.firstName}</Col>
+    //     <Col span={3}>{passenger.lastName}</Col>
+    //     <Col span={3}>{passenger.passportNo}</Col>
+    //     <Col span={3}>{passenger.mealPreference}</Col>
+    //     <Col span={3}>{passenger.booking.bookingId}</Col>
+    //     <Col span={3}>{passenger.booking.seatTypeBooked}</Col>
+    //     <Col>{passenger.booking.travelDate}</Col>
+    //     <Divider></Divider>
+    // </Row>
+    //     );
 
 
     const onPageChange = (page) => {
@@ -149,7 +149,7 @@ function AdminFlightReport(){
                     </Row>
                     <Divider></Divider>
                     <Divider></Divider>
-                    {bookingDataItems}
+                    {/* {bookingDataItems} */}
                     <Pagination
                         style={{ marginTop: "20px" }}
                         current={currentPage1}

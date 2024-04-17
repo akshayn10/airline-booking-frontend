@@ -17,18 +17,13 @@ const pastBookingsColumns = [
     title: "Booking Date",
     dataIndex: "bookingDateTime",
     key: "bookingDate",
-    render: (text) => new Date(text).toLocaleString(), 
+    render: (text) => new Date(text).toLocaleString(),
   },
   {
     title: "Passenger Names",
     dataIndex: "passengers",
     key: "passengerNames",
   },
-  // {
-  //   title: "Seat Numbers",
-  //   dataIndex: "seatNumbers",
-  //   key: "seatNumbers",
-  // },
   {
     title: "Total Cost",
     dataIndex: "totalCost",
@@ -36,9 +31,8 @@ const pastBookingsColumns = [
   },
   {
     title: "Status",
-    dataIndex: "cancelled",
+    dataIndex: "status",
     key: "status",
-    render: (cancelled) => (cancelled ? "Cancelled" : "Done"),
   },
 ];
 
@@ -47,7 +41,8 @@ const PastBookingsTable = ({ pastBookings }) => (
     className={styles.container}
     columns={pastBookingsColumns}
     dataSource={pastBookings}
-    rowKey={record => record.bookingId} 
+    pagination={false}
+    rowKey={(record) => record.bookingId}
   />
 );
 export default PastBookingsTable;

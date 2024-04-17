@@ -1,4 +1,4 @@
-import { Space, Table, Tag } from "antd";
+import { Table } from "antd";
 import styles from "./pastBookingsTable.module.css";
 
 const pastBookingsColumns = [
@@ -6,7 +6,7 @@ const pastBookingsColumns = [
     title: "Booking Reference",
     dataIndex: "bookingId",
     key: "bookingId",
-    render: (text) => <a>{text}</a>,
+    render: (text) => <p>{text}</p>,
   },
   {
     title: "Flight Details",
@@ -47,6 +47,7 @@ const PastBookingsTable = ({ pastBookings }) => (
     className={styles.container}
     columns={pastBookingsColumns}
     dataSource={pastBookings}
+    rowKey={record => record.bookingId} 
   />
 );
 export default PastBookingsTable;

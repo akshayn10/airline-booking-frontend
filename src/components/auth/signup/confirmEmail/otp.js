@@ -1,4 +1,4 @@
-import { Form } from "antd";
+import { Button, Form } from "antd";
 import { InputOTP } from "antd-input-otp"; // Don't forget to import this too!
 import styles from "./confirmEmail.module.css";
 const OTP = ({ handleOtpSubmit }) => {
@@ -17,9 +17,9 @@ const OTP = ({ handleOtpSubmit }) => {
       </Form.Item>
 
       <Form.Item>
-        <button className={styles.continue__button} type="submit">
+        <Button htmlType="submit" className={styles.continue__button} type="primary">
           Submit OTP
-        </button>
+        </Button>
       </Form.Item>
     </Form>
   );

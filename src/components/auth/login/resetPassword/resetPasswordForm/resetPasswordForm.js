@@ -29,7 +29,6 @@ const ResetPasswordForm = () => {
   }, [resetPasswordResponse]);
   return (
     <div className={styles.container}>
-      {email}
       <Form onFinish={onFinish}>
         <Form.Item
           name="password"

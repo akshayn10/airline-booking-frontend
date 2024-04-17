@@ -4,11 +4,10 @@ const ProtectedRoute = ({ children, roles }) => {
   const userRoleFromStore = useSelector(
     (state) => state.authenticationStateReducer.role
   );
-  console.log(userRoleFromStore, "userRoleFromStore");
   const userRoleFromLocalStorage = localStorage.getItem("role");
-  console.log(userRoleFromLocalStorage,"userRoleFromLocalStorage");
 
   if(userRoleFromLocalStorage!==userRoleFromStore){
+    console.log(userRoleFromStore,"Role")
     localStorage.setItem("role",userRoleFromStore)
   }
 

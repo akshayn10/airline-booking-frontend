@@ -4,15 +4,11 @@ import "./signupForm.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RegisterUser } from "../../../../../redux/actions/AuthActions";
 import { useNotificationContext } from "../../../../../context/notificationContext";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 
 const SignupForm = ({ next, setEmail }) => {
   const { openNotification } = useNotificationContext();
-  const registerResponse = useSelector((state) => ({
-    status: state.registerResponseReducer.status,
-    message: state.registerResponseReducer.message,
-    data: state.registerResponseReducer.data,
-  }));
+  const registerResponse = useSelector((state) => state.registerResponseReducer);
   const dispatch = useDispatch();
   const onFinish = (values) => {
     dispatch(RegisterUser(values));

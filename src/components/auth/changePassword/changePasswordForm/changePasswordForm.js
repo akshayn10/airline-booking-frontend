@@ -2,11 +2,10 @@ import { Input, Form, Button } from "antd";
 import styles from "./changePasswordForm.module.css";
 import { LockOutlined } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-
 import { ChangePassword } from "../../../../redux/actions/AuthActions";
 import { useNotificationContext } from "../../../../context/notificationContext";
 import { useEffect } from "react";
+import { logout } from "../../../../util/AuthUtils";
 const ChangePasswordForm = () => {
   const dispatch = useDispatch();
   const email = localStorage.getItem("email");
@@ -14,7 +13,6 @@ const ChangePasswordForm = () => {
     (state) => state.changePasswordResponseReducer
   );
   const { openNotification } = useNotificationContext();
-  const navigate = useNavigate();
   const onFinish = (values) => {
     values = { ...values, email: email };
     dispatch(ChangePassword(values));
@@ -24,7 +22,7 @@ const ChangePasswordForm = () => {
   useEffect(() => {
     if (changePasswordResponse.status === true) {
       openNotification("success", changePasswordResponse.data);
-      navigate("/auth/login");
+      logout();
     } else if (changePasswordResponse.status === false) {
       openNotification("error", changePasswordResponse.message);
     }

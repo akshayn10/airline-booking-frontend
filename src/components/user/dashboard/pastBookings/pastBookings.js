@@ -14,14 +14,12 @@ const PastBookings = ({ userEmail }) => {
   );
 
   useEffect(() => {
-    console.log(userEmail, "User at Past bookings");
     dispatch(GetPastBookings(userEmail));
   }, []);
 
   useEffect(() => {
     if (getPastBookingsResponse?.status === true) {
       setPastBookings(getPastBookingsResponse.data);
-      openNotification("success", getPastBookingsResponse.message);
     } else if (getPastBookingsResponse?.status === false) {
       openNotification("error", getPastBookingsResponse.message);
     }

@@ -19,7 +19,6 @@ const ConfirmEmail = ({ next, email }) => {
     dispatch(ConfirmEmailWithOTP(otpData));
   };
   const handleResendOtp = () => {
-    dispatch(ConfirmEmailWithOTP({ email: email }));
   };
   useEffect(() => {
     if (confirmEmailResponse.status === true) {
@@ -32,17 +31,17 @@ const ConfirmEmail = ({ next, email }) => {
 
   return (
     <div className={styles.confirm_email_container}>
-      <img src={email} alt="email" />
       <h1>Confirm Your Email</h1>
       <p>
         A verification code has been sent to your email. Please enter the code
         to verify and continue using our services.
       </p>
       <div className={styles.actions}>
-        <button onClick={handleResendOtp} className={styles.resend__button}>
-          Resend Confirmation Code
-        </button>
+
         <OTP handleOtpSubmit={handleOtpSubmit} />
+        {/* <button onClick={handleResendOtp} className={styles.resend__button}>
+          Resend Confirmation Code
+        </button> */}
       </div>
     </div>
   );

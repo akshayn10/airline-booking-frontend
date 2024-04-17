@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { CancelBooking } from "../../../../../redux/actions/UserActions";
 import { useNotificationContext } from "../../../../../context/notificationContext";
 
-const UpcomingTripsTable = ({ upcomingTrips }) => {
+const UpcomingTripsTable = ({
+  upcomingTrips,
+  handleDataRefreshWhenCancelled,
+}) => {
   const dispatch = useDispatch();
   const { openNotification } = useNotificationContext();
   const [bookingToCancel, setBookingToCancel] = useState(null);
@@ -27,7 +30,8 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
   const confirmCancelBooking = () => {
     if (bookingToCancel) {
       console.log("Cancel booking with ID:", bookingToCancel);
-      dispatch(CancelBooking(bookingToCancel))
+      dispatch(CancelBooking(bookingToCancel));
+      handleDataRefreshWhenCancelled();
     }
     setBookingToCancel(null);
   };
@@ -52,7 +56,7 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
       title: "Booking Date",
       dataIndex: "bookingDateTime",
       key: "bookingDate",
-      render: (text) => new Date(text).toLocaleString(), 
+      render: (text) => new Date(text).toLocaleString(),
     },
     {
       title: "Departure Time",
@@ -75,6 +79,10 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
       title: "Seat Numbers",
       dataIndex: "seatNumbers",
       key: "seatNumbers",
+      render: (seatNumbers) => {
+        if (!seatNumbers) return "";
+        return seatNumbers.join(", ");
+      },
     },
     {
       title: "Total Cost",
@@ -94,7 +102,9 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
             cancelText="No"
             open={bookingToCancel === record.bookingId}
           >
-            <Button onClick={() => handleCancelBooking(record.bookingId)}>Cancel Booking</Button>
+            <Button onClick={() => handleCancelBooking(record.bookingId)}>
+              Cancel Booking
+            </Button>
           </Popconfirm>
         </Space>
       ),
@@ -102,7 +112,13 @@ const UpcomingTripsTable = ({ upcomingTrips }) => {
   ];
 
   return (
-    <Table rowKey={record => record.bookingId} className={styles.container} columns={upcomingTripsColumns} dataSource={upcomingTrips} />
+    <Table
+      rowKey={(record) => record.bookingId}
+      className={styles.container}
+      columns={upcomingTripsColumns}
+      dataSource={upcomingTrips}
+      pagination={false}
+    />
   );
 };
 

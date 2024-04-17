@@ -83,7 +83,7 @@ export const UpdateFlight = (flight) => async (dispatch) => {
         dispatch(GetFlights());
     } catch (error) {
         if (error.response?.status === 400) {
-            dispatch({ type: API_ERROR, error: "Flight already booked in between selected departure and arrival time period" });
+            dispatch({ type: API_ERROR, error: "Fleet already booked in between selected departure and arrival time period" });
         } else {
             dispatch({ type: API_ERROR, error: "Something went wrong from server-side" });
         }

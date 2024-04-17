@@ -5,7 +5,7 @@ import { GetUpcomingTrips } from "../../../../redux/actions/UserActions";
 import { useDispatch, useSelector } from "react-redux";
 import { useNotificationContext } from "../../../../context/notificationContext";
 
-const UpcomingTrips = ({userEmail}) => {
+const UpcomingTrips = ({ userEmail,updatePastTripsWhenCancelled }) => {
   const dispatch = useDispatch();
   const { openNotification } = useNotificationContext();
   const [upcomingTrips, setUpcomingTrips] = useState(null);
@@ -14,8 +14,14 @@ const UpcomingTrips = ({userEmail}) => {
   );
 
   useEffect(() => {
-      dispatch(GetUpcomingTrips(userEmail));
+    dispatch(GetUpcomingTrips(userEmail));
   }, []);
+  
+  const handleDataRefreshWhenCancelled = () =>{
+    dispatch(GetUpcomingTrips(userEmail));
+    updatePastTripsWhenCancelled();
+  }
+
 
   useEffect(() => {
     if (getUpcomingTripsResponse?.status === true) {
@@ -31,7 +37,7 @@ const UpcomingTrips = ({userEmail}) => {
       {upcomingTrips && (
         <>
           {upcomingTrips.length > 0 && (
-            <UpcomingTripsTable upcomingTrips={upcomingTrips} />
+            <UpcomingTripsTable handleDataRefreshWhenCancelled={handleDataRefreshWhenCancelled} upcomingTrips={upcomingTrips} />
           )}
           {!upcomingTrips.length && <p>No upcoming trips found.</p>}
         </>

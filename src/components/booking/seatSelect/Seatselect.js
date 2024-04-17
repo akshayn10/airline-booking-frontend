@@ -7,11 +7,10 @@ import './Seatselect.css'
 import axios from '../../../config/Axios';
 
 function Seatselect() {
-
     
     const navigate = useNavigate();
     const [selectedSeats, setSelectedSeats] = useState([]);
-    const bookedSeats = [1,2];
+    const [bookedSeats,setBookedSeats] = useState([]);
 
     const location = useLocation();
     const passingData = location.state;
@@ -20,13 +19,25 @@ function Seatselect() {
     const [flightDetail, setFlightDetail] = useState([]);
 
     useEffect(() => {
+        console.log(selectedSeats,"Selected");
+    },[selectedSeats])
+
+    useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/booking/v1/getByFlight/${passingData.flightNo}`);
+                const response = await axios.get(`http://localhost:8080/booking/getByFlight/3`);
                 console.log('Flight Details:', response.data);
                 setFlightDetail(response.data);
             } catch (error) {
                 console.error('Error fetching Flights', error);
+            }
+            try{
+                const response = await axios.get(`http://localhost:8080/booking/booked-seats/3`);
+                console.log('Booked Seats:', response.data);
+                setBookedSeats(response.data); 
+            }
+            catch(error){
+                console.error('Error fetching Booked Seats', error);
             }
         };
         fetchData();
@@ -77,10 +88,12 @@ function Seatselect() {
     const buttonClicked = () => {
         const passingDataTransfer = {
             totalPassengers : noOfPassengers,
-            flightNo : 4,
+            flightNo : 3,
             costPerSeat : costPerSeat,
-            bookingId : passingData.bookingId
+            bookingId : passingData.bookingId,
+            selectedSeats:selectedSeats
         };
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
         navigate('/booking/payment-details', { state: passingDataTransfer});
     }
 

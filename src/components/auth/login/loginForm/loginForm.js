@@ -26,6 +26,10 @@ const LoginForm = () => {
   useEffect(() => {
     if (loginResponse.status === true) {
       openNotification("success", "Login Success");
+      if(localStorage.getItem('isBooking')){
+        navigate('/booking/passenger-form')
+        return
+      }
       setTimeout(() => {
       if (authRole) {
         if (authRole === "ADMIN") {

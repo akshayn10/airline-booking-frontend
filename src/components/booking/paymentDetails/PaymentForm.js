@@ -4,19 +4,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {Route,Routes,Link} from "react-router-dom"
 import { runes } from 'runes2'
 import './PaymentForm.css'; 
-import validator from "validator";
+import axios from '../../../config/Axios'
 
 
 function PaymentForm(){
     const location = useLocation();
-    // const passingData = location.state;
+    const passingData = location.state;
+    console.log("Passing data : ", passingData);
 
-    const passingData = {
-        totalPassengers : 4,
-        flightNo : 4,
-        seatType : "economy",
-        bookingId : 15
-    };
+    // const passingData = {
+    //     totalPassengers : 4,
+    //     flightNo : 4,
+    //     seatType : "economy",
+    //     bookingId : 15
+    // };
 
     const [cardDetails, setCardDetails] = useState({
         nameOnCard: '',
@@ -37,7 +38,25 @@ function PaymentForm(){
     const totalCost = costPerPerson*noOfPassengers;
 
     const navigate = useNavigate();
-
+    const confirmBooking = async () => {
+        const bookingId = localStorage.getItem('bookingId')
+        console.log("bookingId : ", bookingId);
+        const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats"));
+        console.log("selected seats : ", selectedSeats);
+        console.log("Confirming Booking");
+        try{
+            const response = await axios.put(`http://localhost:8080/booking/confirm-booking/${passingData.bookingId}`,{
+                seatNumbers:passingData.selectedSeats
+            });
+            console.log('Confirmed Booking:', response.status);
+            localStorage.removeItem("passengerCount");
+            localStorage.removeItem("selectedSeats");
+            localStorage.setItem("isBooking", false);
+        }
+        catch(error){
+            console.error('Error Confirming Booked Seats', error);
+        }
+    };
     const buttonClicked = () => {
         const isAnyFieldIncomplete = ()=> {
             return (
@@ -68,12 +87,14 @@ function PaymentForm(){
         if(countDigits(cardDetails.cardNo)<16){
             message.info('Invalid card');
         }
+        confirmBooking();
         const passingDataTransfer = {
             totalPassengers : noOfPassengers,  // check and delete
             flightNo : passingData.flightNo,
             costPerSeat : passingData.costPerSeat,  // check and delete
             bookingId : passingData.bookingId
         };
+
         navigate('/booking/final-recipt', { state: passingDataTransfer});
         
     }

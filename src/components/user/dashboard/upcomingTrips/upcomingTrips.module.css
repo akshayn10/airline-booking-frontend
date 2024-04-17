@@ -1,7 +1,6 @@
 .container{
-    width: 40%;
+    width: 50%;
     height: 100%;
-    background-color: rgb(198, 224, 224);
     border-radius: 20px;
     overflow-x: auto;
 }

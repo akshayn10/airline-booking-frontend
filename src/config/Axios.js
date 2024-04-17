@@ -9,7 +9,7 @@ import { logout } from "../util/AuthUtils";
 const jwtInterceptionExcludedUrls = ["/auth"];
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "http://34.83.51.168:8080",
 });
 
 axiosInstance.interceptors.request.use(

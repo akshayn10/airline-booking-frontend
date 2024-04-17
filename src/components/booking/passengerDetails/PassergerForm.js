@@ -4,12 +4,17 @@ import { useNavigate,Link, useLocation } from 'react-router-dom';
 import './PassengerForm.css';
 import axios from '../../../config/Axios';
 import moment from 'moment';
+import { useSelector } from "react-redux";
 
 const { Option } = Select;
 
 function PassengerForm() {
 
     const navigate = useNavigate();
+    const userEmail = useSelector(
+        (state) => state.authenticationStateReducer.user?.email
+      );
+
     
     const location = useLocation(); 
     const noOfPassengers = location.state;
@@ -73,16 +78,15 @@ function PassengerForm() {
         else{
         
             const bookingDetails = {
-                totalCost: 150.00,
-                travelDate: "2024-05-20",
                 seatTypeBooked: seatType,
-                noOfSeatBooked: 5,
+                noOfSeatBooked: noOfPassengers,
                 flightId: 4,
-                passengers: passengerDetails
+                passengers: passengerDetails,
+                userEmail:userEmail
             };
             
                 
-                axios.post('http://localhost:8080/booking/v1/book', bookingDetails) // Use Axios to send POST request
+                axios.post('http://localhost:8080/booking', bookingDetails) // Use Axios to send POST request
             
                 .then(response => {
                     message.info('Submitted');

@@ -71,7 +71,7 @@ function Recipt() {
                 <h3>
                   Name <span class="nameTab"></span>: {booking?.user?.firstName}{" "}
                   - {booking?.user?.lastName} <br></br> Email{" "}
-                  <span class="nameTab"></span>:{booking?.user?.firstName}{" "}
+                  <span class="nameTab"></span>:{booking?.user?.email}{" "}
                   <br></br> Purchased tickets <span class="nameTab1"></span>:{" "}
                   {booking?.passengers?.length > 0 ? booking?.passengers?.length : "Loading..."}
                 </h3>

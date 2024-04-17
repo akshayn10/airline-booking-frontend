@@ -11,7 +11,7 @@ const SignupWelcome = () => {
   };
   return (
     <div style={styles} className="signupWelcome__container">
-      <h1>Welcome to Air Arabia</h1>
+      <h1>Welcome to King Flyer</h1>
     </div>
   );
 };

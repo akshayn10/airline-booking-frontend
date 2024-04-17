@@ -7,7 +7,7 @@ const LoginWelcome = () => {
   }
   return (
     <div className="loginWelcome__container">
-      <h1>Welcome to Air Arabia</h1>
+      <h1>Welcome to King Flyer</h1>
       <button onClick={onclickHandler} className="sign_up__btn">Sign Up</button>
     </div>
   );

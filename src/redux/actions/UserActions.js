@@ -7,6 +7,8 @@ import {
   GET_UPCOMING_TRIPS_SUCCESS,
   GET_USER_DETAILS_BY_EMAIL_FAILURE,
   GET_USER_DETAILS_BY_EMAIL_SUCCESS,
+  UPDATE_USER_DETAILS_FAILURE,
+  UPDATE_USER_DETAILS_SUCCESS,
 } from "../constants/UserConstants";
 import axios from "../../config/Axios";
 
@@ -137,7 +139,7 @@ export const UpdateUserDetails = (userDetails) => async (dispatch) => {
     });
 
     dispatch({
-      type: GET_USER_DETAILS_BY_EMAIL_SUCCESS,
+      type: UPDATE_USER_DETAILS_SUCCESS,
       status: response.data.success,
       message: response.data.message,
       data: response.data.data,
@@ -148,7 +150,7 @@ export const UpdateUserDetails = (userDetails) => async (dispatch) => {
       console.log(apiResponse);
       if (apiResponse.success === false) {
         dispatch({
-          type: GET_USER_DETAILS_BY_EMAIL_FAILURE,
+          type: UPDATE_USER_DETAILS_FAILURE,
           status: apiResponse.success,
           message: apiResponse.message,
         });

@@ -26,7 +26,7 @@ const LoginForm = () => {
   useEffect(() => {
     if (loginResponse.status === true) {
       openNotification("success", "Login Success");
-      if(localStorage.getItem('isBooking')){
+      if(localStorage.getItem('isBooking') === "true"){
         navigate('/booking/passenger-form')
         return
       }
@@ -44,7 +44,6 @@ const LoginForm = () => {
     } else if (loginResponse.status === false) {
       openNotification("error", loginResponse.message);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginResponse]);
 
   const onFinish = (values) => {

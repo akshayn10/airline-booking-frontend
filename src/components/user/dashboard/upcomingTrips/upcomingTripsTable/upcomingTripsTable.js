@@ -17,7 +17,8 @@ const UpcomingTripsTable = ({
   );
   useEffect(() => {
     if (cancelBookingResponseState?.status === true) {
-      openNotification("success", cancelBookingResponseState.data);
+      openNotification("success", "Update success");
+      handleDataRefreshWhenCancelled();
     } else if (cancelBookingResponseState?.status === false) {
       openNotification("error", cancelBookingResponseState.message);
     }
@@ -31,41 +32,45 @@ const UpcomingTripsTable = ({
     if (bookingToCancel) {
       console.log("Cancel booking with ID:", bookingToCancel);
       dispatch(CancelBooking(bookingToCancel));
-      handleDataRefreshWhenCancelled();
     }
     setBookingToCancel(null);
   };
 
   const cancelCancelBooking = () => {
-    console.log("Cancellation cancelled");
+    setBookingToCancel(null);
   };
 
   const upcomingTripsColumns = [
     {
       title: "Booking Reference",
+      width: 100,
       dataIndex: "bookingId",
       key: "bookingId",
       render: (text) => <p>{text}</p>,
     },
     {
       title: "Flight Details",
+      width: 125,
       dataIndex: "flightDetails",
       key: "flightDetails",
     },
     {
       title: "Booking Date",
+      width: 125,
       dataIndex: "bookingDateTime",
       key: "bookingDate",
       render: (text) => new Date(text).toLocaleString(),
     },
     {
       title: "Departure Time",
+      width: 125,
       dataIndex: "departureTime",
       key: "departureTime",
       render: (text) => new Date(text).toLocaleString(),
     },
     {
       title: "Arrival Time",
+      width: 125,
       dataIndex: "arrivalTime",
       key: "arrivalTime",
       render: (text) => new Date(text).toLocaleString(),
@@ -77,6 +82,7 @@ const UpcomingTripsTable = ({
     },
     {
       title: "Seat Numbers",
+      width: 100,
       dataIndex: "seatNumbers",
       key: "seatNumbers",
       render: (seatNumbers) => {
@@ -86,11 +92,15 @@ const UpcomingTripsTable = ({
     },
     {
       title: "Total Cost",
+      width: 100,
       dataIndex: "totalCost",
       key: "totalCost",
+      render: (text) => text + " $",
     },
     {
       title: "Actions",
+      fixed: "right",
+      width: 100,
       key: "actions",
       render: (_, record) => (
         <Space size="middle">
@@ -102,8 +112,12 @@ const UpcomingTripsTable = ({
             cancelText="No"
             open={bookingToCancel === record.bookingId}
           >
-            <Button onClick={() => handleCancelBooking(record.bookingId)}>
-              Cancel Booking
+            <Button
+              type="primary"
+              danger
+              onClick={() => handleCancelBooking(record.bookingId)}
+            >
+              Cancel
             </Button>
           </Popconfirm>
         </Space>
@@ -117,7 +131,15 @@ const UpcomingTripsTable = ({
       className={styles.container}
       columns={upcomingTripsColumns}
       dataSource={upcomingTrips}
-      pagination={false}
+      scroll={{
+        x: 1000,
+      }}
+      pagination={{
+        pageSize: 5,
+        total: upcomingTrips.length,
+        showTotal: (total, range) =>
+          `${range[0]}-${range[1]} of ${total} items`,
+      }}
     />
   );
 };

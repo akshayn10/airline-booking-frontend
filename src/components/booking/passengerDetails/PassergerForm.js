@@ -162,7 +162,7 @@ function PassengerForm() {
                                 </Col>
                                 <Col span={8}>
                                     <Form.Item label="Date of Birth" >
-                                        <DatePicker minDate={dayjs().subtract(18, "years")} onChange={(date, dateString) => handleFormChange(index, 'dateOfBirth', dateString)} />
+                                        <DatePicker maxDate={dayjs().subtract(18, "years")} onChange={(date, dateString) => handleFormChange(index, 'dateOfBirth', dateString)} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>

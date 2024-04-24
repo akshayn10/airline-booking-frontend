@@ -5,7 +5,11 @@ import { GetPastBookings } from "../../../../redux/actions/UserActions";
 import { useDispatch, useSelector } from "react-redux";
 import { useNotificationContext } from "../../../../context/notificationContext";
 
-const PastBookings = ({ userEmail, isPastTableUpdateTriggered,setIsPastTableUpdateTriggered}) => {
+const PastBookings = ({
+  userEmail,
+  isPastTableUpdateTriggered,
+  setIsPastTableUpdateTriggered,
+}) => {
   const dispatch = useDispatch();
   const { openNotification } = useNotificationContext();
   const [pastBookings, setPastBookings] = useState(null);
@@ -17,9 +21,11 @@ const PastBookings = ({ userEmail, isPastTableUpdateTriggered,setIsPastTableUpda
     dispatch(GetPastBookings(userEmail));
   }, []);
   useEffect(() => {
-    dispatch(GetPastBookings(userEmail));
-    setIsPastTableUpdateTriggered(false);
-  },[isPastTableUpdateTriggered])
+    if (isPastTableUpdateTriggered === true) {
+      dispatch(GetPastBookings(userEmail));
+      setIsPastTableUpdateTriggered(false);
+    }
+  }, [isPastTableUpdateTriggered]);
 
   useEffect(() => {
     if (getPastBookingsResponse?.status === true) {

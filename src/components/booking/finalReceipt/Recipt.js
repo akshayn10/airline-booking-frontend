@@ -36,6 +36,9 @@ function Recipt() {
 
     fetchData();
   }, []);
+  const navigateToDashboard = () =>{
+    navigate("/user/dashboard")
+  }
 
   const downloadPDF = () => {
     const input = document.getElementById("pdf-content");
@@ -211,6 +214,13 @@ function Recipt() {
               style={{ width: "200px" }}
             >
               Print Recipt
+            </Button>
+            <Button
+              type="primary"
+              onClick={navigateToDashboard}
+              style={{ width: "200px" }}
+            >
+              Go to Dashboard
             </Button>
           </Row>
         </Col>

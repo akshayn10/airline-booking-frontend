@@ -63,6 +63,17 @@ const ChangePasswordForm = () => {
               message:
                 "Password must be at least 8 characters long and contain at least one number",
             },
+
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("oldPassword") !== value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("New Password should be different!")
+                );
+              },
+            }),
           ]}
           hasFeedback
         >
